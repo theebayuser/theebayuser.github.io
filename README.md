@@ -18,6 +18,19 @@ Then open <http://localhost:4173>.
 | `lean.html` | Formalization: goal-state panel, library stats, contents |
 | `manim.html` | Two self-drawing ink figures (deltoid, Lorenz attractor); film plates |
 | `404.html` | Not-found page, proved by contradiction, with a stippled Mandelbrot |
+
+### Things you can click
+
+- **Formalization**: press `by exact tm_overlapFree` in the goal panel and the goal
+  closes; `reset` reopens it. The stats count up the first time they scroll into view.
+- **Research**: press `Apply 0 → 01, 1 → 10` to grow the Thue–Morse word one generation
+  at a time, up to generation 8.
+- **Anywhere**: keys `1`–`5` jump to the sections, `0` goes home. The strip under the nav
+  is the Thue–Morse word filling in as you scroll.
+
+All of it is a bonus layer over plain HTML. With JavaScript off, the goal panel shows a
+finished proof, the morphism figure shows six generations, and the stats show their real
+numbers.
 | `beyond.html` | Photo slideshow, activities, things you're proud of |
 | `cv.html` | Typeset CV; the Print button produces a clean PDF |
 | `css/paper.css` | The entire design system — every color, size, and rule |

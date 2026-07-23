@@ -77,11 +77,27 @@ Each appears on more than one page — that is what makes it a signature rather 
 4. **Dot-leader contents list** — section number, title, dotted leader, action word.
 5. **Lean goal-state panel** — mono, inset fill, `⊢` in ballpoint, closing on a green
    `No goals. ∎`.
-6. **Plotted ink figures** — a `.canvas-wrap` on `--paper-raised` inside a hairline,
-   with a mono `fig. N · caption` beneath. Each draws itself like a pen plotter: a faint
-   full-path guide underneath, the ballpoint line tracing over it, a laurel dot at the
-   pen. Used for the deltoid, the Lorenz attractor, and the 404 Mandelbrot.
+6. **Plotted ink figures** — a bare `.canvas-wrap` with **no frame and no fill**, since
+   the drawings are ink and ink does not come in a box, plus a mono `fig. N · caption`
+   beneath. Each draws itself like a pen plotter: a faint full guide underneath, the
+   ballpoint line tracing over it, a laurel mark at the pen. Deltoid and Lorenz on
+   animations, the Thue–Morse difference table on formalization, Ulam's spiral on the
+   index, the Mandelbrot on 404.
 7. **Colophon ending in ∎**.
+
+## Figures must be true
+
+Every caption is a claim, on a site whose whole argument is that this person checks
+things. Verify the mathematics before writing the caption, not after.
+
+A worked example worth keeping: an earlier Thue–Morse *turtle* figure was going to be
+captioned as the Koch snowflake, on the strength of a half-remembered result. Simulating
+it first showed the path drifts without bound at every turn angle tried, so the claim was
+false and the figure was cut. What replaced it is the **Thue–Morse difference table**
+(ink cell (i, j) when t(i) ≠ t(j)), where every claim in the caption was checked in the
+browser first: the cell equals t(i xor j) because digit-sum parity adds under xor, each
+quadrant is the whole picture one size down, and the ink density is exactly one half.
+Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 
 ## Component measurements
 
@@ -121,6 +137,20 @@ JS means any failure leaves text permanently invisible, so every mechanism fails
   natural styles rather than depending on a transition having completed.
 - A global 8s timer clears any remaining reveal state as a last resort.
 - The title block reveals on rAF *and* a 400ms timer, then drops its classes at 1400ms.
+
+The same rule governs the widgets, which are all progressive enhancement over complete
+HTML:
+
+- **Goal panel** ships the closed proof. JS only ever *hides* the result and offers a
+  button to bring it back, so no-JS readers see a finished proof rather than a broken one.
+- **Morphism widget** ships six static generations; JS replaces them with the interactive
+  version. Cap at generation 8 (256 letters), and the output needs `pre-wrap` +
+  `break-all` or a 256-character line blows out the mobile layout.
+- **Count-up** ships the real numbers in the HTML and refuses to run in a hidden tab; a
+  1.5s timer restores the exact string if rAF never fires.
+- **Reading-progress bar** updates *synchronously* in a passive scroll listener rather
+  than through rAF, because throttled rAF would freeze it. `scrollHeight` is cached on
+  resize so the handler stays arithmetic plus one style write.
 
 Three canvas bugs worth not reintroducing: `stop()` must `cancelAnimationFrame` **and**
 null the handle, or `start()` sees a stale handle and the figure deadlocks; `paint(0)`

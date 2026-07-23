@@ -28,6 +28,7 @@
       <a href="beyond.html"><span class="num">04</span>Beyond</a>
       <a href="cv.html">CV</a>
     </nav>
+    <div class="progress" data-progress aria-hidden="true"></div>
   </div>
 </header>
 
@@ -54,15 +55,15 @@
 
         <div>
           <div class="goal">
-            <div class="goal-bar"><span>Lean&nbsp;4</span><span style="margin-left:auto">goal state</span></div>
+            <div class="goal-bar"><span>Lean&nbsp;4</span><span class="goal-label" style="margin-left:auto">goal state</span></div>
 <div class="goal-body"><span class="hyp">w : Word Bool
 h : Infinite w
 tm : w = thueMorse</span>
-<span class="turn">⊢</span> OverlapFree w</div>
-            <div class="goal-ok">No goals. ∎</div>
+<span class="goal-target"><span class="turn">⊢</span> OverlapFree w</span></div>
+            <div class="goal-ok"><span>No goals. ∎</span></div>
           </div>
           <p class="meta" style="margin-top: 10px;">Thue's 1912 overlap-freeness theorem, as the
-          assistant sees it once the proof closes.</p>
+          assistant sees it. Run the tactic and watch the goal close.</p>
         </div>
       </div>
     </section>
@@ -73,10 +74,10 @@ tm : w = thueMorse</span>
         <h2>The library, measured</h2>
       </div>
       <div class="stats">
-        <div class="stat"><p class="v">7,665</p><p class="k">lines of Lean</p></div>
-        <div class="stat"><p class="v">394</p><p class="k">theorems &amp; lemmas</p></div>
+        <div class="stat"><p class="v" data-count="7665">7,665</p><p class="k">lines of Lean</p></div>
+        <div class="stat"><p class="v" data-count="394">394</p><p class="k">theorems &amp; lemmas</p></div>
         <div class="stat"><p class="v">Lean 4</p><p class="k">+ Mathlib</p></div>
-        <div class="stat"><p class="v">2</p><p class="k">classical results, closed</p></div>
+        <div class="stat"><p class="v" data-count="2">2</p><p class="k">classical results, closed</p></div>
       </div>
       <p class="meta" style="margin-top: var(--s2);">Counted from the working repository, <span class="fill">date</span>.
       Research-level results in progress carry named, explicitly open obligations. I would rather show you
@@ -84,6 +85,28 @@ tm : w = thueMorse</span>
     </section>
 
     <div class="tm" data-n="24"></div>
+
+    <section class="section" style="padding-top: 0;" id="turtle">
+      <div class="figure-row">
+        <div class="prose stack" data-reveal>
+          <p class="kicker">Figure 2</p>
+          <h2 style="font-size: var(--fs-h2);">The word, seen from above</h2>
+          <p>Take the Thue–Morse word twice, once along each edge of a square, and ink the cell where
+          the two letters disagree. Because the parity of a binary digit sum adds under exclusive or,
+          that cell is exactly the word's own letter at position <em>i</em> xor <em>j</em>. The square
+          is one more picture of the same sequence.</p>
+          <p>It comes out self-similar: every quadrant is the whole picture one size down. That is the
+          doubling rule from the research page, viewed from overhead.</p>
+        </div>
+        <div data-reveal>
+          <div class="canvas-wrap" style="aspect-ratio: 1;">
+            <canvas id="figure-tmgrid" role="img"
+              aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
+          </div>
+          <p class="figcap">fig. 2 · cell (i, j) inked when t(i) ≠ t(j)</p>
+        </div>
+      </div>
+    </section>
 
     <section class="section" style="padding-top: 0;">
       <div class="section-head" data-reveal>
@@ -174,6 +197,7 @@ tm : w = thueMorse</span>
       <a href="beyond.html">Beyond</a>
       <a href="cv.html">CV</a>
     </nav>
+    <p class="colophon keys-hint">keys · 1–5 sections · 0 home</p>
   </div>
 </footer>
 

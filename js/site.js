@@ -355,6 +355,94 @@
     }
   }
 
+  /* --- the Thue–Morse difference table ------------------------------------
+     Ink the cell at (i, j) when t(i) and t(j) disagree. Since the parity of
+     the binary digit sum adds under XOR, that cell is exactly t(i XOR j), so
+     the whole square is one more picture of the same word. It comes out
+     self-similar: every quadrant is the picture one size down, which is the
+     doubling rule on the research page seen from above. */
+
+  function tmGrid(ctx, w, h, progress) {
+    var n = 32;
+    var word = thueMorse(n);
+    var side = Math.min(w, h);
+    var cell = side / n;
+    var ox = (w - side) / 2;
+    var oy = (h - side) / 2;
+    var rows = Math.ceil(n * progress);
+
+    /* the finished square, faint, so the figure is never an empty box */
+    ctx.fillStyle = INK;
+    ctx.globalAlpha = 0.10;
+    for (var gj = 0; gj < n; gj++) {
+      for (var gi = 0; gi < n; gi++) {
+        if (word[gi] !== word[gj]) {
+          ctx.fillRect(ox + gi * cell, oy + gj * cell, cell + 0.5, cell + 0.5);
+        }
+      }
+    }
+
+    ctx.globalAlpha = 0.82;
+    for (var j = 0; j < rows; j++) {
+      for (var i = 0; i < n; i++) {
+        if (word[i] !== word[j]) {
+          ctx.fillRect(ox + i * cell, oy + j * cell, cell + 0.5, cell + 0.5);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    if (progress < 1 && rows > 0) {
+      ctx.fillStyle = LAUREL;
+      ctx.fillRect(ox, oy + (rows - 1) * cell, side, 1.5);
+    }
+  }
+
+  /* --- Ulam's spiral ------------------------------------------------------
+     Walk the integers in a square spiral, ink a dot on the primes. The
+     diagonals that show up are the whole point, and nobody knows why. */
+
+  function ulam(canvas) {
+    var ctx = canvas.getContext("2d");
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    var w = rect.width, h = rect.height;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    var cells = 41;
+    var cell = Math.min(w, h) / cells;
+    var dot = Math.max(1.4, cell * 0.30);
+    var n = cells * cells;
+
+    var sieve = new Uint8Array(n + 1);
+    sieve[0] = sieve[1] = 1;
+    for (var p = 2; p * p <= n; p++) {
+      if (!sieve[p]) for (var m = p * p; m <= n; m += p) sieve[m] = 1;
+    }
+
+    var x = 0, y = 0, dx = 1, dy = 0, len = 1, done = 0;
+    var cx = w / 2, cy = h / 2;
+    ctx.fillStyle = INK;
+    for (var k = 1; k <= n; k++) {
+      if (!sieve[k]) {
+        ctx.globalAlpha = 0.78;
+        ctx.beginPath();
+        ctx.arc(cx + x * cell, cy + y * cell, dot, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      x += dx; y += dy; done++;
+      if (done === len) {
+        done = 0;
+        var t = dx; dx = -dy; dy = t;
+        if (dy === 0) len++;
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
   /* --- the 404 Mandelbrot, stippled once in ink --------------------------- */
 
   function mandelbrot(canvas) {
@@ -393,6 +481,207 @@
     ctx.globalAlpha = 1;
   }
 
+  /* --- the goal panel, made runnable -------------------------------------
+     The static markup already shows a closed proof, so this only ever
+     *removes* something and offers to put it back. */
+
+  function initGoal(panel) {
+    var bar = panel.querySelector(".goal-bar");
+    var target = panel.querySelector(".goal-target");
+    if (!bar || !target) return;
+
+    panel.setAttribute("data-enhanced", "");
+
+    var cursor = document.createElement("span");
+    cursor.className = "goal-cursor";
+    cursor.setAttribute("aria-hidden", "true");
+    target.appendChild(cursor);
+
+    var run = document.createElement("button");
+    run.type = "button";
+    run.className = "btn-tactic";
+    run.textContent = "by exact tm_overlapFree";
+
+    var reset = document.createElement("button");
+    reset.type = "button";
+    reset.className = "goal-reset";
+    reset.textContent = "reset";
+    reset.hidden = true;
+
+    bar.appendChild(run);
+    bar.appendChild(reset);
+
+    run.addEventListener("click", function () {
+      panel.classList.add("is-run");
+      run.disabled = true;
+      run.textContent = "✓ kernel accepted";
+      reset.hidden = false;
+    });
+
+    reset.addEventListener("click", function () {
+      panel.classList.remove("is-run");
+      run.disabled = false;
+      run.textContent = "by exact tm_overlapFree";
+      reset.hidden = true;
+    });
+  }
+
+  /* --- the morphism, one press at a time ---------------------------------- */
+
+  function initMorphism(root) {
+    var out = root.querySelector("[data-morphism-out]");
+    if (!out) return;
+    var MAX = 8;
+    var gens = [];
+
+    var bar = document.createElement("div");
+    bar.className = "morph-bar";
+
+    var apply = document.createElement("button");
+    apply.type = "button";
+    apply.className = "btn";
+    apply.textContent = "Apply 0 → 01, 1 → 10";
+
+    var back = document.createElement("button");
+    back.type = "button";
+    back.className = "btn";
+    back.textContent = "Reset";
+
+    var meta = document.createElement("p");
+    meta.className = "morph-meta";
+
+    bar.appendChild(apply);
+    bar.appendChild(back);
+    bar.appendChild(meta);
+    out.parentNode.insertBefore(bar, out.nextSibling);
+
+    function render() {
+      out.textContent = gens.join("\n");
+      var n = gens.length - 1;
+      var len = gens[n].length;
+      meta.textContent = n >= MAX
+        ? "generation " + n + " · length " + len + " · the fixed point continues forever"
+        : "generation " + n + " · length " + len;
+      apply.disabled = n >= MAX;
+    }
+
+    function step() {
+      var last = gens[gens.length - 1];
+      var next = "";
+      for (var i = 0; i < last.length; i++) {
+        next += last.charAt(i) === "0" ? "01" : "10";
+      }
+      gens.push(next);
+      render();
+    }
+
+    apply.addEventListener("click", function () {
+      if (gens.length - 1 < MAX) step();
+    });
+    back.addEventListener("click", function () {
+      gens = ["0"];
+      render();
+    });
+
+    gens = ["0"];
+    render();
+  }
+
+  /* --- counting up -------------------------------------------------------- */
+
+  function initCounts() {
+    var els = document.querySelectorAll("[data-count]");
+    if (!els.length) return;
+    if (reduced || document.visibilityState === "hidden") return;
+
+    Array.prototype.forEach.call(els, function (el) {
+      var target = parseFloat(el.getAttribute("data-count"));
+      var final = el.textContent;
+      onceInView(el, function () {
+        var start = null;
+        var dur = 650;
+        function tick(now) {
+          if (start === null) start = now;
+          var t = Math.min(1, (now - start) / dur);
+          var eased = 1 - Math.pow(1 - t, 3);
+          if (t < 1) {
+            el.textContent = Math.round(target * eased).toLocaleString();
+            window.requestAnimationFrame(tick);
+          } else {
+            el.textContent = final;
+          }
+        }
+        el.textContent = "0";
+        window.requestAnimationFrame(tick);
+        /* if rAF never runs, put the real number back */
+        window.setTimeout(function () { el.textContent = final; }, 1500);
+      }, 0.4);
+    });
+  }
+
+  /* --- reading progress, written in Thue–Morse ---------------------------- */
+
+  function initProgress() {
+    var bar = document.querySelector("[data-progress]");
+    if (!bar) return;
+    var canvas = document.createElement("canvas");
+    bar.appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    var w = 0;
+
+    function paint() {
+      w = window.innerWidth;
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(2 * dpr);
+      canvas.style.width = w + "px";
+      canvas.style.height = "2px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, 2);
+      var word = thueMorse(Math.ceil(w / 7));
+      for (var i = 0; i < word.length; i++) {
+        ctx.fillStyle = word[i] ? INK : "rgba(33,30,23,0.28)";
+        ctx.fillRect(i * 7, 0, 4, 2);
+      }
+    }
+
+    /* scrollHeight forces layout, so measure it on resize and keep the scroll
+       handler to arithmetic and one style write. Updating synchronously means
+       the bar still tracks when rAF is throttled. */
+    var max = 0;
+    function measure() {
+      max = document.documentElement.scrollHeight - window.innerHeight;
+    }
+    function update() {
+      var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      bar.style.width = (p * 100) + "%";
+    }
+
+    paint();
+    measure();
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", function () { paint(); measure(); update(); });
+    window.setTimeout(function () { measure(); update(); }, 600);
+  }
+
+  /* --- number keys -------------------------------------------------------- */
+
+  function initKeys() {
+    var map = {
+      "1": "research.html", "2": "lean.html", "3": "manim.html",
+      "4": "beyond.html", "5": "cv.html", "0": "index.html"
+    };
+    document.addEventListener("keydown", function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+      var el = document.activeElement;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" ||
+                 el.isContentEditable || el.hasAttribute("data-show"))) return;
+      var dest = map[e.key];
+      if (dest) { window.location.href = dest; }
+    });
+  }
+
   /* --- boot --------------------------------------------------------------- */
 
   function boot() {
@@ -407,8 +696,24 @@
     var fig1 = document.getElementById("figure-lorenz");
     if (fig1) plotter(fig1, { draw: lorenz, seconds: 11, hold: 2.4 });
 
+    var fig2 = document.getElementById("figure-tmgrid");
+    if (fig2) plotter(fig2, { draw: tmGrid, seconds: 3.2, hold: 2.6 });
+
     var mb = document.getElementById("figure-mandelbrot");
     if (mb) mandelbrot(mb);
+
+    var us = document.getElementById("figure-ulam");
+    if (us) ulam(us);
+
+    var goal = document.querySelector(".goal");
+    if (goal) initGoal(goal);
+
+    var morph = document.querySelector("[data-morphism]");
+    if (morph) initMorphism(morph);
+
+    initCounts();
+    initProgress();
+    initKeys();
   }
 
   if (document.readyState === "loading") {
