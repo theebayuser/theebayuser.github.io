@@ -16,7 +16,8 @@ Then open <http://localhost:4173>.
 | `index.html` | Title block, abstract, contents, selected work, notebook, contact |
 | `research.html` | What combinatorics on words is; the two research projects |
 | `lean.html` | Formalization: goal-state panel, library stats, contents |
-| `manim.html` | Blackboard section with the live canvas figure; film plates |
+| `manim.html` | Two self-drawing ink figures (deltoid, Lorenz attractor); film plates |
+| `404.html` | Not-found page, proved by contradiction, with a stippled Mandelbrot |
 | `beyond.html` | Photo slideshow, activities, things you're proud of |
 | `cv.html` | Typeset CV; the Print button produces a clean PDF |
 | `css/paper.css` | The entire design system — every color, size, and rule |
@@ -33,7 +34,16 @@ grep -rn 'class="fill"' *.html
 ```
 
 There are about 60. The ones that matter most, in order: the CV, the "A few honest things"
-paragraph on `beyond.html`, and your GitHub URL (search for `href="#"`).
+paragraph on `beyond.html`, and your **GitHub and Instagram URLs**. Both are currently
+`href="#"`, so find them with:
+
+```bash
+grep -rn 'href="#"' *.html
+```
+
+They appear as buttons in the contact section of `index.html`, and as text links on
+`beyond.html` and `cv.html`. Replace the `#` with the real URL and delete the
+`<span class="fill">url</span>` next to it.
 
 ### Photos
 
@@ -83,9 +93,15 @@ appears at `https://<your-username>.github.io` within a minute or two. Any stati
 
 ## Notes
 
+- **Write no em dashes.** The site uses commas, parentheses, colons, and full stops
+  instead. `grep -c '—' *.html` should stay at 0. En dashes are fine in Thue–Morse and
+  year ranges.
 - Fonts load from Google Fonts and fall back to Palatino/Georgia and the system monospace
   offline, which changes the texture slightly but breaks nothing.
-- The canvas figure pauses when scrolled out of view and renders as a single static curve
-  under `prefers-reduced-motion`.
+- The figures pause when scrolled out of view and render as a single static drawing under
+  `prefers-reduced-motion`. Animation is a bonus layer: if JavaScript is off, if the tab
+  loads in the background, or if anything else fails, every element stays fully visible.
+- No `og:image` is set yet, so link previews show text only. Add one once there is a real
+  image worth showing.
 - The design system is documented in `.interface-design/system.md`. Read it before changing
   colors or spacing — the values are chosen, not arbitrary.

@@ -26,16 +26,6 @@
   --qed:             #35784A;
   --laurel:          #96772B;
 
-  /* Blackboard — the Manim interlude */
-  --board:        #101319;
-  --board-raised: #161B24;
-  --board-rule:   rgba(233, 237, 243, 0.12);
-  --chalk:        #E9EDF3;
-  --chalk-2:      #A9B2C0;
-  --chalk-3:      #6E7887;
-  --chalk-blue:   #58C4DD;
-  --chalk-yellow: #FFD866;
-
   /* Type */
   --serif: "STIX Two Text", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -216,8 +206,6 @@ section { scroll-margin-top: 84px; }
   background: var(--rule-strong);
 }
 .tm i.z { background: none; border: 1px solid var(--rule); }
-.tm.on-board i { background: rgba(233, 237, 243, 0.42); }
-.tm.on-board i.z { background: none; border-color: var(--board-rule); }
 .tm-cap {
   text-align: center; font-family: var(--mono); font-size: var(--fs-label);
   color: var(--ink-4); margin: calc(-1 * var(--s4)) 0 0; padding-bottom: var(--s5);
@@ -341,35 +329,49 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   color: var(--qed); font-size: var(--fs-meta);
 }
 
-/* ---------------------------------------------------------- blackboard --- */
+/* ------------------------------------------------------------- figures --- */
 
-.board {
-  background: var(--board); color: var(--chalk);
-  padding: var(--s7) 0; margin: var(--s7) 0;
-}
-.board h2, .board h3 { color: var(--chalk); }
-.board p { color: var(--chalk-2); }
-.board .kicker { color: var(--chalk-3); }
-.board a { color: var(--chalk-blue); border-bottom-color: rgba(88, 196, 221, 0.3); }
-.board a:hover { background: rgba(88, 196, 221, 0.12); border-bottom-color: var(--chalk-blue); }
-.board .meta { color: var(--chalk-3); }
-
-.board-figure {
+.figure-row {
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: var(--s5); align-items: center;
 }
 .canvas-wrap {
   position: relative; width: 100%; aspect-ratio: 4 / 3;
-  border: 1px solid var(--board-rule); background: var(--board-raised);
+  border: 1px solid var(--rule); background: var(--paper-raised);
 }
 .canvas-wrap canvas { width: 100%; height: 100%; display: block; }
-.figcap { font-family: var(--mono); font-size: var(--fs-label); color: var(--chalk-3); margin-top: 10px; }
+.figcap { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); margin-top: 10px; }
+
+/* -------------------------------------------------------------- motion --- */
+/* JS adds these classes only when prefers-reduced-motion is off; without JS
+   (or with it off) nothing is ever hidden. One-shot, transform/opacity only. */
+
+.rv {
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 380ms var(--ease), transform 380ms var(--ease);
+}
+.rv.rv-in { opacity: 1; transform: none; }
+
+.tm.tm-pre i {
+  opacity: 0; transform: scaleY(0.25); transform-origin: bottom;
+  transition: opacity 240ms var(--ease), transform 240ms var(--ease);
+}
+.tm.tm-pre.tm-draw i { opacity: 1; transform: none; }
+
+.tb-anim > * {
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 460ms var(--ease), transform 460ms var(--ease);
+}
+.tb-anim > *:nth-child(2) { transition-delay: 80ms; }
+.tb-anim > *:nth-child(3) { transition-delay: 160ms; }
+.tb-anim > *:nth-child(4) { transition-delay: 240ms; }
+.tb-anim > *:nth-child(5) { transition-delay: 320ms; }
+.tb-anim.tb-in > * { opacity: 1; transform: none; }
 
 /* -------------------------------------------------------------- plates --- */
 
 .plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s4); }
 .plate { border: 1px solid var(--rule); background: var(--paper-raised); }
-.board .plate { border-color: var(--board-rule); background: var(--board-raised); }
 .plate-frame {
   aspect-ratio: 16 / 9; background: var(--paper-inset);
   display: flex; align-items: center; justify-content: center;
@@ -377,16 +379,13 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   color: var(--ink-4); font-family: var(--mono); font-size: var(--fs-meta);
   text-align: center; padding: var(--s2);
 }
-.board .plate-frame { background: #0C0F14; border-bottom-color: var(--board-rule); color: var(--chalk-3); }
 .plate-cap { padding: 14px var(--s2) var(--s2); }
 .plate-cap .pn {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--ink-3);
 }
-.board .plate-cap .pn { color: var(--chalk-3); }
 .plate-cap .pt { font-size: 16px; margin-top: 4px; }
 .plate-cap .pd { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
-.board .plate-cap .pd { color: var(--chalk-2); }
 
 /* ----------------------------------------------------------- slideshow --- */
 
@@ -421,8 +420,10 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   transition: background-color 140ms var(--ease), transform 100ms var(--ease);
 }
-.btn:hover { background: var(--paper-inset); }
+.btn:hover { background: var(--paper-inset); border-color: var(--rule-strong); }
 .btn:active { transform: scale(0.97); }
+a.btn { color: var(--ink); text-decoration: none; }
+a.btn .fill { color: var(--ink-3); }
 
 /* ------------------------------------------------------------ cv/lists --- */
 
@@ -453,7 +454,7 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   .page, .topbar-inner { padding: 0 var(--s3); }
   .titleblock { padding: var(--s6) 0 var(--s5); }
   .section { padding: var(--s6) 0; }
-  .board-figure { grid-template-columns: 1fr; gap: var(--s4); }
+  .figure-row { grid-template-columns: 1fr; gap: var(--s4); }
   .topbar-inner { flex-wrap: wrap; gap: var(--s1); padding-top: 6px; padding-bottom: 6px; }
   .nav { margin-left: 0; width: 100%; }
   .nav a { padding: 10px 8px; }
@@ -472,6 +473,7 @@ a.env:hover .env-kind { color: var(--ballpoint); }
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
+  .rv, .tm.tm-pre i, .tb-anim > * { opacity: 1 !important; transform: none !important; }
 }
 
 /* --------------------------------------------------------------- print --- */

@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daniel Liao — proofs on paper, in Lean, and in motion</title>
+<title>Daniel Liao · proofs on paper, in Lean, and in motion</title>
 <meta name="description" content="Daniel Liao: high-school mathematics research in combinatorics on words, formal verification in Lean 4, and mathematical animation.">
+<meta property="og:title" content="Daniel Liao">
+<meta property="og:description" content="Mathematics research in combinatorics on words, formal verification in Lean 4, and mathematical animation.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F7F3E9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -29,92 +34,95 @@
 <main id="main">
 
   <div class="page">
-    <div class="titleblock">
+    <div class="titleblock" data-titleblock>
       <p class="kicker">Combinatorics on words · Lean 4 · Manim</p>
       <h1 class="display">Daniel Liao</h1>
       <p class="byline">proofs on paper, in Lean, and in motion</p>
       <p class="affil meta"><span class="fill">school</span> · <span class="fill">city, state</span> · class of <span class="fill">year</span></p>
 
       <div class="abstract">
-        <p><span class="runin">Abstract.</span> I study infinite words over finite alphabets — which patterns are
-        forced to appear, and which can be avoided forever — and then rebuild the proofs in Lean 4 until a
-        computer agrees with every step. Alongside the research I write animations that make the arguments
-        watchable, and I keep a public record of what worked, what failed, and why.</p>
+        <p><span class="runin">Abstract.</span> I study infinite words over finite alphabets, asking
+        which patterns are forced to appear and which can be avoided forever, then rebuild the proofs
+        in Lean 4 until a computer agrees with every step. Alongside the research I write animations
+        that make the arguments watchable, and I keep a public record of what worked, what failed,
+        and why.</p>
         <p class="keywords meta">Keywords: pattern avoidance · repetition · formal verification · Mathlib · Manim</p>
       </div>
     </div>
   </div>
 
   <div class="tm" data-n="28"></div>
-  <p class="tm-cap">the Thue–Morse word — the first infinite word I ever formalized</p>
+  <p class="tm-cap">the Thue–Morse word, the first infinite word I ever formalized</p>
 
   <div class="page">
 
     <section class="section" id="contents" style="padding-top: 0;">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="kicker">§ 00</p>
         <h2>Contents</h2>
       </div>
       <ol class="toc">
-        <li><a href="research.html"><span class="n">01</span><span class="t">Research — words, counted carefully</span><span class="leader"></span><span class="pg">read</span></a></li>
-        <li><a href="lean.html"><span class="n">02</span><span class="t">Formalization — proofs a computer believes</span><span class="leader"></span><span class="pg">read</span></a></li>
-        <li><a href="manim.html"><span class="n">03</span><span class="t">Animations — math you can watch</span><span class="leader"></span><span class="pg">watch</span></a></li>
-        <li><a href="beyond.html"><span class="n">04</span><span class="t">Beyond — life outside the margin</span><span class="leader"></span><span class="pg">browse</span></a></li>
+        <li><a href="research.html"><span class="n">01</span><span class="t">Research, words counted carefully</span><span class="leader"></span><span class="pg">read</span></a></li>
+        <li><a href="lean.html"><span class="n">02</span><span class="t">Formalization, proofs a computer believes</span><span class="leader"></span><span class="pg">read</span></a></li>
+        <li><a href="manim.html"><span class="n">03</span><span class="t">Animations, math you can watch</span><span class="leader"></span><span class="pg">watch</span></a></li>
+        <li><a href="beyond.html"><span class="n">04</span><span class="t">Beyond, life outside the margin</span><span class="leader"></span><span class="pg">browse</span></a></li>
         <li><a href="cv.html"><span class="n">05</span><span class="t">Curriculum vitae</span><span class="leader"></span><span class="pg">print</span></a></li>
       </ol>
     </section>
 
     <section class="section" id="selected">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="kicker">§ 01</p>
         <h2>Selected work</h2>
         <p class="prose lede">Three things I would want you to look at first. Each is live work, not a
-        class project — the write-ups and code go as deep as you care to follow.</p>
+        class project, and the write-ups go as deep as you care to follow.</p>
       </div>
 
-      <a class="env" href="research.html">
-        <div class="env-head">
-          <span class="env-kind">Theorem&nbsp;1</span>
-          <span class="env-name">(a repetition threshold, resolved).</span>
-          <span class="env-status wip">⋯ manuscript in preparation</span>
-        </div>
-        <p class="env-body">An exact answer to a counting question about how long a word can go while
-        avoiding a prescribed kind of repetition, for every alphabet past a small explicit size.
-        Computer-assisted, independently reproduced from scratch, and being verified in Lean.</p>
-        <p class="env-foot"><span>combinatorics on words</span><span>·</span><span>search + proof</span><span class="tomb">→</span></p>
-      </a>
+      <div data-reveal-group>
+        <a class="env" href="research.html">
+          <div class="env-head">
+            <span class="env-kind">Theorem&nbsp;1</span>
+            <span class="env-name">(a repetition threshold, resolved).</span>
+            <span class="env-status wip">⋯ manuscript in preparation</span>
+          </div>
+          <p class="env-body">An exact answer to a counting question about how long a word can go while
+          avoiding a prescribed kind of repetition, for every alphabet past a small explicit size.
+          Computer-assisted, independently reproduced from scratch, and being verified in Lean.</p>
+          <p class="env-foot"><span>combinatorics on words</span><span>·</span><span>search + proof</span><span class="tomb">→</span></p>
+        </a>
 
-      <a class="env" href="lean.html">
-        <div class="env-head">
-          <span class="env-kind">Lemma&nbsp;2</span>
-          <span class="env-name">(Thue, 1912 — machine-checked).</span>
-          <span class="env-status done">✓ machine-checked</span>
-        </div>
-        <p class="env-body">The classical overlap-free and square-free theorems, formalized end to end in
-        Lean 4 with no gaps left open. They anchor a small library of definitions for words, morphisms,
-        and repetitions that the rest of my research is built on.</p>
-        <p class="env-foot"><span>Lean 4 + Mathlib</span><span>·</span><span>sorry-free</span><span class="tomb">→</span></p>
-      </a>
+        <a class="env" href="lean.html">
+          <div class="env-head">
+            <span class="env-kind">Lemma&nbsp;2</span>
+            <span class="env-name">(Thue, 1912, machine-checked).</span>
+            <span class="env-status done">✓ machine-checked</span>
+          </div>
+          <p class="env-body">The classical overlap-free and square-free theorems, formalized end to end in
+          Lean 4 with no gaps left open. They anchor a small library of definitions for words, morphisms,
+          and repetitions that the rest of my research is built on.</p>
+          <p class="env-foot"><span>Lean 4 + Mathlib</span><span>·</span><span>sorry-free</span><span class="tomb">→</span></p>
+        </a>
 
-      <a class="env" href="manim.html">
-        <div class="env-head">
-          <span class="env-kind">Figure&nbsp;3</span>
-          <span class="env-name">(ideas in motion).</span>
-          <span class="env-status">∎ ongoing</span>
-        </div>
-        <p class="env-body">Short animated explanations built in Manim — the same arguments as the papers,
-        drawn rather than written. Making a proof move is the fastest way to find the step I did not
-        actually understand.</p>
-        <p class="env-foot"><span>Manim · Python</span><span>·</span><span><span class="fill">n</span> films</span><span class="tomb">→</span></p>
-      </a>
+        <a class="env" href="manim.html">
+          <div class="env-head">
+            <span class="env-kind">Figure&nbsp;3</span>
+            <span class="env-name">(ideas in motion).</span>
+            <span class="env-status">∎ ongoing</span>
+          </div>
+          <p class="env-body">Short animated explanations built in Manim: the same arguments as the papers,
+          drawn rather than written. Making a proof move is the fastest way to find the step I did not
+          actually understand.</p>
+          <p class="env-foot"><span>Manim · Python</span><span>·</span><span><span class="fill">n</span> films</span><span class="tomb">→</span></p>
+        </a>
+      </div>
     </section>
 
     <section class="section" id="now">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="kicker">§ 02</p>
         <h2>Notebook</h2>
-        <p class="prose lede">A running log, newest first. I keep the failures in — a research record
-        without them is fiction.</p>
+        <p class="prose lede">A running log, newest first. I keep the failures in, because a research
+        record without them is fiction.</p>
       </div>
 
       <div class="prose stack">
@@ -126,9 +134,9 @@
         </div>
         <div class="entry">
           <div class="entry-head"><span class="r">A refuted conjecture, and what it taught me</span><span class="d">Jun 2026</span></div>
-          <p class="note" style="margin-top: 12px;">A uniform version of one obligation turned out to be false;
-          the proof assistant produced explicit counterexamples. The corrected statement needed a threshold
-          I had originally mis-derived — worth every week it cost.</p>
+          <p class="note" style="margin-top: 12px;">A uniform version of one obligation turned out to be false,
+          and the proof assistant produced explicit counterexamples. The corrected statement needed a threshold
+          I had originally mis-derived. Worth every week it cost.</p>
         </div>
         <div class="entry">
           <div class="entry-head"><span class="r"><span class="fill">next entry</span></span><span class="d"><span class="fill">date</span></span></div>
@@ -144,9 +152,11 @@
         <p style="margin-top: var(--s2);">I am always glad to hear from mathematicians, Lean people,
         and students who want to start something similar. Questions about the work, or about how to begin
         formalizing, are especially welcome.</p>
-        <p class="meta"><a href="mailto:artificialintelligencealt33@gmail.com">artificialintelligencealt33@gmail.com</a>
-        &nbsp;·&nbsp; <a href="#" class="fill">github</a>
-        &nbsp;·&nbsp; <a href="cv.html">CV</a></p>
+        <div style="display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s3);">
+          <a class="btn" href="mailto:artificialintelligencealt33@gmail.com">Email</a>
+          <a class="btn" href="#">GitHub <span class="fill">url</span></a>
+          <a class="btn" href="#">Instagram <span class="fill">url</span></a>
+        </div>
       </div>
     </section>
 

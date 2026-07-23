@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Animations — Daniel Liao</title>
+<title>Animations · Daniel Liao</title>
 <meta name="description" content="Mathematical animation with Manim: short films that make proofs watchable.">
+<meta property="og:title" content="Animations · Daniel Liao">
+<meta property="og:description" content="Short animated explanations built in Manim, plus figures this page draws for itself.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F7F3E9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -28,45 +33,65 @@
 
 <main id="main">
   <div class="page">
-    <div class="titleblock" style="text-align: left; padding-bottom: var(--s4);">
+
+    <div class="titleblock" style="text-align: left; padding-bottom: var(--s5);">
       <p class="kicker">§ 03 · Animations</p>
       <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Math you can watch</h1>
       <p class="byline">the same arguments, drawn instead of written</p>
     </div>
-  </div>
 
-  <section class="board">
-    <div class="page">
-      <div class="board-figure">
-        <div>
+    <section class="section" style="padding-top: 0;">
+      <div class="figure-row">
+        <div data-reveal>
           <div class="canvas-wrap">
-            <canvas id="figure-canvas" role="img"
-              aria-label="A deltoid curve traced by two rotating epicycles, drawn continuously in chalk blue."></canvas>
+            <canvas id="figure-deltoid" role="img"
+              aria-label="A deltoid curve traced by two rotating epicycles, drawn continuously in ink."></canvas>
           </div>
-          <p class="figcap">fig. 0 — drawn live by this page, not a video</p>
+          <p class="figcap">fig. 0 · a deltoid, drawn live by this page</p>
         </div>
-        <div class="prose stack">
+        <div class="prose stack" data-reveal>
           <p class="kicker">Figure 0</p>
           <h2 style="font-size: var(--fs-h2);">Two circles, one curve</h2>
           <p>A point riding one rotating arm, itself riding another turning twice as fast the other way,
           traces a deltoid. Nothing in that sentence is hard. Watching it happen is still better than
-          reading it — which is the entire argument for animating mathematics.</p>
+          reading it, which is the entire argument for animating mathematics.</p>
           <p>I build these in Manim: write the scene in Python, render, watch the part that does not read
           clearly, rewrite. It is unreasonably good at exposing the step you thought you understood.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <div class="page">
-    <section class="section" style="padding-top: var(--s6);">
-      <div class="section-head">
+    <div class="tm" data-n="24"></div>
+
+    <section class="section" style="padding-top: 0;">
+      <div class="figure-row">
+        <div class="prose stack" data-reveal>
+          <p class="kicker">Figure 1</p>
+          <h2 style="font-size: var(--fs-h2);">A curve that never repeats</h2>
+          <p>The Lorenz system: three simple rules about how three numbers push each other around.
+          Nothing random anywhere in it. The path still never closes, never crosses itself, and never
+          settles onto either wing for long.</p>
+          <p>This one draws slowly on purpose. The shape is famous enough to be a poster, and the poster
+          loses the part that matters, which is the order the pen visits things in.</p>
+        </div>
+        <div data-reveal>
+          <div class="canvas-wrap">
+            <canvas id="figure-lorenz" role="img"
+              aria-label="The Lorenz attractor, its two lobes traced slowly as a single unbroken ink line."></canvas>
+          </div>
+          <p class="figcap">fig. 1 · the Lorenz attractor, integrated in the browser</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: var(--s5);">
+      <div class="section-head" data-reveal>
         <p class="kicker">Films</p>
         <h2>Selected animations</h2>
         <p class="prose lede">Drop an <code style="font-family: var(--mono); font-size: 15px;">.mp4</code>
         into <code style="font-family: var(--mono); font-size: 15px;">assets/video/</code> and swap the
-        placeholder for a <code style="font-family: var(--mono); font-size: 15px;">&lt;video&gt;</code> tag —
-        the frames are already sized for it.</p>
+        placeholder for a <code style="font-family: var(--mono); font-size: 15px;">&lt;video&gt;</code> tag.
+        The frames are already sized for it.</p>
       </div>
 
       <div class="plates">
@@ -105,7 +130,7 @@
       <div class="grid-2">
         <div class="prose stack">
           <h2>How they get made</h2>
-          <p>Storyboard on paper first — if I cannot draw the key frame by hand, the animation will not
+          <p>Storyboard on paper first. If I cannot draw the key frame by hand, the animation will not
           save it. Then the scene in Python, usually far too long on the first pass. Then cut it in half.</p>
           <p>The rule I keep coming back to: animate the thing that moves in the proof, and hold still
           for everything else. Motion is the emphasis, so spending it on decoration wastes it.</p>
@@ -121,11 +146,13 @@
             <p class="meta" style="margin-top: 6px;">Static diagrams for the manuscripts.</p>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">other tools</span></span><span class="d"><span class="fill">use</span></span></div>
+            <div class="entry-head"><span class="r">HTML canvas</span><span class="d">this page</span></div>
+            <p class="meta" style="margin-top: 6px;">Figures 0 and 1 are drawn here, not embedded.</p>
           </div>
         </div>
       </div>
     </section>
+
   </div>
 </main>
 

@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Research — Daniel Liao</title>
+<title>Research · Daniel Liao</title>
 <meta name="description" content="Mathematics research in combinatorics on words: pattern avoidance, repetition, and computer-assisted proof.">
+<meta property="og:title" content="Research · Daniel Liao">
+<meta property="og:description" content="Which patterns are forced to appear in an infinite word, and which can be avoided forever.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F7F3E9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -37,78 +42,103 @@
 
     <section class="section" style="padding-top: 0;" id="what">
       <div class="prose stack">
-        <p class="lede">Write an infinite sequence of letters from a small alphabet — say just
+        <p class="lede">Write an infinite sequence of letters from a small alphabet, say just
         <em>a</em>, <em>b</em>, <em>c</em>. Can you do it forever without ever repeating a block
         back-to-back? On two letters, no: every long enough word contains a doubled block. On three,
-        yes — and Axel Thue built such a word in 1912.</p>
+        yes, and Axel Thue built such a word in 1912.</p>
 
         <p>That gap between two letters and three is the whole subject. Combinatorics on words asks
-        which patterns are <em>unavoidable</em> — forced to appear in any sufficiently long word — and
-        which can be dodged forever by a clever enough construction. The questions are elementary to
-        state and stubborn to answer, which is exactly what I like about them.</p>
+        which patterns are <em>unavoidable</em>, meaning forced to appear in any sufficiently long
+        word, and which can be dodged forever by a clever enough construction. The questions are
+        elementary to state and stubborn to answer, which is exactly what I like about them.</p>
 
         <p>My own work sits on the counting side of this: given a kind of repetition to avoid, how much
         room does an alphabet actually buy you? The answers tend to be exact formulas that hold past
         some threshold, with a finite, messy, interesting region below it that has to be settled by
-        exhaustive search. Getting a machine to do that search honestly — and then proving the search
-        was complete — is half the research.</p>
+        exhaustive search. Getting a machine to do that search honestly, and then proving the search
+        was complete, is half the research.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;" id="figure">
+      <div class="figure-row">
+        <div data-reveal>
+          <div class="code" aria-label="Six generations of the rewriting rule 0 to 01 and 1 to 10.">0
+01
+0110
+01101001
+0110100110010110
+01101001100101101001011001101001</div>
+          <p class="figcap">fig. 1 · six generations of 0 → 01, 1 → 10</p>
+        </div>
+        <div class="prose stack" data-reveal>
+          <p class="kicker">Figure 1</p>
+          <h2 style="font-size: var(--fs-h2);">One rule, run forever</h2>
+          <p>Start with a single 0. Replace every 0 by 01 and every 1 by 10, over and over. Each line
+          above is the whole previous line rewritten, so each is twice as long as the one before, and
+          each begins with the one before it.</p>
+          <p>Keep going and the lines converge on one infinite word. It is the Thue–Morse word, and it
+          is the same word drawn as tick marks in every rule on this site.</p>
+        </div>
       </div>
     </section>
 
     <div class="tm" data-n="24"></div>
 
     <section class="section" style="padding-top: 0;" id="projects">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="kicker">Projects</p>
         <h2>Two open lines of work</h2>
         <p class="prose lede">Both are in preparation. I state them loosely here and in full in the
-        manuscripts — happy to share drafts with anyone who asks.</p>
+        manuscripts, and I am happy to share drafts with anyone who asks.</p>
       </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">Project&nbsp;P2</span>
-          <span class="env-name">(an exact threshold formula).</span>
-          <span class="env-status wip">⋯ manuscript in preparation</span>
+      <div data-reveal-group>
+        <div class="env">
+          <div class="env-head">
+            <span class="env-kind">Project&nbsp;P2</span>
+            <span class="env-name">(an exact threshold formula).</span>
+            <span class="env-status wip">⋯ manuscript in preparation</span>
+          </div>
+          <p class="env-body">For a family of avoidance problems, I determine the exact answer for every
+          alphabet size past a small explicit bound, together with a complete classification of the
+          extremal configurations that achieve it. The proof pairs a structural argument with an
+          exhaustive finite search; the search has been independently re-run from scratch by a second,
+          deliberately different implementation, and the structural half is being verified in Lean.</p>
+          <p class="env-foot">
+            <span>status: complete at computer-assisted rigor</span><span>·</span>
+            <span>Lean verification ~72%</span>
+          </p>
         </div>
-        <p class="env-body">For a family of avoidance problems, I determine the exact answer for every
-        alphabet size past a small explicit bound, together with a complete classification of the
-        extremal configurations that achieve it. The proof pairs a structural argument with an
-        exhaustive finite search; the search has been independently re-run from scratch by a second,
-        deliberately different implementation, and the structural half is being verified in Lean.</p>
-        <p class="env-foot">
-          <span>status: complete at computer-assisted rigor</span><span>·</span>
-          <span>Lean verification ~72%</span>
-        </p>
-      </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">Project&nbsp;P3</span>
-          <span class="env-name">(a classification of admissible alphabets).</span>
-          <span class="env-status wip">⋯ manuscript in preparation</span>
+        <div class="env">
+          <div class="env-head">
+            <span class="env-kind">Project&nbsp;P3</span>
+            <span class="env-name">(a classification of admissible alphabets).</span>
+            <span class="env-status wip">⋯ manuscript in preparation</span>
+          </div>
+          <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
+          with a demanding combination of avoidance and richness properties. The criterion turns out to be
+          strikingly simple, which took a long certificate to establish: a bounded search over a large but
+          finite space, audited twice, with the boundary cases hunted down individually.</p>
+          <p class="env-foot">
+            <span>status: classification complete, under review</span><span>·</span>
+            <span>reproduction package written</span>
+          </p>
         </div>
-        <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
-        with a demanding combination of avoidance and richness properties. The criterion turns out to be
-        strikingly simple, which took a long certificate to establish: a bounded search over a large but
-        finite space, audited twice, with the boundary cases hunted down individually.</p>
-        <p class="env-foot">
-          <span>status: classification complete, under review</span><span>·</span>
-          <span>reproduction package written</span>
-        </p>
-      </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">Library&nbsp;P0</span>
-          <span class="env-name">(foundations, in Lean).</span>
-          <span class="env-status done">✓ machine-checked</span>
+        <div class="env">
+          <div class="env-head">
+            <span class="env-kind">Library&nbsp;P0</span>
+            <span class="env-name">(foundations, in Lean).</span>
+            <span class="env-status done">✓ machine-checked</span>
+          </div>
+          <p class="env-body">Everything above needs definitions that a proof assistant will accept:
+          finite and infinite words, morphisms, powers, overlaps, avoidance. I built that spine first and
+          proved the classical theorems on top of it, so the research results have somewhere to land.
+          <a href="lean.html">More on the formalization →</a></p>
+          <p class="env-foot"><span>complete</span><span>·</span><span>no gaps left open</span></p>
         </div>
-        <p class="env-body">Everything above needs definitions that a proof assistant will accept:
-        finite and infinite words, morphisms, powers, overlaps, avoidance. I built that spine first and
-        proved the classical theorems on top of it, so the research results have somewhere to land.
-        <a href="lean.html">More on the formalization →</a></p>
-        <p class="env-foot"><span>complete</span><span>·</span><span>no gaps left open</span></p>
       </div>
     </section>
 

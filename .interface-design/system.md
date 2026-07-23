@@ -50,8 +50,17 @@ Everything else is the paper/ink ramp.
 Ink has four levels (`--ink`, `--ink-2`, `--ink-3`, `--ink-4`) — primary, supporting,
 metadata, disabled. Using only two flattens the hierarchy.
 
-The blackboard palette is separate and scoped to `.board`: `--board` #101319 with
-`--chalk-blue` #58C4DD (Manim's BLUE_C) and `--chalk-yellow` #FFD866.
+**One palette, no dark sections.** An earlier version broke the animations page onto a
+Manim blackboard; it was cut deliberately. The whole site is paper. Plotted figures use
+`--ballpoint` for the drawn line, `rgba(33,30,23,.12)` for construction guides, and
+`--laurel` for the moving point, which are the ink equivalents of Manim's chalk blue and
+yellow and stay legible on warm stock.
+
+## Prose
+
+**No em dashes anywhere in site copy.** Use commas or parentheses for asides, a colon
+before a summary, or a full stop and a new sentence. The en dash stays, but only for
+names (Thue–Morse) and ranges (2025–26).
 
 ## Signature elements
 
@@ -68,7 +77,10 @@ Each appears on more than one page — that is what makes it a signature rather 
 4. **Dot-leader contents list** — section number, title, dotted leader, action word.
 5. **Lean goal-state panel** — mono, inset fill, `⊢` in ballpoint, closing on a green
    `No goals. ∎`.
-6. **Blackboard interlude** — full-bleed dark band with the live canvas figure.
+6. **Plotted ink figures** — a `.canvas-wrap` on `--paper-raised` inside a hairline,
+   with a mono `fig. N · caption` beneath. Each draws itself like a pen plotter: a faint
+   full-path guide underneath, the ballpoint line tracing over it, a laurel dot at the
+   pen. Used for the deltoid, the Lorenz attractor, and the 404 Mandelbrot.
 7. **Colophon ending in ∎**.
 
 ## Component measurements
@@ -87,14 +99,34 @@ Each appears on more than one page — that is what makes it a signature rather 
 
 ## Motion
 
-Transitions ≤220ms on `transform`/`opacity` and color only, `cubic-bezier(0.23, 1, 0.32, 1)`.
-Nothing animates on entrance. The canvas figure is the sole continuous motion on the site;
-it pauses via `IntersectionObserver` when off-screen and renders one static complete curve
-under `prefers-reduced-motion`, which the media query also enforces globally.
+Restrained on purpose. `transform` and `opacity` only, `cubic-bezier(0.23, 1, 0.32, 1)`,
+one-shot, never replayed.
 
-Two bugs worth not reintroducing: `stop()` must `cancelAnimationFrame` **and** null the
-handle, or `start()` sees a stale handle and the figure deadlocks; and `draw(0)` must run
-once at init so the frame is never blank before the first animation frame.
+- **Scroll reveals** on section heads and theorem cards only: 380ms, 12px rise, 50ms
+  stagger between siblings of a `[data-reveal-group]`. Nothing else on the page moves.
+- **Thue–Morse rules draw in** tick by tick on first view, 14ms apart.
+- **Index title block** staggers kicker → name → byline → affiliation at 80ms steps, once
+  on load. This is the only entrance animation on the site.
+- **Plotted figures** are the sole continuous motion: they pause off-screen and render one
+  static complete drawing under `prefers-reduced-motion`.
+
+**The reveal contract, which is not optional.** Hiding content in CSS and revealing it in
+JS means any failure leaves text permanently invisible, so every mechanism fails open:
+
+- JS adds the hidden class; without JS nothing is ever hidden.
+- Reveals do not engage at all when `document.visibilityState === "hidden"`, because
+  observers and transitions are throttled in background tabs and would strand text at
+  opacity 0.
+- After revealing, the animation classes are **removed**, so elements rest at their
+  natural styles rather than depending on a transition having completed.
+- A global 8s timer clears any remaining reveal state as a last resort.
+- The title block reveals on rAF *and* a 400ms timer, then drops its classes at 1400ms.
+
+Three canvas bugs worth not reintroducing: `stop()` must `cancelAnimationFrame` **and**
+null the handle, or `start()` sees a stale handle and the figure deadlocks; `paint(0)`
+must run once at init so a frame is never blank; and a figure whose progress-0 state draws
+nothing (the Lorenz) needs a faint full-path guide underneath, or its frame sits empty
+until it animates.
 
 ## Consistency rules
 
@@ -102,5 +134,7 @@ once at init so the frame is never blank before the first animation frame.
 - Colors come from the tokens. No literal hex in the HTML.
 - One accent. If something needs to stand out and blue is taken, use weight or space.
 - Radius stays 0. Shadows stay absent.
-- No emoji anywhere — the math glyphs (∎ ⊢ § ⟨⟩) carry the character.
+- No emoji anywhere; the math glyphs (∎ ⊢ § ⟨⟩) carry the character.
+- No em dashes in copy. See Prose above.
+- No dark sections. One paper palette across every page.
 - Every placeholder is `<span class="fill">`, so unfilled content is visible, never plausible.
