@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research — Daniel Liao</title>
+<meta name="description" content="Mathematics research in combinatorics on words: pattern avoidance, repetition, and computer-assisted proof.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/paper.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">Daniel&nbsp;Liao</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="research.html" aria-current="page"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="beyond.html"><span class="num">04</span>Beyond</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="page">
+
+    <div class="titleblock" style="text-align: left; padding-bottom: var(--s5);">
+      <p class="kicker">§ 01 · Research</p>
+      <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Words, counted carefully</h1>
+      <p class="byline">what has to repeat, and what never does</p>
+    </div>
+
+    <section class="section" style="padding-top: 0;" id="what">
+      <div class="prose stack">
+        <p class="lede">Write an infinite sequence of letters from a small alphabet — say just
+        <em>a</em>, <em>b</em>, <em>c</em>. Can you do it forever without ever repeating a block
+        back-to-back? On two letters, no: every long enough word contains a doubled block. On three,
+        yes — and Axel Thue built such a word in 1912.</p>
+
+        <p>That gap between two letters and three is the whole subject. Combinatorics on words asks
+        which patterns are <em>unavoidable</em> — forced to appear in any sufficiently long word — and
+        which can be dodged forever by a clever enough construction. The questions are elementary to
+        state and stubborn to answer, which is exactly what I like about them.</p>
+
+        <p>My own work sits on the counting side of this: given a kind of repetition to avoid, how much
+        room does an alphabet actually buy you? The answers tend to be exact formulas that hold past
+        some threshold, with a finite, messy, interesting region below it that has to be settled by
+        exhaustive search. Getting a machine to do that search honestly — and then proving the search
+        was complete — is half the research.</p>
+      </div>
+    </section>
+
+    <div class="tm" data-n="24"></div>
+
+    <section class="section" style="padding-top: 0;" id="projects">
+      <div class="section-head">
+        <p class="kicker">Projects</p>
+        <h2>Two open lines of work</h2>
+        <p class="prose lede">Both are in preparation. I state them loosely here and in full in the
+        manuscripts — happy to share drafts with anyone who asks.</p>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">Project&nbsp;P2</span>
+          <span class="env-name">(an exact threshold formula).</span>
+          <span class="env-status wip">⋯ manuscript in preparation</span>
+        </div>
+        <p class="env-body">For a family of avoidance problems, I determine the exact answer for every
+        alphabet size past a small explicit bound, together with a complete classification of the
+        extremal configurations that achieve it. The proof pairs a structural argument with an
+        exhaustive finite search; the search has been independently re-run from scratch by a second,
+        deliberately different implementation, and the structural half is being verified in Lean.</p>
+        <p class="env-foot">
+          <span>status: complete at computer-assisted rigor</span><span>·</span>
+          <span>Lean verification ~72%</span>
+        </p>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">Project&nbsp;P3</span>
+          <span class="env-name">(a classification of admissible alphabets).</span>
+          <span class="env-status wip">⋯ manuscript in preparation</span>
+        </div>
+        <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
+        with a demanding combination of avoidance and richness properties. The criterion turns out to be
+        strikingly simple, which took a long certificate to establish: a bounded search over a large but
+        finite space, audited twice, with the boundary cases hunted down individually.</p>
+        <p class="env-foot">
+          <span>status: classification complete, under review</span><span>·</span>
+          <span>reproduction package written</span>
+        </p>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">Library&nbsp;P0</span>
+          <span class="env-name">(foundations, in Lean).</span>
+          <span class="env-status done">✓ machine-checked</span>
+        </div>
+        <p class="env-body">Everything above needs definitions that a proof assistant will accept:
+        finite and infinite words, morphisms, powers, overlaps, avoidance. I built that spine first and
+        proved the classical theorems on top of it, so the research results have somewhere to land.
+        <a href="lean.html">More on the formalization →</a></p>
+        <p class="env-foot"><span>complete</span><span>·</span><span>no gaps left open</span></p>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="grid-2">
+        <div class="prose stack">
+          <h2>How I work</h2>
+          <p>Conjecture from data first. I write the brute-force search before I write anything else,
+          look at what the small cases actually do, and only then guess the theorem. A guess that
+          survives contact with fifty thousand cases is worth proving.</p>
+          <p>Then rebuild by hand. Search tells you what is true; it does not tell you why. The structural
+          proof always comes second, and it usually changes what I thought the theorem was.</p>
+          <p>Then formalize, which is where the remaining lies get found.</p>
+        </div>
+        <div class="prose stack">
+          <h2>Writing</h2>
+          <div class="entry">
+            <div class="entry-head"><span class="r"><span class="fill">Manuscript title</span></span><span class="d">in prep</span></div>
+            <p class="meta" style="margin-top: 6px;">Preprint link on submission.</p>
+          </div>
+          <div class="entry">
+            <div class="entry-head"><span class="r"><span class="fill">Manuscript title</span></span><span class="d">in prep</span></div>
+            <p class="meta" style="margin-top: 6px;">Preprint link on submission.</p>
+          </div>
+          <div class="entry">
+            <div class="entry-head"><span class="r">Research journal</span><span class="d">ongoing</span></div>
+            <p class="meta" style="margin-top: 6px;">A public ledger of attempts that did not work.
+            <span class="fill">link</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="page foot-inner">
+    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
+    Rules drawn by the Thue–Morse word. ∎</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="lean.html">Formalization</a>
+      <a href="manim.html">Animations</a>
+      <a href="beyond.html">Beyond</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>

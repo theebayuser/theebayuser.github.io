@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formalization — Daniel Liao</title>
+<meta name="description" content="Formal verification in Lean 4: a library for combinatorics on words, machine-checked classical theorems, and research-level proofs under construction.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/paper.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">Daniel&nbsp;Liao</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html" aria-current="page"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="beyond.html"><span class="num">04</span>Beyond</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="page">
+
+    <div class="titleblock" style="text-align: left; padding-bottom: var(--s5);">
+      <p class="kicker">§ 02 · Formalization</p>
+      <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Proofs a computer believes</h1>
+      <p class="byline">Lean 4, Mathlib, and no benefit of the doubt</p>
+    </div>
+
+    <section class="section" style="padding-top: 0;">
+      <div class="grid-2">
+        <div class="prose stack">
+          <p class="lede">A proof assistant will not accept "clearly," "similarly," or "the other case is
+          analogous." You either have the argument or you find out, at three in the morning, that you
+          don't.</p>
+          <p>I am building a Lean 4 library for combinatorics on words — words, morphisms, powers,
+          overlaps, avoidance — and using it to machine-check both the classical theorems of the field
+          and my own research. Every definition below type-checks against Mathlib, and every claim marked
+          machine-checked has no gaps left open behind it.</p>
+        </div>
+
+        <div>
+          <div class="goal">
+            <div class="goal-bar"><span>Lean&nbsp;4</span><span style="margin-left:auto">goal state</span></div>
+<div class="goal-body"><span class="hyp">w : Word Bool
+h : Infinite w
+tm : w = thueMorse</span>
+<span class="turn">⊢</span> OverlapFree w</div>
+            <div class="goal-ok">No goals. ∎</div>
+          </div>
+          <p class="meta" style="margin-top: 10px;">Thue's 1912 overlap-freeness theorem, as the
+          assistant sees it once the proof closes.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: var(--s6);">
+      <div class="section-head">
+        <p class="kicker">By the numbers</p>
+        <h2>The library, measured</h2>
+      </div>
+      <div class="stats">
+        <div class="stat"><p class="v">7,665</p><p class="k">lines of Lean</p></div>
+        <div class="stat"><p class="v">394</p><p class="k">theorems &amp; lemmas</p></div>
+        <div class="stat"><p class="v">Lean 4</p><p class="k">+ Mathlib</p></div>
+        <div class="stat"><p class="v">2</p><p class="k">classical results, closed</p></div>
+      </div>
+      <p class="meta" style="margin-top: var(--s2);">Counted from the working repository, <span class="fill">date</span>.
+      Research-level results in progress carry named, explicitly open obligations — I would rather show you
+      the frontier than hide it.</p>
+    </section>
+
+    <div class="tm" data-n="24"></div>
+
+    <section class="section" style="padding-top: 0;">
+      <div class="section-head">
+        <p class="kicker">What is in it</p>
+        <h2>Contents of the library</h2>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">Module</span><span class="env-name">(the spine).</span>
+          <span class="env-status done">✓ no gaps</span>
+        </div>
+        <p class="env-body">Definitions for finite and infinite words, concatenation, factors,
+        morphisms and their iteration, powers, squares, overlaps, and the avoidance predicates —
+        plus the API lemmas that make any of it usable in a real proof.</p>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912 — binary).</span>
+          <span class="env-status done">✓ machine-checked</span>
+        </div>
+        <p class="env-body">The Thue–Morse word is overlap-free. Formalized from the fixed-point
+        definition through to the full theorem, with no assumptions left open.</p>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912 — ternary).</span>
+          <span class="env-status done">✓ machine-checked</span>
+        </div>
+        <p class="env-body">There exists an infinite square-free word over three letters. The
+        construction and the proof that it works, both checked.</p>
+      </div>
+
+      <div class="env">
+        <div class="env-head">
+          <span class="env-kind">In progress</span><span class="env-name">(research results).</span>
+          <span class="env-status wip">⋯ ~72% verified</span>
+        </div>
+        <p class="env-body">The classification from Project P2 is wired end to end in Lean: the
+        structural argument, the upper bound, and the finite base cases compile together. Four named
+        obligations remain open and are stated as such in the source, not papered over. One earlier
+        version of them was refuted outright by the assistant — which is the system working.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid-2">
+        <div class="prose stack">
+          <h2>Why bother</h2>
+          <p>Because a computer-assisted proof invites exactly one question — <em>do you trust the
+          program?</em> — and formalization is the only answer that does not require trusting me.</p>
+          <p>Because it found real errors. A uniform version of one of my obligations was false, and I
+          did not know it until Lean produced counterexamples. The corrected statement rests on a
+          threshold I had originally derived wrong.</p>
+          <p>And because it is a good way to learn a field. You cannot formalize a definition you only
+          half understand.</p>
+        </div>
+        <div>
+          <p class="kicker">Illustrative</p>
+          <div class="code"><span class="cm">-- shape of a definition in the library</span>
+<span class="kw">def</span> OverlapFree (w : Word α) : <span class="kw">Prop</span> :=
+  ∀ u : Word α, ∀ n, 0 &lt; u.length →
+    ¬ (u ^ n ++ u.take 1).IsFactorOf w
+
+<span class="cm">-- and the shape of a result</span>
+<span class="kw">theorem</span> tm_overlapFree :
+    OverlapFree thueMorse := <span class="kw">by</span>
+  <span class="cm">…</span></div>
+          <p class="meta" style="margin-top: 10px;">Simplified for reading — the real statements carry
+          more bookkeeping. Source available on request, and public when the papers post.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="page foot-inner">
+    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
+    Rules drawn by the Thue–Morse word. ∎</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="research.html">Research</a>
+      <a href="manim.html">Animations</a>
+      <a href="beyond.html">Beyond</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>

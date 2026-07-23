@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animations — Daniel Liao</title>
+<meta name="description" content="Mathematical animation with Manim: short films that make proofs watchable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/paper.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">Daniel&nbsp;Liao</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html" aria-current="page"><span class="num">03</span>Animations</a>
+      <a href="beyond.html"><span class="num">04</span>Beyond</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="page">
+    <div class="titleblock" style="text-align: left; padding-bottom: var(--s4);">
+      <p class="kicker">§ 03 · Animations</p>
+      <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Math you can watch</h1>
+      <p class="byline">the same arguments, drawn instead of written</p>
+    </div>
+  </div>
+
+  <section class="board">
+    <div class="page">
+      <div class="board-figure">
+        <div>
+          <div class="canvas-wrap">
+            <canvas id="figure-canvas" role="img"
+              aria-label="A deltoid curve traced by two rotating epicycles, drawn continuously in chalk blue."></canvas>
+          </div>
+          <p class="figcap">fig. 0 — drawn live by this page, not a video</p>
+        </div>
+        <div class="prose stack">
+          <p class="kicker">Figure 0</p>
+          <h2 style="font-size: var(--fs-h2);">Two circles, one curve</h2>
+          <p>A point riding one rotating arm, itself riding another turning twice as fast the other way,
+          traces a deltoid. Nothing in that sentence is hard. Watching it happen is still better than
+          reading it — which is the entire argument for animating mathematics.</p>
+          <p>I build these in Manim: write the scene in Python, render, watch the part that does not read
+          clearly, rewrite. It is unreasonably good at exposing the step you thought you understood.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
+    <section class="section" style="padding-top: var(--s6);">
+      <div class="section-head">
+        <p class="kicker">Films</p>
+        <h2>Selected animations</h2>
+        <p class="prose lede">Drop an <code style="font-family: var(--mono); font-size: 15px;">.mp4</code>
+        into <code style="font-family: var(--mono); font-size: 15px;">assets/video/</code> and swap the
+        placeholder for a <code style="font-family: var(--mono); font-size: 15px;">&lt;video&gt;</code> tag —
+        the frames are already sized for it.</p>
+      </div>
+
+      <div class="plates">
+        <figure class="plate" style="margin: 0;">
+          <div class="plate-frame">16 : 9 &nbsp;·&nbsp; <span class="fill">film-01.mp4</span></div>
+          <figcaption class="plate-cap">
+            <p class="pn">Plate I</p>
+            <p class="pt">Why two letters are not enough</p>
+            <p class="pd">The pigeonhole argument that forces a repetition on a binary alphabet, one
+            case at a time.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="plate" style="margin: 0;">
+          <div class="plate-frame">16 : 9 &nbsp;·&nbsp; <span class="fill">film-02.mp4</span></div>
+          <figcaption class="plate-cap">
+            <p class="pn">Plate II</p>
+            <p class="pt">Building an infinite word from a rule</p>
+            <p class="pd">Iterating a morphism until the fixed point appears, and seeing why it never
+            repeats itself.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="plate" style="margin: 0;">
+          <div class="plate-frame">16 : 9 &nbsp;·&nbsp; <span class="fill">film-03.mp4</span></div>
+          <figcaption class="plate-cap">
+            <p class="pn">Plate III</p>
+            <p class="pt"><span class="fill">Title</span></p>
+            <p class="pd"><span class="fill">One or two sentences on what the film shows.</span></p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;">
+      <div class="grid-2">
+        <div class="prose stack">
+          <h2>How they get made</h2>
+          <p>Storyboard on paper first — if I cannot draw the key frame by hand, the animation will not
+          save it. Then the scene in Python, usually far too long on the first pass. Then cut it in half.</p>
+          <p>The rule I keep coming back to: animate the thing that moves in the proof, and hold still
+          for everything else. Motion is the emphasis, so spending it on decoration wastes it.</p>
+        </div>
+        <div class="prose stack">
+          <h2>Tools</h2>
+          <div class="entry">
+            <div class="entry-head"><span class="r">Manim Community</span><span class="d">Python</span></div>
+            <p class="meta" style="margin-top: 6px;">Scene construction, transforms, LaTeX rendering.</p>
+          </div>
+          <div class="entry">
+            <div class="entry-head"><span class="r">TikZ &amp; LaTeX</span><span class="d">figures</span></div>
+            <p class="meta" style="margin-top: 6px;">Static diagrams for the manuscripts.</p>
+          </div>
+          <div class="entry">
+            <div class="entry-head"><span class="r"><span class="fill">other tools</span></span><span class="d"><span class="fill">use</span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="page foot-inner">
+    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
+    Rules drawn by the Thue–Morse word. ∎</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="research.html">Research</a>
+      <a href="lean.html">Formalization</a>
+      <a href="beyond.html">Beyond</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>
