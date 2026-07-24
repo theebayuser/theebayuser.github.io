@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Beyond · Daniel Liao</title>
-<meta name="description" content="Photographs, activities, and the things outside the research that I'm proud of.">
-<meta property="og:title" content="Beyond · Daniel Liao">
-<meta property="og:description" content="Photographs, activities, and the things outside the research worth being proud of.">
+<title>Personal · Daniel Liao</title>
+<meta name="description" content="Photographs, doodles, and the things outside the work worth keeping.">
+<meta property="og:title" content="Personal · Daniel Liao">
+<meta property="og:description" content="Life outside the margin: photographs, marginalia, and where to find me.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#F7F3E9">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
@@ -25,7 +25,8 @@
       <a href="research.html"><span class="num">01</span>Research</a>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
-      <a href="beyond.html" aria-current="page"><span class="num">04</span>Beyond</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html" aria-current="page"><span class="num">05</span>Personal</a>
       <a href="cv.html">CV</a>
     </nav>
     <div class="progress" data-progress aria-hidden="true"></div>
@@ -36,7 +37,7 @@
   <div class="page">
 
     <div class="titleblock" style="text-align: left; padding-bottom: var(--s5);">
-      <p class="kicker">§ 04 · Beyond</p>
+      <p class="kicker">§ 05 · Personal</p>
       <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Life outside the margin</h1>
       <p class="byline">the parts that don't fit in a theorem environment</p>
     </div>
@@ -81,51 +82,35 @@
 
     <div class="tm" data-n="24"></div>
 
-    <section class="section" style="padding-top: 0;" id="appendix-a">
-      <div class="grid-2">
-        <div>
-          <div class="section-head" data-reveal>
-            <p class="kicker">Appendix A</p>
-            <h2>Activities</h2>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Math club / team</span></span><span class="d"><span class="fill">years</span></span></div>
-            <ul>
-              <li><span class="fill">Your role, and one concrete thing you did in it.</span></li>
-            </ul>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Tutoring or teaching</span></span><span class="d"><span class="fill">years</span></span></div>
-            <ul>
-              <li><span class="fill">Who you taught, what changed because you did.</span></li>
-            </ul>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Music, sport, or club</span></span><span class="d"><span class="fill">years</span></span></div>
-            <ul>
-              <li><span class="fill">Keep one line. Specific beats impressive.</span></li>
-            </ul>
-          </div>
+    <section class="section" style="padding-top: 0;" id="marginalia">
+      <div class="figure-row">
+        <div class="prose stack" data-reveal>
+          <p class="kicker">Marginalia</p>
+          <h2 style="font-size: var(--fs-h2);">What I doodle</h2>
+          <p>Write out Pascal's triangle, then keep only whether each number is odd. Sixteen rows in,
+          a Sierpinski triangle has appeared, made of nothing but ones and zeros.</p>
+          <p>There is a clean reason: a binomial coefficient is odd exactly when the bits of <em>k</em>
+          sit inside the bits of <em>n</em>. So the pattern is really about binary all along, which is
+          the same joke the Thue–Morse word keeps telling on the rest of this site.</p>
         </div>
-
-        <div>
-          <div class="section-head" data-reveal>
-            <p class="kicker">Appendix B</p>
-            <h2>Things I'm proud of</h2>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Olympiad or competition result</span></span><span class="d"><span class="fill">year</span></span></div>
-            <p class="meta" style="margin-top: 6px;"><span class="fill">Contest, level reached, score if you want it.</span></p>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Award or recognition</span></span><span class="d"><span class="fill">year</span></span></div>
-            <p class="meta" style="margin-top: 6px;"><span class="fill">One line of context for a reader who doesn't know it.</span></p>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r">Learning Lean without a teacher</span><span class="d">2025–26</span></div>
-            <p class="meta" style="margin-top: 6px;">No course, no mentor, no one at school who had heard
-            of it. Some of the proudest lines I've written are the ones that finally compiled.</p>
-          </div>
+        <div data-reveal>
+          <pre class="code sierpinski" aria-label="Pascal's triangle modulo 2 for sixteen rows, forming a Sierpinski triangle of ones and zeros.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 0 0 0 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 0 0 0 0 <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 0 0 0 0 <b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> 0 0 0 0 <b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b>
+&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
+&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
+<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b></pre>
+          <p class="figcap">fig. s · Pascal's triangle mod 2</p>
         </div>
       </div>
     </section>
@@ -137,10 +122,22 @@
         <p style="margin-top: var(--s2);"><span class="fill">Three or four sentences in your own voice.
         What you're curious about lately, what you're bad at, what you'd do with a free Saturday.
         This is the paragraph people remember; don't let it sound like a résumé.</span></p>
-        <p class="meta" style="margin-top: var(--s3);">Elsewhere:
-        <a href="#">instagram <span class="fill">url</span></a> ·
-        <a href="#">github <span class="fill">url</span></a> ·
-        <a href="mailto:artificialintelligencealt33@gmail.com">email</a></p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;" id="elsewhere">
+      <div class="prose">
+        <p class="kicker">Elsewhere</p>
+        <h2>Where to find me</h2>
+        <div style="display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s3);">
+          <a class="btn" href="mailto:artificialintelligencealt33@gmail.com">Email</a>
+          <a class="btn" href="https://github.com/theebayuser" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/daniel-liao-ca/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="btn" href="https://www.instagram.com/theebayuser/" target="_blank" rel="noopener">Instagram ↗</a>
+          <a class="btn" href="https://x.com/theebayuser" target="_blank" rel="noopener">X ↗</a>
+        </div>
+        <p class="meta" style="margin-top: var(--s3);">The animation channel lives separately, on
+        <a href="manim.html">§ 03</a>.</p>
       </div>
     </section>
 
@@ -156,9 +153,11 @@
       <a href="research.html">Research</a>
       <a href="lean.html">Formalization</a>
       <a href="manim.html">Animations</a>
+      <a href="education.html">Education</a>
       <a href="cv.html">CV</a>
     </nav>
-    <p class="colophon keys-hint">keys · 1–5 sections · 0 home</p>
+    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
+    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
   </div>
 </footer>
 

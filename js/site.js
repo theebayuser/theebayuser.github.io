@@ -1,14 +1,40 @@
-/* site.js — Thue–Morse rules, the plate slideshow, and the drawn figures. */
+/* site.js — Thue–Morse rules, the drawn figures, and the things you can press. */
 
 (function () {
   "use strict";
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var INK = "#211E17";
-  var INK_FAINT = "rgba(33, 30, 23, 0.12)";
-  var BALLPOINT = "#2358A7";
-  var LAUREL = "#96772B";
+  /* --- palette ------------------------------------------------------------
+     Canvases cannot read CSS variables, so read them once from the document
+     and hand them out. Cleared when the board flips, so every figure redraws
+     itself in chalk without knowing that is what happened. */
+
+  var PAL = null;
+  var repaints = [];
+
+  function palette() {
+    if (PAL) return PAL;
+    var cs = getComputedStyle(document.documentElement);
+    function v(name) { return cs.getPropertyValue(name).trim(); }
+    PAL = {
+      ink: v("--ink"),
+      ink3: v("--ink-3"),
+      guide: v("--fig-guide"),
+      ballpoint: v("--ballpoint"),
+      laurel: v("--laurel"),
+      paper: v("--paper")
+    };
+    return PAL;
+  }
+
+  function onRepaint(fn) { repaints.push(fn); fn(); }
+
+  function repaintAll() {
+    PAL = null;
+    palette();
+    repaints.forEach(function (fn) { fn(); });
+  }
 
   /* --- helpers ------------------------------------------------------------ */
 
@@ -22,9 +48,38 @@
     io.observe(el);
   }
 
+  function fitCanvas(canvas) {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    return { ctx: ctx, w: rect.width, h: rect.height };
+  }
+
+  function countUp(el, target, finalText) {
+    if (reduced || document.visibilityState === "hidden") { el.textContent = finalText; return; }
+    var start = null, dur = 650;
+    function tick(now) {
+      if (start === null) start = now;
+      var t = Math.min(1, (now - start) / dur);
+      var eased = 1 - Math.pow(1 - t, 3);
+      if (t < 1) {
+        el.textContent = Math.round(target * eased).toLocaleString();
+        window.requestAnimationFrame(tick);
+      } else {
+        el.textContent = finalText;
+      }
+    }
+    el.textContent = "0";
+    window.requestAnimationFrame(tick);
+    window.setTimeout(function () { el.textContent = finalText; }, 1500);
+  }
+
   /* --- Thue–Morse --------------------------------------------------------
-     t(n) = parity of the number of 1s in the binary expansion of n.
-     0110100110010110... the word these rules are drawn from. */
+     t(n) = parity of the number of 1s in the binary expansion of n. */
 
   function thueMorse(n) {
     var out = [];
@@ -74,9 +129,6 @@
 
   function initReveals() {
     if (reduced) return;
-    /* Observers and transitions are throttled while the tab is hidden, which
-       would strand text at opacity 0. Nobody is watching an entrance they
-       cannot see, so only hide content when the page is actually visible. */
     if (document.visibilityState === "hidden") return;
 
     Array.prototype.forEach.call(document.querySelectorAll("[data-reveal-group]"), function (group) {
@@ -98,8 +150,6 @@
       }, 0.12);
     });
 
-    /* Last resort: whatever has not revealed by now gets its natural styles
-       back. Content being readable outranks the entrance. */
     window.setTimeout(function () {
       Array.prototype.forEach.call(items, function (el) {
         el.classList.remove("rv", "rv-in");
@@ -116,9 +166,6 @@
     window.requestAnimationFrame(function () {
       window.requestAnimationFrame(reveal);
     });
-    /* rAF and transitions are both suspended in a background tab. Reveal on a
-       timer as well, then drop the classes so the hero rests at its natural
-       styles no matter whether the transition ever ran. */
     window.setTimeout(reveal, 400);
     window.setTimeout(function () {
       tb.classList.remove("tb-anim", "tb-in");
@@ -170,32 +217,27 @@
     return out;
   }
 
-  /* --- a canvas that draws itself, then rests ----------------------------
-     Shared plumbing for the plotted figures: DPR scaling, pause when
-     off-screen, one static complete drawing under reduced motion. */
+  /* --- a canvas that draws itself, then rests ---------------------------- */
 
   function plotter(canvas, spec) {
     var ctx = canvas.getContext("2d");
     var w = 0, h = 0;
 
     function resize() {
-      var rect = canvas.getBoundingClientRect();
-      var dpr = window.devicePixelRatio || 1;
-      w = rect.width; h = rect.height;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var m = fitCanvas(canvas);
+      ctx = m.ctx; w = m.w; h = m.h;
     }
 
     function paint(progress) {
       ctx.clearRect(0, 0, w, h);
-      spec.draw(ctx, w, h, progress);
+      spec.draw(ctx, w, h, progress, palette());
     }
 
     resize();
 
     if (reduced) {
       paint(1);
+      repaints.push(function () { paint(1); });
       window.addEventListener("resize", function () { resize(); paint(1); });
       return;
     }
@@ -206,6 +248,7 @@
     var holding = 0;
 
     paint(0);
+    repaints.push(function () { paint(p); });
 
     function frame(now) {
       if (!running) { raf = null; return; }
@@ -242,29 +285,28 @@
     }
   }
 
-  /* --- fig. 0: a deltoid, from two epicycles -----------------------------
-     p(t) = R1·e^{it} + R2·e^{−2it}, drawn the way you'd draw it on paper. */
+  /* --- fig. 0: a deltoid, from two epicycles ----------------------------- */
 
-  function deltoid(ctx, w, h, progress) {
+  function deltoidPoint(t, cx, cy, scale) {
     var R1 = 0.30, R2 = 0.15;
+    return {
+      x: cx + scale * (R1 * Math.cos(t) + R2 * Math.cos(-2 * t)),
+      y: cy + scale * (R1 * Math.sin(t) + R2 * Math.sin(-2 * t))
+    };
+  }
+
+  function deltoid(ctx, w, h, progress, pal) {
     var cx = w / 2, cy = h / 2, scale = Math.min(w, h);
     var TAU = Math.PI * 2;
     var upTo = progress * TAU;
 
-    function point(t) {
-      return {
-        x: cx + scale * (R1 * Math.cos(t) + R2 * Math.cos(-2 * t)),
-        y: cy + scale * (R1 * Math.sin(t) + R2 * Math.sin(-2 * t))
-      };
-    }
-
-    ctx.strokeStyle = INK_FAINT;
+    ctx.strokeStyle = pal.guide;
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(cx, cy, scale * (R1 + R2), 0, TAU);
+    ctx.arc(cx, cy, scale * 0.45, 0, TAU);
     ctx.stroke();
 
-    ctx.strokeStyle = BALLPOINT;
+    ctx.strokeStyle = pal.ballpoint;
     ctx.lineWidth = 1.75;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
@@ -273,23 +315,21 @@
     for (var s = 0; s <= steps; s++) {
       var t = (s / steps) * TAU;
       if (t > upTo) break;
-      var pt = point(t);
+      var pt = deltoidPoint(t, cx, cy, scale);
       if (s === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
     }
     ctx.stroke();
 
     if (progress < 1) {
-      var tip = point(upTo);
-      ctx.fillStyle = LAUREL;
+      var tip = deltoidPoint(upTo, cx, cy, scale);
+      ctx.fillStyle = pal.laurel;
       ctx.beginPath();
       ctx.arc(tip.x, tip.y, 3.5, 0, TAU);
       ctx.fill();
     }
   }
 
-  /* --- fig. 1: the Lorenz attractor --------------------------------------
-     x' = σ(y−x), y' = x(ρ−z)−y, z' = xy−βz, integrated small-step and
-     projected on the x–z plane. Two lobes, never once repeating. */
+  /* --- fig. 1: the Lorenz attractor -------------------------------------- */
 
   var lorenzPath = null;
 
@@ -309,21 +349,15 @@
     return pts;
   }
 
-  function lorenz(ctx, w, h, progress) {
+  function lorenz(ctx, w, h, progress, pal) {
     var pts = lorenzPoints();
     var pad = 18;
-    var sx = (w - pad * 2) / 46;
-    var sy = (h - pad * 2) / 46;
-    var s = Math.min(sx, sy);
+    var s = Math.min((w - pad * 2) / 46, (h - pad * 2) / 46);
     var cx = w / 2, cy = h / 2;
 
-    function at(i) {
-      return [cx + pts[i][0] * s, cy + (25 - pts[i][1]) * s];
-    }
+    function at(i) { return [cx + pts[i][0] * s, cy + (25 - pts[i][1]) * s]; }
 
-    /* the whole path, faint, the way a plotter's pencil guide would sit
-       under the ink. Keeps the frame from ever being empty. */
-    ctx.strokeStyle = INK_FAINT;
+    ctx.strokeStyle = pal.guide;
     ctx.lineWidth = 0.7;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
@@ -334,7 +368,7 @@
     }
     ctx.stroke();
 
-    ctx.strokeStyle = BALLPOINT;
+    ctx.strokeStyle = pal.ballpoint;
     ctx.lineWidth = 0.9;
     ctx.globalAlpha = 0.85;
     ctx.beginPath();
@@ -348,21 +382,16 @@
 
     if (progress < 1 && upTo > 0) {
       var tip = at(upTo - 1);
-      ctx.fillStyle = LAUREL;
+      ctx.fillStyle = pal.laurel;
       ctx.beginPath();
       ctx.arc(tip[0], tip[1], 3, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 
-  /* --- the Thue–Morse difference table ------------------------------------
-     Ink the cell at (i, j) when t(i) and t(j) disagree. Since the parity of
-     the binary digit sum adds under XOR, that cell is exactly t(i XOR j), so
-     the whole square is one more picture of the same word. It comes out
-     self-similar: every quadrant is the picture one size down, which is the
-     doubling rule on the research page seen from above. */
+  /* --- fig. 2: the Thue–Morse difference table --------------------------- */
 
-  function tmGrid(ctx, w, h, progress) {
+  function tmGrid(ctx, w, h, progress, pal) {
     var n = 32;
     var word = thueMorse(n);
     var side = Math.min(w, h);
@@ -371,46 +400,34 @@
     var oy = (h - side) / 2;
     var rows = Math.ceil(n * progress);
 
-    /* the finished square, faint, so the figure is never an empty box */
-    ctx.fillStyle = INK;
+    ctx.fillStyle = pal.ink;
     ctx.globalAlpha = 0.10;
     for (var gj = 0; gj < n; gj++) {
       for (var gi = 0; gi < n; gi++) {
-        if (word[gi] !== word[gj]) {
-          ctx.fillRect(ox + gi * cell, oy + gj * cell, cell + 0.5, cell + 0.5);
-        }
+        if (word[gi] !== word[gj]) ctx.fillRect(ox + gi * cell, oy + gj * cell, cell + 0.5, cell + 0.5);
       }
     }
 
     ctx.globalAlpha = 0.82;
     for (var j = 0; j < rows; j++) {
       for (var i = 0; i < n; i++) {
-        if (word[i] !== word[j]) {
-          ctx.fillRect(ox + i * cell, oy + j * cell, cell + 0.5, cell + 0.5);
-        }
+        if (word[i] !== word[j]) ctx.fillRect(ox + i * cell, oy + j * cell, cell + 0.5, cell + 0.5);
       }
     }
     ctx.globalAlpha = 1;
 
     if (progress < 1 && rows > 0) {
-      ctx.fillStyle = LAUREL;
+      ctx.fillStyle = pal.laurel;
       ctx.fillRect(ox, oy + (rows - 1) * cell, side, 1.5);
     }
   }
 
-  /* --- Ulam's spiral ------------------------------------------------------
-     Walk the integers in a square spiral, ink a dot on the primes. The
-     diagonals that show up are the whole point, and nobody knows why. */
+  /* --- Ulam's spiral, with the contents filed among the primes ------------ */
 
   function ulam(canvas) {
-    var ctx = canvas.getContext("2d");
-    var rect = canvas.getBoundingClientRect();
-    var dpr = window.devicePixelRatio || 1;
-    var w = rect.width, h = rect.height;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+    var m = fitCanvas(canvas);
+    var ctx = m.ctx, w = m.w, h = m.h;
+    var pal = palette();
 
     var cells = 41;
     var cell = Math.min(w, h) / cells;
@@ -420,18 +437,22 @@
     var sieve = new Uint8Array(n + 1);
     sieve[0] = sieve[1] = 1;
     for (var p = 2; p * p <= n; p++) {
-      if (!sieve[p]) for (var m = p * p; m <= n; m += p) sieve[m] = 1;
+      if (!sieve[p]) for (var mm = p * p; mm <= n; mm += p) sieve[mm] = 1;
     }
 
     var x = 0, y = 0, dx = 1, dy = 0, len = 1, done = 0;
     var cx = w / 2, cy = h / 2;
-    ctx.fillStyle = INK;
+    var primes = [];
+
+    ctx.fillStyle = pal.ink;
     for (var k = 1; k <= n; k++) {
       if (!sieve[k]) {
+        var px = cx + x * cell, py = cy + y * cell;
         ctx.globalAlpha = 0.78;
         ctx.beginPath();
-        ctx.arc(cx + x * cell, cy + y * cell, dot, 0, Math.PI * 2);
+        ctx.arc(px, py, dot, 0, Math.PI * 2);
         ctx.fill();
+        primes.push({ n: k, x: px, y: py, r: Math.hypot(x, y), a: Math.atan2(y, x) });
       }
       x += dx; y += dy; done++;
       if (done === len) {
@@ -441,19 +462,126 @@
       }
     }
     ctx.globalAlpha = 1;
+
+    return { primes: primes, maxR: cells / 2 };
+  }
+
+  /* Pick well-separated primes to hang the section numerals on: one per
+     angular sector, each at its own distance from the middle. */
+  function pickAnchors(primes, maxR, count) {
+    var wants = [0.20, 0.38, 0.55, 0.70, 0.83, 0.93];
+    var picked = [];
+    for (var i = 0; i < count; i++) {
+      var wantR = wants[i] * maxR;
+      var wantA = (-Math.PI / 2) + (i / count) * Math.PI * 2;
+      var best = null, bestCost = Infinity;
+      primes.forEach(function (pr) {
+        var da = Math.abs(Math.atan2(Math.sin(pr.a - wantA), Math.cos(pr.a - wantA)));
+        var cost = Math.abs(pr.r - wantR) / maxR * 2 + da;
+        var clash = picked.some(function (q) { return Math.hypot(q.x - pr.x, q.y - pr.y) < 46; });
+        if (!clash && cost < bestCost) { bestCost = cost; best = pr; }
+      });
+      if (best) picked.push(best);
+    }
+    return picked;
+  }
+
+  function initSpiralNav(wrap) {
+    var canvas = wrap.querySelector("canvas");
+    var chips = wrap.querySelectorAll(".ulam-node");
+    if (!canvas || !chips.length) return;
+
+    function place() {
+      var res = ulam(canvas);
+      var anchors = pickAnchors(res.primes, res.maxR, chips.length);
+      Array.prototype.forEach.call(chips, function (chip, i) {
+        var a = anchors[i];
+        if (!a) { chip.style.display = "none"; return; }
+        chip.style.display = "";
+        chip.style.left = a.x + "px";
+        chip.style.top = a.y + "px";
+        chip.title = "prime " + a.n;
+      });
+    }
+
+    onRepaint(place);
+    window.addEventListener("resize", place);
+
+    /* hover on either side lights the other */
+    Array.prototype.forEach.call(chips, function (chip) {
+      var href = chip.getAttribute("href");
+      var row = document.querySelector('.toc a[href="' + href + '"]');
+      function on() { chip.classList.add("is-hot"); if (row) row.classList.add("is-hot"); }
+      function off() { chip.classList.remove("is-hot"); if (row) row.classList.remove("is-hot"); }
+      chip.addEventListener("mouseenter", on);
+      chip.addEventListener("mouseleave", off);
+      if (row) {
+        row.addEventListener("mouseenter", on);
+        row.addEventListener("mouseleave", off);
+        row.addEventListener("focus", on);
+        row.addEventListener("blur", off);
+      }
+    });
+  }
+
+  /* --- the prerequisite graph, as actually experienced -------------------- */
+
+  function prereqGraph(canvas) {
+    var m = fitCanvas(canvas);
+    var ctx = m.ctx, w = m.w, h = m.h;
+    var pal = palette();
+
+    var nodes = [
+      { x: 0.10, y: 0.22, t: "arithmetic" },
+      { x: 0.36, y: 0.12, t: "olympiad" },
+      { x: 0.64, y: 0.22, t: "words" },
+      { x: 0.89, y: 0.13, t: "avoidance" },
+      { x: 0.11, y: 0.74, t: "logic" },
+      { x: 0.37, y: 0.86, t: "types" },
+      { x: 0.64, y: 0.74, t: "Lean 4" },
+      { x: 0.89, y: 0.86, t: "Mathlib" }
+    ];
+    var edges = [[0, 1], [1, 2], [2, 3], [4, 5], [5, 6], [6, 7], [1, 5], [2, 6], [3, 6]];
+    var here = 3;
+
+    function pt(i) { return { x: 16 + nodes[i].x * (w - 32), y: 14 + nodes[i].y * (h - 28) }; }
+
+    ctx.strokeStyle = pal.guide;
+    ctx.lineWidth = 1;
+    edges.forEach(function (e) {
+      var a = pt(e[0]), b = pt(e[1]);
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - Math.abs(b.x - a.x) * 0.14;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.quadraticCurveTo(mx, my, b.x, b.y);
+      ctx.stroke();
+    });
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "11px ui-monospace, Menlo, monospace";
+    nodes.forEach(function (nd, i) {
+      var p = pt(i);
+      var hot = i === here;
+      ctx.fillStyle = pal.paper;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = hot ? pal.laurel : pal.ink;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, hot ? 4 : 2.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = hot ? pal.ink : pal.ink3;
+      ctx.fillText(nd.t, p.x, p.y + (nd.y > 0.5 ? 16 : -14));
+    });
   }
 
   /* --- the 404 Mandelbrot, stippled once in ink --------------------------- */
 
   function mandelbrot(canvas) {
-    var ctx = canvas.getContext("2d");
-    var rect = canvas.getBoundingClientRect();
-    var dpr = window.devicePixelRatio || 1;
-    var w = rect.width, h = rect.height;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+    var m = fitCanvas(canvas);
+    var ctx = m.ctx, w = m.w, h = m.h;
+    var pal = palette();
 
     var step = 2;
     for (var py = 0; py < h; py += step) {
@@ -468,11 +596,11 @@
           it++;
         }
         if (it === 40) {
-          ctx.fillStyle = INK;
+          ctx.fillStyle = pal.ink;
           ctx.globalAlpha = 0.82;
           ctx.fillRect(px, py, step, step);
         } else if (it > 6) {
-          ctx.fillStyle = INK;
+          ctx.fillStyle = pal.ink;
           ctx.globalAlpha = Math.min(0.4, it / 90);
           ctx.fillRect(px, py, step, step);
         }
@@ -481,9 +609,52 @@
     ctx.globalAlpha = 1;
   }
 
-  /* --- the goal panel, made runnable -------------------------------------
-     The static markup already shows a closed proof, so this only ever
-     *removes* something and offers to put it back. */
+  /* --- small glyphs on the selected-work cards ---------------------------- */
+
+  function glyph(canvas) {
+    var kind = canvas.getAttribute("data-glyph");
+    var m = fitCanvas(canvas);
+    var ctx = m.ctx, w = m.w, h = m.h;
+    var pal = palette();
+
+    if (kind === "word") {
+      var bits = thueMorse(14);
+      var gap = w / 14;
+      bits.forEach(function (b, i) {
+        ctx.fillStyle = b ? pal.ink : pal.paper;
+        ctx.strokeStyle = pal.guide;
+        ctx.lineWidth = 1;
+        var x = i * gap, y = h / 2 - 5;
+        if (b) ctx.fillRect(x, y, 3, 10);
+        else ctx.strokeRect(x + 0.5, y + 0.5, 2, 9);
+      });
+    } else if (kind === "grid") {
+      var n = 8, word = thueMorse(n), side = Math.min(w, h), cell = side / n;
+      var ox = (w - side) / 2, oy = (h - side) / 2;
+      ctx.fillStyle = pal.ink;
+      ctx.globalAlpha = 0.72;
+      for (var j = 0; j < n; j++) {
+        for (var i = 0; i < n; i++) {
+          if (word[i] !== word[j]) ctx.fillRect(ox + i * cell, oy + j * cell, cell + 0.4, cell + 0.4);
+        }
+      }
+      ctx.globalAlpha = 1;
+    } else if (kind === "curve") {
+      var cx = w / 2, cy = h / 2, scale = Math.min(w, h) * 1.7;
+      ctx.strokeStyle = pal.ballpoint;
+      ctx.lineWidth = 1.2;
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      for (var s = 0; s <= 160; s++) {
+        var t = (s / 160) * Math.PI * 2;
+        var pp = deltoidPoint(t, cx, cy, scale);
+        if (s === 0) ctx.moveTo(pp.x, pp.y); else ctx.lineTo(pp.x, pp.y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  /* --- the goal panel, made runnable -------------------------------------- */
 
   function initGoal(panel) {
     var bar = panel.querySelector(".goal-bar");
@@ -575,13 +746,8 @@
       render();
     }
 
-    apply.addEventListener("click", function () {
-      if (gens.length - 1 < MAX) step();
-    });
-    back.addEventListener("click", function () {
-      gens = ["0"];
-      render();
-    });
+    apply.addEventListener("click", function () { if (gens.length - 1 < MAX) step(); });
+    back.addEventListener("click", function () { gens = ["0"]; render(); });
 
     gens = ["0"];
     render();
@@ -591,32 +757,53 @@
 
   function initCounts() {
     var els = document.querySelectorAll("[data-count]");
-    if (!els.length) return;
-    if (reduced || document.visibilityState === "hidden") return;
-
     Array.prototype.forEach.call(els, function (el) {
       var target = parseFloat(el.getAttribute("data-count"));
       var final = el.textContent;
-      onceInView(el, function () {
-        var start = null;
-        var dur = 650;
-        function tick(now) {
-          if (start === null) start = now;
-          var t = Math.min(1, (now - start) / dur);
-          var eased = 1 - Math.pow(1 - t, 3);
-          if (t < 1) {
-            el.textContent = Math.round(target * eased).toLocaleString();
-            window.requestAnimationFrame(tick);
-          } else {
-            el.textContent = final;
-          }
-        }
-        el.textContent = "0";
-        window.requestAnimationFrame(tick);
-        /* if rAF never runs, put the real number back */
-        window.setTimeout(function () { el.textContent = final; }, 1500);
-      }, 0.4);
+      onceInView(el, function () { countUp(el, target, final); }, 0.4);
     });
+  }
+
+  /* --- the ledger ---------------------------------------------------------
+     Follower counts cannot be read from the browser: none of the three
+     platforms allow it. So they are kept by hand in data/socials.json and
+     stamped with the date they were true. If the fetch fails the dashes
+     stay and every link still works. */
+
+  var ledgerPromise = null;
+
+  function loadLedger() {
+    if (ledgerPromise) return ledgerPromise;
+    if (!window.fetch) return Promise.reject();
+    ledgerPromise = fetch("data/socials.json", { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); });
+    return ledgerPromise;
+  }
+
+  function initLedger() {
+    var root = document.querySelector("[data-ledger]");
+    var nowEls = document.querySelectorAll("[data-now]");
+    if (!root && !nowEls.length) return;
+
+    loadLedger().then(function (data) {
+      if (nowEls.length && data.now) {
+        Array.prototype.forEach.call(nowEls, function (el) { el.textContent = data.now; });
+      }
+      if (!root || !data.channels) return;
+
+      var stamp = root.querySelector("[data-ledger-stamp]");
+      if (stamp && data.updated) {
+        stamp.textContent = "counts kept by hand · last checked " + data.updated;
+      }
+
+      data.channels.forEach(function (ch) {
+        var cell = root.querySelector('[data-platform="' + ch.platform + '"] .lg-count');
+        if (!cell || typeof ch.followers !== "number") return;
+        var text = ch.followers.toLocaleString();
+        cell.setAttribute("data-empty", "false");
+        onceInView(cell, function () { countUp(cell, ch.followers, text); }, 0.4);
+      });
+    }, function () { /* dashes stay, links still work */ });
   }
 
   /* --- reading progress, written in Thue–Morse ---------------------------- */
@@ -627,11 +814,11 @@
     var canvas = document.createElement("canvas");
     bar.appendChild(canvas);
     var ctx = canvas.getContext("2d");
-    var w = 0;
 
     function paint() {
-      w = window.innerWidth;
+      var w = window.innerWidth;
       var dpr = window.devicePixelRatio || 1;
+      var pal = palette();
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(2 * dpr);
       canvas.style.width = w + "px";
@@ -640,24 +827,21 @@
       ctx.clearRect(0, 0, w, 2);
       var word = thueMorse(Math.ceil(w / 7));
       for (var i = 0; i < word.length; i++) {
-        ctx.fillStyle = word[i] ? INK : "rgba(33,30,23,0.28)";
+        ctx.globalAlpha = word[i] ? 1 : 0.3;
+        ctx.fillStyle = pal.ink;
         ctx.fillRect(i * 7, 0, 4, 2);
       }
+      ctx.globalAlpha = 1;
     }
 
-    /* scrollHeight forces layout, so measure it on resize and keep the scroll
-       handler to arithmetic and one style write. Updating synchronously means
-       the bar still tracks when rAF is throttled. */
     var max = 0;
-    function measure() {
-      max = document.documentElement.scrollHeight - window.innerHeight;
-    }
+    function measure() { max = document.documentElement.scrollHeight - window.innerHeight; }
     function update() {
       var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
       bar.style.width = (p * 100) + "%";
     }
 
-    paint();
+    onRepaint(paint);
     measure();
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -665,26 +849,50 @@
     window.setTimeout(function () { measure(); update(); }, 600);
   }
 
-  /* --- number keys -------------------------------------------------------- */
+  /* --- keys: sections by number, and the board after dark ----------------- */
+
+  function typingContext() {
+    var el = document.activeElement;
+    return !!(el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" ||
+      el.isContentEditable || el.hasAttribute("data-show")));
+  }
+
+  function applyBoard(on) {
+    document.documentElement.classList.toggle("board", on);
+    repaintAll();
+  }
 
   function initKeys() {
     var map = {
       "1": "research.html", "2": "lean.html", "3": "manim.html",
-      "4": "beyond.html", "5": "cv.html", "0": "index.html"
+      "4": "education.html", "5": "personal.html", "6": "cv.html",
+      "0": "index.html"
     };
+
+    try {
+      if (window.localStorage.getItem("board") === "1") applyBoard(true);
+    } catch (e) { /* private mode */ }
+
     document.addEventListener("keydown", function (e) {
       if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
-      var el = document.activeElement;
-      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" ||
-                 el.isContentEditable || el.hasAttribute("data-show"))) return;
+      if (typingContext()) return;
+
+      if (e.key === "b" || e.key === "B") {
+        var on = !document.documentElement.classList.contains("board");
+        applyBoard(on);
+        try { window.localStorage.setItem("board", on ? "1" : "0"); } catch (err) {}
+        return;
+      }
+
       var dest = map[e.key];
-      if (dest) { window.location.href = dest; }
+      if (dest) window.location.href = dest;
     });
   }
 
   /* --- boot --------------------------------------------------------------- */
 
   function boot() {
+    palette();
     fillStrips();
     initTitleBlock();
     initReveals();
@@ -700,10 +908,24 @@
     if (fig2) plotter(fig2, { draw: tmGrid, seconds: 3.2, hold: 2.6 });
 
     var mb = document.getElementById("figure-mandelbrot");
-    if (mb) mandelbrot(mb);
+    if (mb) onRepaint(function () { mandelbrot(mb); });
 
-    var us = document.getElementById("figure-ulam");
-    if (us) ulam(us);
+    var pg = document.getElementById("figure-prereq");
+    if (pg) onRepaint(function () { prereqGraph(pg); });
+
+    var spiral = document.querySelector("[data-spiral]");
+    if (spiral) initSpiralNav(spiral);
+    else {
+      var us = document.getElementById("figure-ulam");
+      if (us) onRepaint(function () { ulam(us); });
+    }
+
+    var glyphs = document.querySelectorAll("[data-glyph]");
+    if (glyphs.length) {
+      onRepaint(function () {
+        Array.prototype.forEach.call(glyphs, glyph);
+      });
+    }
 
     var goal = document.querySelector(".goal");
     if (goal) initGoal(goal);
@@ -712,6 +934,7 @@
     if (morph) initMorphism(morph);
 
     initCounts();
+    initLedger();
     initProgress();
     initKeys();
   }

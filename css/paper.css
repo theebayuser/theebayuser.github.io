@@ -26,6 +26,10 @@
   --qed:             #35784A;
   --laurel:          #96772B;
 
+  /* interaction + figure washes */
+  --hover:     rgba(33, 30, 23, 0.03);
+  --fig-guide: rgba(33, 30, 23, 0.12);
+
   /* Type */
   --serif: "STIX Two Text", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -47,6 +51,33 @@
 
   --ease: cubic-bezier(0.23, 1, 0.32, 1);
 }
+
+/* Night board: hidden on the B key. The same paper, after dark: every token
+   flips, nothing else changes, and the figures repaint themselves in chalk. */
+html.board {
+  --paper:        #101319;
+  --paper-raised: #161B24;
+  --paper-inset:  #0C0F14;
+  --ink:   #E9EDF3;
+  --ink-2: #C3CAD6;
+  --ink-3: #8B94A3;
+  --ink-4: #5E6675;
+  --rule-soft:   rgba(233, 237, 243, 0.07);
+  --rule:        rgba(233, 237, 243, 0.14);
+  --rule-strong: rgba(233, 237, 243, 0.34);
+  --ballpoint:      #58C4DD;
+  --ballpoint-wash: rgba(88, 196, 221, 0.12);
+  --qed:    #7FC98B;
+  --laurel: #FFD866;
+  --hover:     rgba(233, 237, 243, 0.045);
+  --fig-guide: rgba(233, 237, 243, 0.14);
+}
+html.board .topbar { background: rgba(16, 19, 25, 0.92); }
+html.board a { border-bottom-color: rgba(88, 196, 221, 0.32); }
+html.board ::selection { background: rgba(88, 196, 221, 0.28); }
+html.board .btn-tactic { border-color: rgba(88, 196, 221, 0.4); }
+html.board .btn-tactic:disabled { border-color: rgba(127, 201, 139, 0.4); }
+html.board .show-slide img { outline-color: rgba(255, 255, 255, 0.1); }
 
 /* --------------------------------------------------------------- base --- */
 
@@ -165,7 +196,7 @@ section { scroll-margin-top: 84px; }
   border: 0; padding: 12px 10px; display: inline-flex; align-items: center;
   min-height: 40px; line-height: 1;
 }
-.nav a:hover { color: var(--ink); background: rgba(33, 30, 23, 0.05); }
+.nav a:hover { color: var(--ink); background: var(--hover); }
 .nav a .num { color: var(--ink-4); margin-right: 5px; font-variant-numeric: tabular-nums; }
 .nav a[aria-current="page"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--ballpoint); }
 .nav a[aria-current="page"] .num { color: var(--ballpoint); }
@@ -219,7 +250,8 @@ section { scroll-margin-top: 84px; }
   display: flex; align-items: baseline; gap: var(--s2);
   padding: 14px 2px; border: 0; color: var(--ink);
 }
-.toc a:hover { background: rgba(33, 30, 23, 0.035); }
+.toc a:hover { background: var(--hover); }
+.toc a.is-hot .t, .toc a:hover .t { color: var(--ballpoint); }
 .toc .n {
   font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-4);
   font-variant-numeric: tabular-nums; min-width: 26px;
@@ -241,7 +273,7 @@ section { scroll-margin-top: 84px; }
   border-bottom: 0; color: inherit;
 }
 .env:last-of-type { border-bottom: 1px solid var(--rule); }
-a.env:hover { background: rgba(33, 30, 23, 0.028); }
+a.env:hover { background: var(--hover); }
 .env-head {
   display: flex; align-items: baseline; gap: var(--s2);
   flex-wrap: wrap; margin-bottom: var(--s1);
@@ -403,6 +435,60 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   text-wrap: balance;
 }
 
+/* the contents, filed among the primes: section numerals pinned to the
+   spiral at the coordinates of six actual primes */
+.ulam-node {
+  position: absolute; transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; padding: 3px 5px; border: 0;
+  font: 500 11px var(--mono); font-variant-numeric: tabular-nums;
+  color: var(--ink-3); background: var(--paper);
+  box-shadow: 0 0 0 1px var(--rule);
+  transition: color 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+.ulam-node::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 44px; height: 44px; transform: translate(-50%, -50%);
+}
+.ulam-node:hover, .ulam-node.is-hot {
+  color: var(--ballpoint); background: var(--paper);
+  box-shadow: 0 0 0 1px var(--ballpoint);
+}
+
+/* the channel ledger: a hand-kept account book, not a dashboard */
+.ledger { border-top: 1px solid var(--rule); }
+.ledger-row {
+  display: flex; align-items: baseline; gap: var(--s2);
+  padding: 14px 2px; border-bottom: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+  color: inherit;
+}
+a.ledger-row { border-bottom: 1px solid var(--rule-soft); }
+a.ledger-row:hover { background: var(--hover); }
+a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
+.lg-plat {
+  font: 500 var(--fs-meta) var(--mono); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink); min-width: 92px;
+}
+.lg-handle { font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-3); }
+.lg-count {
+  margin-left: auto; font-size: 21px; font-weight: 600;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+.lg-count[data-empty="true"] { color: var(--ink-4); font-weight: 400; }
+.lg-unit { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); margin-left: 6px; }
+
+/* marginalia: a doodle, set as type */
+.sierpinski {
+  border: 0; background: none; padding: 0;
+  font-size: 12px; line-height: 1.15; letter-spacing: 0.16em;
+  color: var(--ink-4); text-align: center; overflow-x: auto;
+}
+.sierpinski b { color: var(--ink); font-weight: 400; }
+
+/* a small live glyph on each selected-work card */
+.env-glyph { flex: 0 0 auto; width: 72px; height: 26px; opacity: 0.9; }
+
 /* -------------------------------------------------------------- motion --- */
 /* JS adds these classes only when prefers-reduced-motion is off; without JS
    (or with it off) nothing is ever hidden. One-shot, transform/opacity only. */
@@ -525,6 +611,10 @@ a.btn .fill { color: var(--ink-3); }
   .foot-inner { gap: var(--s3); }
   .foot-links { margin-left: 0; width: 100%; }
   .keys-hint { display: none; }
+  /* platform and count on one line, handle beneath */
+  .ledger-row { flex-wrap: wrap; gap: 4px var(--s2); }
+  .lg-plat { min-width: 0; }
+  .lg-handle { flex-basis: 100%; order: 3; }
   .show-bar { flex-wrap: wrap; }
   .show-cap { flex-basis: 100%; }
 }

@@ -25,7 +25,8 @@
       <a href="research.html"><span class="num">01</span>Research</a>
       <a href="lean.html" aria-current="page"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
-      <a href="beyond.html"><span class="num">04</span>Beyond</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
       <a href="cv.html">CV</a>
     </nav>
     <div class="progress" data-progress aria-hidden="true"></div>
@@ -183,6 +184,33 @@ tm : w = thueMorse</span>
       </div>
     </section>
 
+    <section class="section" style="padding-top: 0;" id="talos">
+      <div class="section-head" data-reveal>
+        <p class="kicker">Elsewhere in verification</p>
+        <h2>Proving things about programs</h2>
+        <p class="prose lede">The same discipline, pointed at software instead of words.</p>
+      </div>
+
+      <div class="env" style="border-bottom: 1px solid var(--rule);">
+        <div class="env-head">
+          <span class="env-kind">Contribution</span>
+          <span class="env-name">(Talos, open source).</span>
+          <span class="env-status wip">&#8943; ongoing</span>
+        </div>
+        <p class="env-body"><a href="https://github.com/theebayuser/talos" target="_blank" rel="noopener">Talos</a>
+        is a WebAssembly interpreter written in Lean 4, where the definitions that
+        <em>run</em> a program are the same ones you <em>reason about</em>. There is no second
+        specification to drift out of sync with the implementation, which is the whole point.</p>
+        <p class="env-body" style="margin-top: var(--s2);">My patches live on the proof side: total
+        correctness for small programs, machine-checked equivalence between an unoptimized build and
+        an optimized build of the same function, and the memory-region disjointness algebra those
+        proofs stand on. It is the first place I have written verification someone else depends on,
+        and reviewing against a real codebase has taught me more about stating a theorem usefully
+        than any amount of solo work.</p>
+        <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>open-source contributor</span></p>
+      </div>
+    </section>
+
   </div>
 </main>
 
@@ -194,10 +222,12 @@ tm : w = thueMorse</span>
       <a href="index.html">Home</a>
       <a href="research.html">Research</a>
       <a href="manim.html">Animations</a>
-      <a href="beyond.html">Beyond</a>
+      <a href="education.html">Education</a>
+      <a href="personal.html">Personal</a>
       <a href="cv.html">CV</a>
     </nav>
-    <p class="colophon keys-hint">keys · 1–5 sections · 0 home</p>
+    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
+    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
   </div>
 </footer>
 

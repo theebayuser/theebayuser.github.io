@@ -51,7 +51,15 @@ Ink has four levels (`--ink`, `--ink-2`, `--ink-3`, `--ink-4`) — primary, supp
 metadata, disabled. Using only two flattens the hierarchy.
 
 **One palette, no dark sections.** An earlier version broke the animations page onto a
-Manim blackboard; it was cut deliberately. The whole site is paper. Plotted figures use
+Manim blackboard; it was cut deliberately. The whole site is paper. The single exception
+is the **night board**, a hidden whole-site mode on the `b` key that remaps every token at
+once (`html.board`), so the page is still one palette, just a different one.
+
+**Canvas colour rule.** A canvas cannot read CSS variables, so no figure may hardcode a
+hex value. `palette()` reads the tokens off the document once and hands them out;
+flipping the board clears the cache and calls every registered repaint. Register static
+figures with `onRepaint(fn)`; plotters register themselves. Break this and the night board
+silently leaves black ink on a black board. Plotted figures use
 `--ballpoint` for the drawn line, `rgba(33,30,23,.12)` for construction guides, and
 `--laurel` for the moving point, which are the ink equivalents of Manim's chalk blue and
 yellow and stay legible on warm stock.
@@ -83,7 +91,14 @@ Each appears on more than one page — that is what makes it a signature rather 
    ballpoint line tracing over it, a laurel mark at the pen. Deltoid and Lorenz on
    animations, the Thue–Morse difference table on formalization, Ulam's spiral on the
    index, the Mandelbrot on 404.
-7. **Colophon ending in ∎**.
+7. **Contents filed among the primes** — the section numerals are absolutely positioned
+   onto six real primes in Ulam's spiral (`.ulam-node`, paper backplate, hairline ring,
+   44px hit area via `::after`). Chips are `aria-hidden` with `tabindex="-1"`; the
+   dot-leader list beside them stays the real, keyboard-navigable navigation. Hovering
+   either side lights the other through `.is-hot`.
+8. **The ledger** — hand-kept counts as an account book: mono platform label, handle,
+   figure right-aligned in tabular numerals. Never a dashboard tile.
+9. **Colophon ending in ∎**.
 
 ## Figures must be true
 
@@ -151,6 +166,9 @@ HTML:
 - **Reading-progress bar** updates *synchronously* in a passive scroll listener rather
   than through rAF, because throttled rAF would freeze it. `scrollHeight` is cached on
   resize so the handler stays arithmetic plus one style write.
+- **Ledger** ships dashes in the HTML and fills them from `data/socials.json`. A failed
+  fetch leaves the dashes and every link still works. Numbers nobody can verify live are
+  stamped with the date they were true instead of being faked as live.
 
 Three canvas bugs worth not reintroducing: `stop()` must `cancelAnimationFrame` **and**
 null the handle, or `start()` sees a stale handle and the figure deadlocks; `paint(0)`

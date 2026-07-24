@@ -16,8 +16,29 @@ Then open <http://localhost:4173>.
 | `index.html` | Title block, abstract, contents, selected work, notebook, contact |
 | `research.html` | What combinatorics on words is; the two research projects |
 | `lean.html` | Formalization: goal-state panel, library stats, contents |
-| `manim.html` | Two self-drawing ink figures (deltoid, Lorenz attractor); film plates |
+| `manim.html` | Self-drawing figures, film plates, and the channel ledger |
+| `education.html` | Schools, coursework, clubs, competitions, prerequisite graph |
+| `personal.html` | Photos, the Sierpinski marginalia, and where to find you |
 | `404.html` | Not-found page, proved by contradiction, with a stippled Mandelbrot |
+| `data/socials.json` | Follower counts and the "currently" line (see below) |
+
+### Follower counts
+
+None of TikTok, Instagram, or Facebook will tell a web page how many followers an
+account has: there is no public API without server-side tokens, and CORS blocks reading
+the pages directly. Anything claiming to do this live is a third-party service that
+rate-limits, breaks, and occasionally reports wrong numbers, which is the last thing this
+site should do.
+
+So the counts are kept by hand. Open `data/socials.json`, set each `followers` number and
+the `updated` date, and the animations page picks them up and rolls them into place. The
+same file holds `now`, the one-line "currently" status in every footer.
+
+```json
+{ "updated": "2026-07-23", "now": "what you are working on", "channels": [ … ] }
+```
+
+If the file fails to load, the counts stay as dashes and every link still works.
 
 ### Things you can click
 
@@ -25,8 +46,12 @@ Then open <http://localhost:4173>.
   closes; `reset` reopens it. The stats count up the first time they scroll into view.
 - **Research**: press `Apply 0 → 01, 1 → 10` to grow the Thue–Morse word one generation
   at a time, up to generation 8.
-- **Anywhere**: keys `1`–`5` jump to the sections, `0` goes home. The strip under the nav
-  is the Thue–Morse word filling in as you scroll.
+- **Home**: the six section numerals are pinned to six actual primes on Ulam's spiral, and
+  hovering either the numeral or its row in the contents lights up the other.
+- **Anywhere**: keys `1`–`5` jump to the sections, `6` opens the CV, `0` goes home. The
+  strip under the nav is the Thue–Morse word filling in as you scroll.
+- **Hidden**: press `b` for the night board, the same paper after dark. Every figure
+  repaints itself in chalk. Press it again to come back; the choice is remembered.
 
 All of it is a bonus layer over plain HTML. With JavaScript off, the goal panel shows a
 finished proof, the morphism figure shows six generations, and the stats show their real

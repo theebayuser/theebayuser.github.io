@@ -25,7 +25,8 @@
       <a href="research.html"><span class="num">01</span>Research</a>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
-      <a href="beyond.html"><span class="num">04</span>Beyond</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
       <a href="cv.html">CV</a>
     </nav>
     <div class="progress" data-progress aria-hidden="true"></div>
@@ -67,15 +68,22 @@
           <li><a href="research.html"><span class="n">01</span><span class="t">Research, words counted carefully</span><span class="leader"></span><span class="pg">read</span></a></li>
           <li><a href="lean.html"><span class="n">02</span><span class="t">Formalization, proofs a computer believes</span><span class="leader"></span><span class="pg">read</span></a></li>
           <li><a href="manim.html"><span class="n">03</span><span class="t">Animations, math you can watch</span><span class="leader"></span><span class="pg">watch</span></a></li>
-          <li><a href="beyond.html"><span class="n">04</span><span class="t">Beyond, life outside the margin</span><span class="leader"></span><span class="pg">browse</span></a></li>
-          <li><a href="cv.html"><span class="n">05</span><span class="t">Curriculum vitae</span><span class="leader"></span><span class="pg">print</span></a></li>
+          <li><a href="education.html"><span class="n">04</span><span class="t">Education, where the math came from</span><span class="leader"></span><span class="pg">read</span></a></li>
+          <li><a href="personal.html"><span class="n">05</span><span class="t">Personal, life outside the margin</span><span class="leader"></span><span class="pg">browse</span></a></li>
+          <li><a href="cv.html"><span class="n">06</span><span class="t">Curriculum vitae</span><span class="leader"></span><span class="pg">print</span></a></li>
         </ol>
         <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 1;">
+          <div class="canvas-wrap" style="aspect-ratio: 1;" data-spiral>
             <canvas id="figure-ulam" role="img"
-              aria-label="The prime numbers plotted on Ulam's square spiral, showing diagonal streaks."></canvas>
+              aria-label="The prime numbers plotted on Ulam's square spiral, with the six section numerals pinned to six of the primes."></canvas>
+            <a class="ulam-node" href="research.html" aria-hidden="true" tabindex="-1">01</a>
+            <a class="ulam-node" href="lean.html" aria-hidden="true" tabindex="-1">02</a>
+            <a class="ulam-node" href="manim.html" aria-hidden="true" tabindex="-1">03</a>
+            <a class="ulam-node" href="education.html" aria-hidden="true" tabindex="-1">04</a>
+            <a class="ulam-node" href="personal.html" aria-hidden="true" tabindex="-1">05</a>
+            <a class="ulam-node" href="cv.html" aria-hidden="true" tabindex="-1">06</a>
           </div>
-          <p class="figcap">fig. i · the primes on Ulam's spiral, and the diagonals nobody can explain</p>
+          <p class="figcap">fig. i · the contents, filed among the primes</p>
         </div>
       </div>
     </section>
@@ -94,6 +102,7 @@
             <span class="env-kind">Theorem&nbsp;1</span>
             <span class="env-name">(a repetition threshold, resolved).</span>
             <span class="env-status wip">⋯ manuscript in preparation</span>
+            <canvas class="env-glyph" data-glyph="word" aria-hidden="true"></canvas>
           </div>
           <p class="env-body">An exact answer to a counting question about how long a word can go while
           avoiding a prescribed kind of repetition, for every alphabet past a small explicit size.
@@ -106,6 +115,7 @@
             <span class="env-kind">Lemma&nbsp;2</span>
             <span class="env-name">(Thue, 1912, machine-checked).</span>
             <span class="env-status done">✓ machine-checked</span>
+            <canvas class="env-glyph" data-glyph="grid" aria-hidden="true"></canvas>
           </div>
           <p class="env-body">The classical overlap-free and square-free theorems, formalized end to end in
           Lean 4 with no gaps left open. They anchor a small library of definitions for words, morphisms,
@@ -118,6 +128,7 @@
             <span class="env-kind">Figure&nbsp;3</span>
             <span class="env-name">(ideas in motion).</span>
             <span class="env-status">∎ ongoing</span>
+            <canvas class="env-glyph" data-glyph="curve" aria-hidden="true"></canvas>
           </div>
           <p class="env-body">Short animated explanations built in Manim: the same arguments as the papers,
           drawn rather than written. Making a proof move is the fastest way to find the step I did not
@@ -164,8 +175,10 @@
         formalizing, are especially welcome.</p>
         <div style="display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s3);">
           <a class="btn" href="mailto:artificialintelligencealt33@gmail.com">Email</a>
-          <a class="btn" href="#">GitHub <span class="fill">url</span></a>
-          <a class="btn" href="#">Instagram <span class="fill">url</span></a>
+          <a class="btn" href="https://github.com/theebayuser" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/daniel-liao-ca/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="btn" href="https://www.instagram.com/theebayuser/" target="_blank" rel="noopener">Instagram ↗</a>
+          <a class="btn" href="https://x.com/theebayuser" target="_blank" rel="noopener">X ↗</a>
         </div>
       </div>
     </section>
@@ -181,10 +194,12 @@
       <a href="research.html">Research</a>
       <a href="lean.html">Formalization</a>
       <a href="manim.html">Animations</a>
-      <a href="beyond.html">Beyond</a>
+      <a href="education.html">Education</a>
+      <a href="personal.html">Personal</a>
       <a href="cv.html">CV</a>
     </nav>
-    <p class="colophon keys-hint">keys · 1–5 sections · 0 home</p>
+    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
+    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
   </div>
 </footer>
 
