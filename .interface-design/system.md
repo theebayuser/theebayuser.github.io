@@ -51,9 +51,11 @@ Ink has four levels (`--ink`, `--ink-2`, `--ink-3`, `--ink-4`) — primary, supp
 metadata, disabled. Using only two flattens the hierarchy.
 
 **One palette, no dark sections.** An earlier version broke the animations page onto a
-Manim blackboard; it was cut deliberately. The whole site is paper. The single exception
-is the **night board**, a hidden whole-site mode on the `b` key that remaps every token at
-once (`html.board`), so the page is still one palette, just a different one.
+Manim blackboard; it was cut deliberately. The whole site is paper. Two exceptions, both
+narrow: the **night board**, a hidden whole-site mode on the `b` key that remaps every
+token at once (`html.board`), so the page is still one palette, just a different one; and
+`--film`, the near-black inside a video frame, which is the film's own background rather
+than a design choice. Neither licenses a dark band anywhere else.
 
 **Canvas colour rule.** A canvas cannot read CSS variables, so no figure may hardcode a
 hex value. `palette()` reads the tokens off the document once and hands them out;
@@ -91,14 +93,34 @@ Each appears on more than one page — that is what makes it a signature rather 
    ballpoint line tracing over it, a laurel mark at the pen. Deltoid and Lorenz on
    animations, the Thue–Morse difference table on formalization, Ulam's spiral on the
    index, the Mandelbrot on 404.
-7. **Contents filed among the primes** — the section numerals are absolutely positioned
-   onto six real primes in Ulam's spiral (`.ulam-node`, paper backplate, hairline ring,
-   44px hit area via `::after`). Chips are `aria-hidden` with `tabindex="-1"`; the
-   dot-leader list beside them stays the real, keyboard-navigable navigation. Hovering
-   either side lights the other through `.is-hot`.
-8. **The ledger** — hand-kept counts as an account book: mono platform label, handle,
-   figure right-aligned in tabular numerals. Never a dashboard tile.
-9. **Colophon ending in ∎**.
+7. **Contents filed among the primes** — on the index the spiral *is* the contents. The
+   numerals are absolutely positioned onto six real primes (`.ulam-node`, paper backplate,
+   hairline ring, 44px hit area via `::after`) and are **real links**, not decoration. A
+   compact `.toc-line` legend sits beneath as the plain-text equivalent and the no-JS
+   fallback; hovering either side lights the other through `.is-hot`. Separation between
+   numerals scales with the figure (`pickAnchors(…, side)`); a fixed pixel threshold
+   strands them on a narrow viewport.
+8. **The prerequisite graph as navigation** (education) — every node is a real `<button>`
+   over a canvas of curved edges, and selecting one fills a `.node-pop` card with dates, a
+   line, and a jump link into the section below. Wide, it reads as two chains meeting.
+   Under 560px the identical graph relayouts to one column in chronological order, chips
+   centred on the nodes and edges bowed out to the side. Chip x is clamped to the figure,
+   or a label near an edge hangs off it.
+9. **The ledger** — hand-kept counts as an account book: mono platform label, handle,
+   figure right-aligned in tabular numerals. Never a dashboard tile. A count of zero means
+   "not written down yet" and keeps the dash.
+10. **The epigraph** (`.quote`) — rules above and below, the line at 23px italic, the
+    attribution in small tracked mono. At most once per page, where a chapter opens.
+11. **The footer** — an offprint's last page, not a sitemap: signature and an epigraph on
+    the left, the numbered contents in two hairline-ruled columns on the right, one meta
+    rule beneath carrying `currently ·` and the key map. No colophon boilerplate about
+    which typefaces were used; the page itself is the evidence.
+12. **Film plates** — a real `<video>` in the frame, `object-fit: contain` over `--film`,
+    the single dark token and the one place a dark surface is allowed. Manim renders on
+    black, so a vertical reel is letterboxed against its own ground, never cropped and
+    never matted onto paper.
+13. **Link marks** — contact buttons carry a 15px inline SVG in `currentColor`, inheriting
+    `--ink-3` and turning ballpoint on hover. Real brand marks; never emoji.
 
 ## Figures must be true
 
@@ -175,6 +197,13 @@ null the handle, or `start()` sees a stale handle and the figure deadlocks; `pai
 must run once at init so a frame is never blank; and a figure whose progress-0 state draws
 nothing (the Lorenz) needs a faint full-path guide underneath, or its frame sits empty
 until it animates.
+
+**A fourth, and the nastiest: a page can boot invisible.** In a background tab every
+measurement is zero, so anything positioned from the DOM (the spiral numerals, the graph
+chips) lands against nothing and stays there, because no resize event ever follows. Two
+defences, both required: any layout function bails when its canvas measures under 40px
+rather than committing a garbage position, and `visibilitychange` calls `repaintAll()` the
+first time the page is actually looked at.
 
 ## Consistency rules
 

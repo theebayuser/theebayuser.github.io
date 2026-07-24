@@ -13,13 +13,16 @@ Then open <http://localhost:4173>.
 
 | Path | What it is |
 |---|---|
-| `index.html` | Title block, abstract, contents, selected work, notebook, contact |
-| `research.html` | What combinatorics on words is; the two research projects |
-| `lean.html` | Formalization: goal-state panel, library stats, contents |
-| `manim.html` | Self-drawing figures, film plates, and the channel ledger |
-| `education.html` | Schools, coursework, clubs, competitions, prerequisite graph |
-| `personal.html` | Photos, the Sierpinski marginalia, and where to find you |
-| `404.html` | Not-found page, proved by contradiction, with a stippled Mandelbrot |
+| `index.html` | Title block, abstract, the spiral contents, publications, contact |
+| `research.html` | What combinatorics on words is, the projects, and the marginalia figures |
+| `lean.html` | Formalization: goal-state panel, library stats, contents, Talos |
+| `manim.html` | Self-drawing figures, the three films, and the channel ledger |
+| `education.html` | The prerequisite graph as navigation; schools, coursework, clubs, results |
+| `personal.html` | Photographs, the honest paragraph, and where to find you |
+| `cv.html` | Typeset CV; the Print button produces a clean PDF |
+| `404.html` | Not-found page, proved by contradiction |
+| `css/paper.css` | The entire design system: every colour, size, and rule |
+| `js/site.js` | Every figure, widget, and key binding |
 | `data/socials.json` | Follower counts and the "currently" line (see below) |
 
 ### Follower counts
@@ -46,8 +49,13 @@ If the file fails to load, the counts stay as dashes and every link still works.
   closes; `reset` reopens it. The stats count up the first time they scroll into view.
 - **Research**: press `Apply 0 → 01, 1 → 10` to grow the Thue–Morse word one generation
   at a time, up to generation 8.
-- **Home**: the six section numerals are pinned to six actual primes on Ulam's spiral, and
-  hovering either the numeral or its row in the contents lights up the other.
+- **Home**: the contents *are* Ulam's spiral. The six numerals are pinned to six actual
+  primes (163, 173, 457, 887, 907, 1051) and are real links; hovering either a numeral or
+  its entry in the legend beneath lights up the other. The legend is the no-JS fallback.
+- **Education**: the prerequisite graph is the page's navigation. Every node is a button;
+  clicking one opens a card with the dates and a jump link to the section below. Wide, it
+  reads left to right as two chains meeting. Under 560px the same graph becomes one
+  column, in the order things actually happened.
 - **Anywhere**: keys `1`–`5` jump to the sections, `6` opens the CV, `0` goes home. The
   strip under the nav is the Thue–Morse word filling in as you scroll.
 - **Hidden**: press `b` for the night board, the same paper after dark. Every figure
@@ -56,59 +64,45 @@ If the file fails to load, the counts stay as dashes and every link still works.
 All of it is a bonus layer over plain HTML. With JavaScript off, the goal panel shows a
 finished proof, the morphism figure shows six generations, and the stats show their real
 numbers.
-| `beyond.html` | Photo slideshow, activities, things you're proud of |
-| `cv.html` | Typeset CV; the Print button produces a clean PDF |
-| `css/paper.css` | The entire design system — every color, size, and rule |
-| `js/site.js` | Thue–Morse dividers, slideshow, the canvas figure |
 
 ## Filling it in
 
-Every spot that needs your words is wrapped in `<span class="fill">…</span>` and renders
-in italic angle brackets — ⟨like this⟩ — so nothing fake ever ships by accident.
-Find them all:
+Every placeholder is gone: nothing on the site says ⟨like this⟩ any more. Two things are
+still waiting on you.
 
-```bash
-grep -rn 'class="fill"' *.html
-```
+### Photographs
 
-There are about 60. The ones that matter most, in order: the CV, the "A few honest things"
-paragraph on `beyond.html`, and your **GitHub and Instagram URLs**. Both are currently
-`href="#"`, so find them with:
-
-```bash
-grep -rn 'href="#"' *.html
-```
-
-They appear as buttons in the contact section of `index.html`, and as text links on
-`beyond.html` and `cv.html`. Replace the `#` with the real URL and delete the
-`<span class="fill">url</span>` next to it.
-
-### Photos
-
-Drop files into `assets/photos/`, then in `beyond.html` replace each placeholder
+`assets/photos/` is **empty**, so the slideshow on `personal.html` shows a deliberate
+empty state ("no plates filed"). Drop files into `assets/photos/`, then replace the single
+placeholder slide with one `div` per photo:
 
 ```html
-<div class="show-slide" data-caption="Your caption."><span>⟨ … ⟩</span></div>
+<div class="show-slide" data-active="true" data-caption="Your caption."><img src="assets/photos/01.jpg" alt="Describe the photo."></div>
+<div class="show-slide" data-caption="Another caption."><img src="assets/photos/02.jpg" alt="Describe the photo."></div>
 ```
 
-with the image itself, keeping the `data-caption`:
+Update the `of 1` in `data-show-count`; the Plate numerals recompute themselves. Three to
+eight photos is the right number.
 
-```html
-<div class="show-slide" data-caption="Your caption."><img src="assets/photos/01.jpg" alt="Describe the photo."></div>
-```
+### Follower counts
 
-Add or remove slides freely — the counter and the Plate numerals recompute themselves.
+They are all `0` in `data/socials.json`, and a zero is treated as "not written down yet",
+so the ledger shows a dash rather than claiming nobody follows you. Put the real numbers
+in and set `updated`.
 
 ### Films
 
-Drop `.mp4` files into `assets/video/`, then in `manim.html` swap each
-`<div class="plate-frame">…</div>` for
+The three films are already in place on `manim.html`. To add another, drop the `.mp4` into
+`assets/video/` and copy an existing `figure.plate` block:
 
 ```html
-<video class="plate-frame" controls preload="metadata" poster="assets/video/film-01.jpg">
-  <source src="assets/video/film-01.mp4" type="video/mp4">
+<video class="plate-frame" controls preload="metadata" playsinline>
+  <source src="assets/video/YourFilm.mp4" type="video/mp4">
 </video>
 ```
+
+Vertical reels are fine: the frame letterboxes them against the film-black surface rather
+than cropping. Write the caption from what the film actually shows.
 
 ### Research detail
 

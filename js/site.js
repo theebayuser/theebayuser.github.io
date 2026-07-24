@@ -468,8 +468,11 @@
 
   /* Pick well-separated primes to hang the section numerals on: one per
      angular sector, each at its own distance from the middle. */
-  function pickAnchors(primes, maxR, count) {
+  function pickAnchors(primes, maxR, count, side) {
     var wants = [0.20, 0.38, 0.55, 0.70, 0.83, 0.93];
+    /* keep the numerals apart in proportion to the figure, or a narrow
+       viewport shrinks every gap below a fixed threshold and strands them */
+    var apart = Math.max(24, Math.min(46, (side || 400) * 0.11));
     var picked = [];
     for (var i = 0; i < count; i++) {
       var wantR = wants[i] * maxR;
@@ -478,7 +481,7 @@
       primes.forEach(function (pr) {
         var da = Math.abs(Math.atan2(Math.sin(pr.a - wantA), Math.cos(pr.a - wantA)));
         var cost = Math.abs(pr.r - wantR) / maxR * 2 + da;
-        var clash = picked.some(function (q) { return Math.hypot(q.x - pr.x, q.y - pr.y) < 46; });
+        var clash = picked.some(function (q) { return Math.hypot(q.x - pr.x, q.y - pr.y) < apart; });
         if (!clash && cost < bestCost) { bestCost = cost; best = pr; }
       });
       if (best) picked.push(best);
@@ -492,8 +495,10 @@
     if (!canvas || !chips.length) return;
 
     function place() {
+      var side = Math.min(canvas.clientWidth, canvas.clientHeight);
+      if (side < 40) return;                 /* not laid out yet; try again when it is */
       var res = ulam(canvas);
-      var anchors = pickAnchors(res.primes, res.maxR, chips.length);
+      var anchors = pickAnchors(res.primes, res.maxR, chips.length, side);
       Array.prototype.forEach.call(chips, function (chip, i) {
         var a = anchors[i];
         if (!a) { chip.style.display = "none"; return; }
@@ -510,11 +515,13 @@
     /* hover on either side lights the other */
     Array.prototype.forEach.call(chips, function (chip) {
       var href = chip.getAttribute("href");
-      var row = document.querySelector('.toc a[href="' + href + '"]');
+      var row = document.querySelector('.toc-line a[href="' + href + '"], .toc a[href="' + href + '"]');
       function on() { chip.classList.add("is-hot"); if (row) row.classList.add("is-hot"); }
       function off() { chip.classList.remove("is-hot"); if (row) row.classList.remove("is-hot"); }
       chip.addEventListener("mouseenter", on);
       chip.addEventListener("mouseleave", off);
+      chip.addEventListener("focus", on);
+      chip.addEventListener("blur", off);
       if (row) {
         row.addEventListener("mouseenter", on);
         row.addEventListener("mouseleave", off);
@@ -524,56 +531,192 @@
     });
   }
 
-  /* --- the prerequisite graph, as actually experienced -------------------- */
+  /* --- the prerequisite graph, used as this page's navigation --------------
+     The chart is the real thing that happened: two chains, one through school
+     and one through contests, meeting where the research starts. Each node is
+     a button; the sections below it stay the complete, no-JS version. */
 
-  function prereqGraph(canvas) {
-    var m = fitCanvas(canvas);
-    var ctx = m.ctx, w = m.w, h = m.h;
-    var pal = palette();
+  var EDU_NODES = [
+    { x: 0.06, y: 0.22, t: "Dougherty Valley",
+      kind: "Dougherty Valley High School", when: "2023 – 2027",
+      body: "San Ramon, California. Expected graduation June 2027, GPA 4.5 / 4.0.",
+      more: "#schools", moreText: "schools" },
+    { x: 0.06, y: 0.76, t: "AMC · AIME",
+      kind: "AMC 10/12, then AIME", when: "2023 – 2026",
+      body: "Where the mathematics stopped being homework. Three AIME qualifications and Distinguished Honor Roll on the AMC.",
+      more: "#results", moreText: "results" },
+    { x: 0.28, y: 0.10, t: "AP CS A · CS P",
+      kind: "AP Computer Science A and Principles", when: "2024 – 2026",
+      body: "The first place I had to write something that either compiled or did not. Good practice for a proof assistant.",
+      more: "#coursework", moreText: "coursework" },
+    { x: 0.28, y: 0.44, t: "college, concurrent",
+      kind: "Cerro Coso and San Diego City College", when: "2025 – 2027",
+      body: "Concurrent enrollment, because the mathematics I wanted was not offered at school. Taken alongside a full high-school schedule.",
+      more: "#schools", moreText: "schools" },
+    { x: 0.28, y: 0.76, t: "olympiad, self-taught",
+      kind: "Olympiad mathematics, on my own", when: "2025 – 2026",
+      body: "Combinatorics, elementary number theory, algebra, geometry. No course for any of it, which meant learning how to be stuck productively.",
+      more: "#coursework", moreText: "self-taught" },
+    { x: 0.53, y: 0.72, t: "discrete structures",
+      kind: "Discrete structures", when: "college",
+      body: "Induction, counting, graphs, and the first formal proofs I was asked to write down rather than wave at.",
+      more: "#coursework", moreText: "coursework" },
+    { x: 0.53, y: 0.20, t: "calculus 1–3",
+      kind: "Calculus 1 through 3", when: "college",
+      body: "Single variable through multivariable. Useful, and also the clearest lesson that computation and proof are different skills.",
+      more: "#coursework", moreText: "coursework" },
+    { x: 0.53, y: 0.44, t: "linear algebra, ODEs",
+      kind: "Linear algebra and differential equations", when: "college",
+      body: "Structure over calculation: bases, maps, and what stays fixed when everything else moves.",
+      more: "#coursework", moreText: "coursework" },
+    { x: 0.53, y: 0.84, t: "USAMO 2026",
+      kind: "USA Mathematical Olympiad", when: "2026",
+      body: "Qualified in 2026. Six problems, nine hours, and no partial credit for a good feeling about it.",
+      more: "#results", moreText: "results" },
+    { x: 0.80, y: 0.34, t: "words + avoidance",
+      kind: "Combinatorics on words", when: "2025 – present",
+      body: "Where the two chains meet, and where the research actually happens. Nobody assigned this one.",
+      more: "research.html", moreText: "the research" },
+    { x: 0.80, y: 0.70, t: "Lean 4 · Mathlib",
+      kind: "Lean 4 and Mathlib", when: "2025 – present",
+      body: "No course, no mentor, and nobody at school who had heard of it. I read the manual, broke things, and read the errors until they stopped being noise.",
+      more: "lean.html", moreText: "the formalization" }
+  ];
 
-    var nodes = [
-      { x: 0.10, y: 0.22, t: "arithmetic" },
-      { x: 0.36, y: 0.12, t: "olympiad" },
-      { x: 0.64, y: 0.22, t: "words" },
-      { x: 0.89, y: 0.13, t: "avoidance" },
-      { x: 0.11, y: 0.74, t: "logic" },
-      { x: 0.37, y: 0.86, t: "types" },
-      { x: 0.64, y: 0.74, t: "Lean 4" },
-      { x: 0.89, y: 0.86, t: "Mathlib" }
-    ];
-    var edges = [[0, 1], [1, 2], [2, 3], [4, 5], [5, 6], [6, 7], [1, 5], [2, 6], [3, 6]];
-    var here = 3;
+  var EDU_EDGES = [
+    [0, 2], [0, 3], [1, 4], [4, 8], [3, 5], [3, 6], [6, 7],
+    [2, 10], [5, 10], [7, 9], [8, 9], [9, 10]
+  ];
 
-    function pt(i) { return { x: 16 + nodes[i].x * (w - 32), y: 14 + nodes[i].y * (h - 28) }; }
+  function eduGraph(root) {
+    var wrap = root.querySelector(".graph-wrap");
+    var canvas = wrap && wrap.querySelector("canvas");
+    var pop = root.querySelector(".node-pop");
+    if (!canvas || !pop) return;
 
-    ctx.strokeStyle = pal.guide;
-    ctx.lineWidth = 1;
-    edges.forEach(function (e) {
-      var a = pt(e[0]), b = pt(e[1]);
-      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - Math.abs(b.x - a.x) * 0.14;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.quadraticCurveTo(mx, my, b.x, b.y);
-      ctx.stroke();
+    var here = 9;
+    var chips = EDU_NODES.map(function (nd, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "node-chip";
+      b.textContent = nd.t;
+      b.setAttribute("aria-pressed", i === here ? "true" : "false");
+      wrap.appendChild(b);
+      b.addEventListener("click", function () { select(i); });
+      return b;
     });
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.font = "11px ui-monospace, Menlo, monospace";
-    nodes.forEach(function (nd, i) {
-      var p = pt(i);
-      var hot = i === here;
-      ctx.fillStyle = pal.paper;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = hot ? pal.laurel : pal.ink;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, hot ? 4 : 2.6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = hot ? pal.ink : pal.ink3;
-      ctx.fillText(nd.t, p.x, p.y + (nd.y > 0.5 ? 16 : -14));
-    });
+    /* Wide, the chart reads left to right as two chains meeting. Narrow, that
+       cannot fit, so the same nodes stack into one column in the order they
+       actually happened. Same graph, same edges, one turn of the page. */
+    var EDU_COLUMN = [0, 2, 3, 6, 7, 5, 1, 4, 8, 9, 10];
+
+    function pt(i, w, h) {
+      if (w < 560) {
+        var row = EDU_COLUMN.indexOf(i);
+        return {
+          x: w / 2,
+          y: 20 + (row / (EDU_COLUMN.length - 1)) * (h - 40)
+        };
+      }
+      return { x: 20 + EDU_NODES[i].x * (w - 40), y: 18 + EDU_NODES[i].y * (h - 36) };
+    }
+
+    function draw() {
+      if (canvas.clientWidth < 40) return;   /* not laid out yet */
+      var m = fitCanvas(canvas);
+      var ctx = m.ctx, w = m.w, h = m.h;
+      var pal = palette();
+
+      var narrow = w < 560;
+      ctx.lineWidth = 1;
+      EDU_EDGES.forEach(function (e) {
+        var a = pt(e[0], w, h), b = pt(e[1], w, h);
+        var live = e[0] === here || e[1] === here;
+        ctx.strokeStyle = live ? pal.ballpoint : pal.guide;
+        var mx, my;
+        if (narrow) {
+          /* one column: bow each edge out to the side so a long jump between
+             chains is visibly a different edge from a step to the next row */
+          var rows = Math.abs(EDU_COLUMN.indexOf(e[1]) - EDU_COLUMN.indexOf(e[0]));
+          mx = a.x + (e[0] % 2 ? -1 : 1) * Math.min(w * 0.34, 14 + rows * 16);
+          my = (a.y + b.y) / 2;
+        } else {
+          mx = (a.x + b.x) / 2;
+          my = (a.y + b.y) / 2 - Math.abs(b.x - a.x) * 0.12;
+        }
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.quadraticCurveTo(mx, my, b.x, b.y);
+        ctx.stroke();
+      });
+
+      /* In one column the chip sits on the node, so it is the node. */
+      if (!narrow) {
+        EDU_NODES.forEach(function (nd, i) {
+          var p = pt(i, w, h);
+          var hot = i === here;
+          ctx.fillStyle = pal.paper;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = hot ? pal.ballpoint : pal.ink3;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, hot ? 4 : 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      var column = w < 560;
+      chips.forEach(function (chip, i) {
+        var p = pt(i, w, h);
+        /* keep the whole label on the paper: a node near an edge would
+           otherwise hang its chip off the side of the figure */
+        var half = chip.offsetWidth / 2;
+        chip.style.left = Math.min(Math.max(p.x, half + 2), w - half - 2) + "px";
+        chip.style.top = (column ? p.y : p.y + (EDU_NODES[i].y > 0.5 ? 20 : -20)) + "px";
+      });
+    }
+
+    function select(i) {
+      here = i;
+      var nd = EDU_NODES[i];
+      chips.forEach(function (c, k) { c.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+      pop.innerHTML = "";
+
+      var head = document.createElement("div");
+      head.className = "np-head";
+      var kind = document.createElement("span");
+      kind.className = "np-kind";
+      kind.textContent = nd.kind;
+      var when = document.createElement("span");
+      when.className = "np-when";
+      when.textContent = nd.when;
+      head.appendChild(kind);
+      head.appendChild(when);
+
+      var body = document.createElement("p");
+      body.className = "np-body";
+      body.textContent = nd.body;
+
+      var more = document.createElement("p");
+      more.className = "np-more";
+      var link = document.createElement("a");
+      link.href = nd.more;
+      link.textContent = nd.moreText + " ↓";
+      if (nd.more.indexOf("#") !== 0) link.textContent = nd.moreText + " →";
+      more.appendChild(link);
+
+      pop.appendChild(head);
+      pop.appendChild(body);
+      pop.appendChild(more);
+      draw();
+    }
+
+    root.setAttribute("data-edu-graph", "on");
+    select(here);
+    onRepaint(draw);
+    window.addEventListener("resize", draw);
   }
 
   /* --- the 404 Mandelbrot, stippled once in ink --------------------------- */
@@ -799,6 +942,8 @@
       data.channels.forEach(function (ch) {
         var cell = root.querySelector('[data-platform="' + ch.platform + '"] .lg-count');
         if (!cell || typeof ch.followers !== "number") return;
+        /* zero means "not written down yet", not "nobody follows this" */
+        if (ch.followers <= 0) return;
         var text = ch.followers.toLocaleString();
         cell.setAttribute("data-empty", "false");
         onceInView(cell, function () { countUp(cell, ch.followers, text); }, 0.4);
@@ -910,8 +1055,8 @@
     var mb = document.getElementById("figure-mandelbrot");
     if (mb) onRepaint(function () { mandelbrot(mb); });
 
-    var pg = document.getElementById("figure-prereq");
-    if (pg) onRepaint(function () { prereqGraph(pg); });
+    var eg = document.querySelector("[data-edu-graph]");
+    if (eg) eduGraph(eg);
 
     var spiral = document.querySelector("[data-spiral]");
     if (spiral) initSpiralNav(spiral);
@@ -937,6 +1082,14 @@
     initLedger();
     initProgress();
     initKeys();
+
+    /* A tab that boots in the background lays out at zero size, so anything
+       measured from the DOM (the spiral numerals, the graph nodes) would be
+       placed against nothing. Draw it all again the first time we are
+       actually looked at. */
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") repaintAll();
+    });
   }
 
   if (document.readyState === "loading") {

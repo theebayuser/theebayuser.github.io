@@ -39,29 +39,20 @@
     </div>
 
     <section class="section" style="padding-top: 0;">
-      <div class="figure-row">
-        <div class="prose stack">
-          <div class="env" style="border-bottom: 1px solid var(--rule);">
-            <div class="env-head">
-              <span class="env-kind">Theorem</span>
-              <span class="env-name">(this page does not exist).</span>
-              <span class="env-status done">∎ proved</span>
-            </div>
-            <p class="env-body"><span class="ital">Proof.</span> Suppose it did. Then the server would
-            have returned it, since the server returns every page it has. It returned this one instead,
-            which is not that page. Contradiction. ∎</p>
+      <div class="prose stack">
+        <div class="env" style="border-bottom: 1px solid var(--rule);">
+          <div class="env-head">
+            <span class="env-kind">Theorem</span>
+            <span class="env-name">(this page does not exist).</span>
+            <span class="env-status done">∎ proved</span>
           </div>
-          <p>The link that brought you here is wrong, or something moved. Neither is your fault.</p>
-          <div style="display: flex; gap: var(--s2); flex-wrap: wrap;">
-            <a class="btn" href="index.html">← Back to the front page</a>
-          </div>
+          <p class="env-body"><span class="ital">Proof.</span> Suppose it did. Then the server would
+          have returned it, since the server returns every page it has. It returned this one instead,
+          which is not that page. Contradiction. ∎</p>
         </div>
-        <div>
-          <div class="canvas-wrap" style="aspect-ratio: 5 / 4;">
-            <canvas id="figure-mandelbrot" role="img"
-              aria-label="The Mandelbrot set, stippled in ink."></canvas>
-          </div>
-          <p class="figcap">fig. ∞ · the edge of the Mandelbrot set, where things also get lost</p>
+        <p>The link that brought you here is wrong, or something moved. Neither is your fault.</p>
+        <div style="display: flex; gap: var(--s2); flex-wrap: wrap;">
+          <a class="btn" href="index.html">← Back to the front page</a>
         </div>
       </div>
     </section>
@@ -70,20 +61,28 @@
 </main>
 
 <footer class="foot">
-  <div class="page foot-inner">
-    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
-    Rules drawn by the Thue–Morse word. ∎</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="research.html">Research</a>
-      <a href="lean.html">Formalization</a>
-      <a href="manim.html">Animations</a>
-      <a href="education.html">Education</a>
-      <a href="personal.html">Personal</a>
-      <a href="cv.html">CV</a>
-    </nav>
-    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
-    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
+  <div class="page">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-sig">Daniel Liao · San Ramon, California</p>
+        <blockquote class="foot-quote">
+          <p>Mathematics is the art of giving the same name to different things.</p>
+          <footer>Henri Poincar&#233;</footer>
+        </blockquote>
+      </div>
+      <nav class="foot-nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
+      <a href="cv.html"><span class="num">06</span>Curriculum vitae</a>
+      </nav>
+    </div>
+    <div class="foot-rule">
+      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
+    </div>
   </div>
 </footer>
 

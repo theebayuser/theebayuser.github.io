@@ -40,10 +40,13 @@
       <p class="kicker">Combinatorics · Lean 4 · Manim</p>
       <h1 class="display">Daniel Liao</h1>
       <p class="byline">proofs on paper, in Lean, and in motion</p>
-      <p class="affil meta"><span class="fill">Dougherty Valley High School</span> · <span class="fill">San Ramon, CA</span> · class of <span class="fill">2031</span></p>
+      <p class="affil meta">Dougherty Valley High School · San Ramon, CA · class of 2027</p>
 
       <div class="abstract">
-        <p><span class="runin">Abstract.</span> I work to connect frontier math with AI, as well as math exposition. </p>
+        <p><span class="runin">Abstract.</span> I work to connect frontier mathematics with AI, and to
+        make mathematics worth watching. In practice that means research in combinatorics on words,
+        proofs rebuilt in Lean 4 until a computer agrees with every step, and animations for the
+        arguments that are easier to watch than to read.</p>
         <p class="keywords meta">Keywords: math · edtech · formal verification · Mathlib · Manim</p>
       </div>
     </div>
@@ -59,122 +62,102 @@
         <p class="kicker">§ 00</p>
         <h2>Contents</h2>
       </div>
-      <div class="figure-row">
-        <ol class="toc">
-          <li><a href="research.html"><span class="n">01</span><span class="t">Research, counting words</span><span class="leader"></span><span class="pg">read</span></a></li>
-          <li><a href="lean.html"><span class="n">02</span><span class="t">Formalization, proofs to a computer</span><span class="leader"></span><span class="pg">read</span></a></li>
-          <li><a href="manim.html"><span class="n">03</span><span class="t">Animations, math you can watch</span><span class="leader"></span><span class="pg">watch</span></a></li>
-          <li><a href="education.html"><span class="n">04</span><span class="t">Education, what i'm learning</span><span class="leader"></span><span class="pg">read</span></a></li>
-          <li><a href="personal.html"><span class="n">05</span><span class="t">Personal, life outside the margin</span><span class="leader"></span><span class="pg">browse</span></a></li>
-          <li><a href="cv.html"><span class="n">06</span><span class="t">Curriculum vitae</span><span class="leader"></span><span class="pg">print</span></a></li>
-        </ol>
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 1;" data-spiral>
-            <canvas id="figure-ulam" role="img"
-              aria-label="The prime numbers plotted on Ulam's square spiral, with the six section numerals pinned to six of the primes."></canvas>
-            <a class="ulam-node" href="research.html" aria-hidden="true" tabindex="-1">01</a>
-            <a class="ulam-node" href="lean.html" aria-hidden="true" tabindex="-1">02</a>
-            <a class="ulam-node" href="manim.html" aria-hidden="true" tabindex="-1">03</a>
-            <a class="ulam-node" href="education.html" aria-hidden="true" tabindex="-1">04</a>
-            <a class="ulam-node" href="personal.html" aria-hidden="true" tabindex="-1">05</a>
-            <a class="ulam-node" href="cv.html" aria-hidden="true" tabindex="-1">06</a>
-          </div>
-          <p class="figcap">fig. i · the contents, filed among the primes</p>
+      <div class="contents-hero" data-reveal>
+        <div class="canvas-wrap" style="aspect-ratio: 1; width: 100%;" data-spiral>
+          <canvas id="figure-ulam" role="img"
+            aria-label="The prime numbers plotted on Ulam's square spiral, with the six section numerals pinned to six of the primes."></canvas>
+          <a class="ulam-node" href="research.html" aria-label="01, Research">01</a>
+          <a class="ulam-node" href="lean.html" aria-label="02, Formalization">02</a>
+          <a class="ulam-node" href="manim.html" aria-label="03, Animations">03</a>
+          <a class="ulam-node" href="education.html" aria-label="04, Education">04</a>
+          <a class="ulam-node" href="personal.html" aria-label="05, Personal">05</a>
+          <a class="ulam-node" href="cv.html" aria-label="06, Curriculum vitae">06</a>
         </div>
+        <p class="figcap">fig. i · the contents, filed among the primes</p>
+
+        <ul class="toc-line">
+          <li><a href="research.html"><span class="n">01</span>Research</a></li>
+          <li><a href="lean.html"><span class="n">02</span>Formalization</a></li>
+          <li><a href="manim.html"><span class="n">03</span>Animations</a></li>
+          <li><a href="education.html"><span class="n">04</span>Education</a></li>
+          <li><a href="personal.html"><span class="n">05</span>Personal</a></li>
+          <li><a href="cv.html"><span class="n">06</span>Curriculum vitae</a></li>
+        </ul>
+
+        <p class="meta contents-note">Each numeral sits on an actual prime. You can also just type the
+        number: <kbd>1</kbd> to <kbd>5</kbd> jump to a section from anywhere on the site,
+        <kbd>6</kbd> opens the CV, <kbd>0</kbd> comes back here.</p>
       </div>
     </section>
 
-    <section class="section" id="selected">
+    <section class="section" id="publications">
       <div class="section-head" data-reveal>
         <p class="kicker">§ 01</p>
-        <h2>Selected work</h2>
-        <p class="prose lede">Three things I would want you to look at first. Each is live work, not a
-        class project, and the write-ups go as deep as you care to follow.</p>
+        <h2>Publications, in preparation</h2>
+        <p class="prose lede">Two manuscripts and one library. Nothing here is posted yet, so the
+        statements are given loosely; I am glad to share a draft with anyone who asks.</p>
       </div>
 
       <div data-reveal-group>
-        <a class="env" href="research.html">
+        <div class="env">
           <div class="env-head">
-            <span class="env-kind">Theorem&nbsp;1</span>
-            <span class="env-name">(a repetition threshold, resolved).</span>
-            <span class="env-status wip">⋯ manuscript in preparation</span>
+            <span class="env-kind">Manuscript&nbsp;I</span>
+            <span class="env-name">(an exact repetition threshold).</span>
+            <span class="env-status wip">⋯ in preparation</span>
             <canvas class="env-glyph" data-glyph="word" aria-hidden="true"></canvas>
           </div>
           <p class="env-body">An exact answer to a counting question about how long a word can go while
-          avoiding a prescribed kind of repetition, for every alphabet past a small explicit size.
-          Computer-assisted, independently reproduced from scratch, and being verified in Lean.</p>
-          <p class="env-foot"><span>combinatorics on words</span><span>·</span><span>search + proof</span><span class="tomb">→</span></p>
-        </a>
+          avoiding a prescribed kind of repetition, for every alphabet past a small explicit size, with a
+          complete classification of the configurations that achieve it. Computer-assisted, independently
+          reproduced from scratch by a second implementation, and now being verified in Lean.</p>
+          <p class="env-foot"><span>combinatorics on words</span><span>·</span><span>search + proof</span></p>
+        </div>
 
-        <a class="env" href="lean.html">
+        <div class="env">
           <div class="env-head">
-            <span class="env-kind">Lemma&nbsp;2</span>
-            <span class="env-name">(Thue, 1912, machine-checked).</span>
-            <span class="env-status done">✓ machine-checked</span>
+            <span class="env-kind">Manuscript&nbsp;II</span>
+            <span class="env-name">(a classification of admissible alphabets).</span>
+            <span class="env-status wip">⋯ in preparation</span>
             <canvas class="env-glyph" data-glyph="grid" aria-hidden="true"></canvas>
           </div>
-          <p class="env-body">The classical overlap-free and square-free theorems, formalized end to end in
-          Lean 4 with no gaps left open. They anchor a small library of definitions for words, morphisms,
-          and repetitions that the rest of my research is built on.</p>
-          <p class="env-foot"><span>Lean 4 + Mathlib</span><span>·</span><span>sorry-free</span><span class="tomb">→</span></p>
-        </a>
+          <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
+          with a demanding combination of avoidance and richness properties. The criterion turned out to
+          be simple, which took a long finite certificate to establish and a second audit to trust.</p>
+          <p class="env-foot"><span>classification complete</span><span>·</span><span>reproduction package written</span></p>
+        </div>
 
-        <a class="env" href="manim.html">
+        <div class="env">
           <div class="env-head">
-            <span class="env-kind">Figure&nbsp;3</span>
-            <span class="env-name">(ideas in motion).</span>
-            <span class="env-status">∎ ongoing</span>
+            <span class="env-kind">Software</span>
+            <span class="env-name">(a Lean 4 library for words).</span>
+            <span class="env-status done">✓ machine-checked</span>
             <canvas class="env-glyph" data-glyph="curve" aria-hidden="true"></canvas>
           </div>
-          <p class="env-body">Short animated explanations built in Manim: the same arguments as the papers,
-          drawn rather than written. Making a proof move is the fastest way to find the step I did not
-          actually understand.</p>
-          <p class="env-foot"><span>Manim · Python</span><span>·</span><span><span class="fill">n</span> films</span><span class="tomb">→</span></p>
-        </a>
-      </div>
-    </section>
-
-    <section class="section" id="now">
-      <div class="section-head" data-reveal>
-        <p class="kicker">§ 02</p>
-        <h2>Notebook</h2>
-        <p class="prose lede">A running log, newest first. I keep the failures in, because a research
-        record without them is fiction.</p>
+          <p class="env-body">Definitions a proof assistant will accept for words, morphisms, powers,
+          overlaps, and avoidance, with Thue's 1912 theorems machine-checked on top of them and no gaps
+          left open. Both manuscripts land on this spine.</p>
+          <p class="env-foot"><span>7,665 lines of Lean</span><span>·</span><span>394 theorems</span></p>
+        </div>
       </div>
 
-      <div class="prose stack">
-        <div class="entry">
-          <div class="entry-head"><span class="r">Formalization crossed the two-thirds mark</span><span class="d">Jul 2026</span></div>
-          <p class="note" style="margin-top: 12px;">The main classification argument now compiles end to end,
-          with a handful of named obligations left explicitly open rather than quietly assumed. Naming them
-          was the hard part.</p>
-        </div>
-        <div class="entry">
-          <div class="entry-head"><span class="r">A refuted conjecture, and what it taught me</span><span class="d">Jun 2026</span></div>
-          <p class="note" style="margin-top: 12px;">A uniform version of one obligation turned out to be false,
-          and the proof assistant produced explicit counterexamples. The corrected statement needed a threshold
-          I had originally mis-derived. Worth every week it cost.</p>
-        </div>
-        <div class="entry">
-          <div class="entry-head"><span class="r"><span class="fill">next entry</span></span><span class="d"><span class="fill">date</span></span></div>
-          <p class="note" style="margin-top: 12px;"><span class="fill">Two or three sentences. Keep the voice plain.</span></p>
-        </div>
-      </div>
+      <p class="meta" style="margin-top: var(--s3); max-width: var(--measure);">The mathematics behind
+      the first two is written up in <a href="research.html">&#167; 01</a>, and what it takes to convince
+      a computer of any of it is in <a href="lean.html">&#167; 02</a>.</p>
     </section>
 
     <section class="section" id="contact" style="padding-top: var(--s5);">
       <div class="prose">
-        <p class="kicker">§ 03</p>
+        <p class="kicker">§ 02</p>
         <h2>Get in touch</h2>
         <p style="margin-top: var(--s2);">I am always glad to hear from mathematicians, Lean people,
         and students who want to start something similar. Questions about the work, or about how to begin
         formalizing, are especially welcome.</p>
         <div style="display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s3);">
-          <a class="btn" href="mailto:artificialintelligencealt33@gmail.com">Email</a>
-          <a class="btn" href="https://github.com/theebayuser" target="_blank" rel="noopener">GitHub ↗</a>
-          <a class="btn" href="https://www.linkedin.com/in/daniel-liao-ca/" target="_blank" rel="noopener">LinkedIn ↗</a>
-          <a class="btn" href="https://www.instagram.com/theebayuser/" target="_blank" rel="noopener">Instagram ↗</a>
-          <a class="btn" href="https://x.com/theebayuser" target="_blank" rel="noopener">X ↗</a>
+          <a class="btn" href="mailto:artificialintelligencealt33@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14"/><path d="m2.5 6 9.5 7.5L21.5 6"/></svg>Email</a>
+          <a class="btn" href="https://github.com/theebayuser" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
+          <a class="btn" href="https://www.linkedin.com/in/daniel-liao-ca/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/></svg>LinkedIn</a>
+          <a class="btn" href="https://www.instagram.com/theebayuser/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</a>
+          <a class="btn" href="https://x.com/theebayuser" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg>X</a>
         </div>
       </div>
     </section>
@@ -183,19 +166,28 @@
 </main>
 
 <footer class="foot">
-  <div class="page foot-inner">
-    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
-    Rules drawn by the Thue–Morse word. ∎</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="research.html">Research</a>
-      <a href="lean.html">Formalization</a>
-      <a href="manim.html">Animations</a>
-      <a href="education.html">Education</a>
-      <a href="personal.html">Personal</a>
-      <a href="cv.html">CV</a>
-    </nav>
-    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
-    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
+  <div class="page">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-sig">Daniel Liao · San Ramon, California</p>
+        <blockquote class="foot-quote">
+          <p>Mathematics is the art of giving the same name to different things.</p>
+          <footer>Henri Poincar&#233;</footer>
+        </blockquote>
+      </div>
+      <nav class="foot-nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
+      <a href="cv.html"><span class="num">06</span>Curriculum vitae</a>
+      </nav>
+    </div>
+    <div class="foot-rule">
+      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
+    </div>
   </div>
 </footer>
 

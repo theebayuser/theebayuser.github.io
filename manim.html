@@ -98,31 +98,41 @@
 
       <div class="plates">
         <figure class="plate" style="margin: 0;">
-          <div class="plate-frame">16 : 9 &nbsp;·&nbsp; <span class="fill">BoltzmannDistribution.mp4</span></div>
+          <video class="plate-frame" controls preload="metadata" playsinline
+            aria-label="A Maxwell-Boltzmann speed distribution simulation.">
+            <source src="assets/video/BoltzmannDistribution.mp4" type="video/mp4">
+          </video>
           <figcaption class="plate-cap">
             <p class="pn">Plate I</p>
-            <p class="pt">Why two letters are not enough</p>
-            <p class="pd">The pigeonhole argument that forces a repetition on a binary alphabet, one
-            case at a time.</p>
+            <p class="pt">The Maxwell&#8211;Boltzmann speed distribution</p>
+            <p class="pd">Particles rattle around a box, their speeds are binned live, and the
+            histogram settles onto the curve you could also just write down.</p>
           </figcaption>
         </figure>
 
         <figure class="plate" style="margin: 0;">
-          <div class="plate-frame">16 : 9 &nbsp;·&nbsp; <span class="fill">EulersFormulaReels.mp4</span></div>
+          <video class="plate-frame" controls preload="metadata" playsinline
+            aria-label="Euler's formula drawn as a helix in three dimensions.">
+            <source src="assets/video/EulersFormulaReels.mp4" type="video/mp4">
+          </video>
           <figcaption class="plate-cap">
             <p class="pn">Plate II</p>
-            <p class="pt">Building an infinite word from a rule</p>
-            <p class="pd">Iterating a morphism until the fixed point appears, and seeing why it never
-            repeats itself.</p>
+            <p class="pt">Euler's formula, seen sideways</p>
+            <p class="pd">The complex exponential drawn as a helix, so cosine and sine are literally
+            its two shadows. Follow it to <em>x</em> = &#960; and it lands on &#8722;1.</p>
           </figcaption>
         </figure>
 
         <figure class="plate" style="margin: 0;">
-          <div class="plate-frame">16 : 9 &nbsp;·&nbsp; <span class="fill">GaltonBoard.mp4</span></div>
+          <video class="plate-frame" controls preload="metadata" playsinline
+            aria-label="A Galton board dropping balls through pegs into bins that build a curve.">
+            <source src="assets/video/GaltonBoard.mp4" type="video/mp4">
+          </video>
           <figcaption class="plate-cap">
             <p class="pn">Plate III</p>
-            <p class="pt"><span class="fill">Title</span></p>
-            <p class="pd"><span class="fill">One or two sentences on what the film shows.</span></p>
+            <p class="pt">A Galton board, filling up</p>
+            <p class="pd">Every ball takes an independent coin flip at each peg. Nothing coordinates
+            them, and the bins underneath still build the same smooth curve every time.</p>
           </figcaption>
         </figure>
       </div>
@@ -131,9 +141,10 @@
     <section class="section" style="padding-top: 0;" id="distribution">
       <div class="section-head" data-reveal>
         <p class="kicker">Distribution</p>
-        <h2>See everything else!</h2>
-        <p class="prose lede">follow if you want!
-        <span style="font-family: var(--mono); font-size: 15px;">@math.visualizations</span>.</p>
+        <h2>See everything else</h2>
+        <p class="prose lede">The rest of the films go out as
+        <span style="font-family: var(--mono); font-size: 15px;">@math.visualizations</span>, in three
+        places. Follow along if you want.</p>
       </div>
 
       <div class="ledger" data-ledger>
@@ -155,10 +166,8 @@
           <span class="lg-handle">math.visualizations</span>
           <span class="lg-count" data-empty="true">&#183;</span><span class="lg-unit">followers</span>
         </a>
-        <p class="figcap" data-ledger-stamp>updated counts</p>
+        <p class="figcap" data-ledger-stamp>counts kept by hand</p>
       </div>
-
-      <p class="meta" style="margin-top: var(--s3); max-width: var(--measure);">.</p>
     </section>
 
     <section class="section" style="padding-top: 0;">
@@ -192,19 +201,28 @@
 </main>
 
 <footer class="foot">
-  <div class="page foot-inner">
-    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
-    Rules drawn by the Thue–Morse word. ∎</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="research.html">Research</a>
-      <a href="lean.html">Formalization</a>
-      <a href="education.html">Education</a>
-      <a href="personal.html">Personal</a>
-      <a href="cv.html">CV</a>
-    </nav>
-    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
-    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
+  <div class="page">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-sig">Daniel Liao · San Ramon, California</p>
+        <blockquote class="foot-quote">
+          <p>Mathematics is the art of giving the same name to different things.</p>
+          <footer>Henri Poincar&#233;</footer>
+        </blockquote>
+      </div>
+      <nav class="foot-nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
+      <a href="cv.html"><span class="num">06</span>Curriculum vitae</a>
+      </nav>
+    </div>
+    <div class="foot-rule">
+      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
+    </div>
   </div>
 </footer>
 

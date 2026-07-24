@@ -42,19 +42,34 @@
       <p class="byline">schooling, official and otherwise</p>
     </div>
 
-    <section class="section" style="padding-top: 0;" id="graph">
+    <section class="section" style="padding-top: 0;">
       <div class="figure-row">
-        <div class="prose stack" data-reveal>
-          <p class="lede">Note to self: replace this description with a quote: "God made the integers, all else is the work of man" - Leopold Kronecker</p>
-        </div>
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 3 / 2;">
-            <canvas id="figure-prereq" role="img"
-              aria-label="A graph of topics: arithmetic to olympiad to words to avoidance, and logic to types to Lean 4 to Mathlib, with edges joining the two chains."></canvas>
-          </div>
-          <p class="figcap">fig. e · the prerequisite graph, as actually experienced</p>
+        <blockquote class="quote" data-reveal>
+          <p>God made the integers, all else is the work of man.</p>
+          <footer>Leopold Kronecker</footer>
+        </blockquote>
+        <div class="prose" data-reveal>
+          <p>Two chains got me here. One went through school and one went through contests, and they
+          met at the point where a theorem has to be typed out in full. The chart below is the honest
+          version of my prerequisites, and it is also the table of contents for this page.</p>
         </div>
       </div>
+    </section>
+
+    <section class="section" style="padding-top: var(--s5);" id="graph" data-edu-graph>
+      <div class="section-head" data-reveal>
+        <p class="kicker">Prerequisites</p>
+        <h2>How the subject got assembled</h2>
+        <p class="prose lede">Every node is a real course, contest, or year. Pick one and it explains
+        itself; the full lists are underneath.</p>
+      </div>
+
+      <div class="graph-wrap">
+        <canvas id="figure-prereq" role="img"
+          aria-label="A prerequisite graph. One chain runs from Dougherty Valley High School through AP Computer Science and concurrent college enrolment to calculus, linear algebra, and discrete structures. A second runs from the AMC and AIME through self-taught olympiad mathematics to the USA Mathematical Olympiad. Both lead into combinatorics on words and Lean 4 with Mathlib."></canvas>
+      </div>
+      <p class="figcap">fig. e · the prerequisite graph, as actually experienced</p>
+      <div class="node-pop" aria-live="polite"></div>
     </section>
 
     <div class="tm" data-n="24"></div>
@@ -67,28 +82,33 @@
       <div class="prose">
         <div class="entry">
           <div class="entry-head">
-            <span class="r"><span class="fill">Dougherty Valley High School</span></span>
-            <span class="w"><span class="fill">San Ramon, CA</span></span>
-            <span class="d"><span class="fill">2023 - 2027</span></span>
+            <span class="r">Dougherty Valley High School</span>
+            <span class="w">San Ramon, CA</span>
+            <span class="d">2023 – 2027</span>
           </div>
           <ul>
-            <li>Expected graduation <span class="fill">Jun 2027</span>.</li>
-            <li><span class="fill">GPA: 4.5/4.0 </span></li>
+            <li>Expected graduation June 2027. GPA 4.5 / 4.0.</li>
           </ul>
         </div>
         <div class="entry">
           <div class="entry-head">
-            <span class="r"><span class="fill">Cerro Coso Community College</span></span>
-            <span class="w"><span class="fill">Ridgecrest, CA</span></span>
-            <span class="d"><span class="fill">2025 – 2027</span></span>
+            <span class="r">Cerro Coso Community College</span>
+            <span class="w">Ridgecrest, CA</span>
+            <span class="d">2025 – 2027</span>
           </div>
+          <ul>
+            <li>Concurrent enrolment, alongside a full high-school schedule.</li>
+          </ul>
         </div>
         <div class="entry">
           <div class="entry-head">
-            <span class="r"><span class="fill">San Diego City Community Collegee</span></span>
-            <span class="w"><span class="fill">San Diego, CA</span></span>
-            <span class="d"><span class="fill">2026 - 2027</span></span>
+            <span class="r">San Diego City College</span>
+            <span class="w">San Diego, CA</span>
+            <span class="d">2026 – 2027</span>
           </div>
+          <ul>
+            <li>Concurrent enrolment.</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -101,21 +121,15 @@
             <h2>Taught to me</h2>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r">Mathematics</span></div>
+            <div class="entry-head"><span class="r">Mathematics</span><span class="d">college</span></div>
             <ul>
-              <li><span class="fill">Calculus 1-3, Linear Algebra, Differential Equations</span></li>
+              <li>Calculus 1 through 3, linear algebra, differential equations.</li>
             </ul>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r">Computer science</span></div>
+            <div class="entry-head"><span class="r">Computer science</span><span class="d">school + college</span></div>
             <ul>
-              <li><span class="fill">AP CSA & CSP, Discrete Structures</span></li>
-            </ul>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r">Everything else</span></div>
-            <ul>
-              <li><span class="fill">Anything you would actually want a reader to know.</span></li>
+              <li>AP Computer Science A, AP Computer Science Principles, discrete structures.</li>
             </ul>
           </div>
         </div>
@@ -126,35 +140,18 @@
             <h2>Read on my own</h2>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r">Olympiad Math</span><span class="d">2025–26</span></div>
+            <div class="entry-head"><span class="r">Olympiad mathematics</span><span class="d">2025–26</span></div>
             <ul>
-              <li>Combinatorics, Elementary Number Theory, Algebra, Geometry.</li>
+              <li>Combinatorics, elementary number theory, algebra, geometry.</li>
             </ul>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r">More Math</span><span class="d">2025–26</span></div>
+            <div class="entry-head"><span class="r">Everything else I got curious about</span><span class="d">2025–26</span></div>
             <ul>
-              <li>Mathematics in lean, voting theory, knot theory</li>
+              <li>Mathematics in Lean, voting theory, knot theory.</li>
             </ul>
           </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Anything else</span></span><span class="d"><span class="fill">years</span></span></div>
-          </div>
         </div>
-      </div>
-    </section>
-
-    <section class="section" style="padding-top: 0;" id="lean-alone">
-      <div class="env" style="border-bottom: 1px solid var(--rule);">
-        <div class="env-head">
-          <span class="env-kind">Note</span>
-          <span class="env-name">(learning Lean without a teacher).</span>
-          <span class="env-status">∎ the hard part</span>
-        </div>
-        <p class="env-body">No course, no mentor, and nobody at school who had heard of it. I read the
-        manual, broke things, and read the error messages until they stopped being noise. Some of the
-        lines I am proudest of are the ones that finally compiled, and the reason this site keeps
-        saying machine-checked is that I know exactly how much that costs.</p>
       </div>
     </section>
 
@@ -166,21 +163,21 @@
             <h2>Rooms I show up to</h2>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Math Club</span></span><span class="d"><span class="fill">2023-2026</span></span></div>
+            <div class="entry-head"><span class="r">Math Club</span><span class="w">president</span><span class="d">2023–2026</span></div>
             <ul>
-              <li><span class="fill">President, launched inagural tournament (250+).</span></li>
+              <li>Launched the school's inaugural tournament, 250 competitors.</li>
             </ul>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">FBLA Club</span></span><span class="d"><span class="fill">2023-2026</span></span></div>
+            <div class="entry-head"><span class="r">FBLA</span><span class="w">vice president</span><span class="d">2023–2026</span></div>
             <ul>
-              <li><span class="fill">Vice President, organized 1000+ person conference, managed 100k budget.</span></li>
+              <li>Organized a conference for over 1,000 attendees on a $100k budget.</li>
             </ul>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Econ Team</span></span><span class="d"><span class="fill">2023-2025</span></span></div>
+            <div class="entry-head"><span class="r">Economics Team</span><span class="d">2023–2025</span></div>
             <ul>
-              <li><span class="fill">NEC State Champs!</span></li>
+              <li>National Economics Challenge, state champions.</li>
             </ul>
           </div>
         </div>
@@ -191,15 +188,15 @@
             <h2>Results</h2>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">USA Math Olympiad/span></span><span class="w"><span class="fill">Qualifier</span></span><span class="d"><span class="fill">2026</span></span></div>
-            <p class="meta" style="margin-top: 6px;"><span class="fill">Also x3 AIME & AMC10/12 DHR!</span></p>
+            <div class="entry-head"><span class="r">USA Mathematical Olympiad</span><span class="w">qualifier</span><span class="d">2026</span></div>
+            <p class="meta" style="margin-top: 6px;">Also a three-time AIME qualifier, and AMC 10/12
+            Distinguished Honor Roll.</p>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Stanford Math Tournament</span></span><span class="w"><span class="fill">1st Place</span></span><span class="d"><span class="fill">2025</span></span></div>
+            <div class="entry-head"><span class="r">Stanford Math Tournament</span><span class="w">first place</span><span class="d">2025</span></div>
           </div>
           <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Pueple Comet Math Meet</span></span><span class="w"><span class="fill">context</span></span><span class="d"><span class="fill">2026</span></span></div>
-            <p class="meta" style="margin-top: 6px;"><span class="fill"></span></p>
+            <div class="entry-head"><span class="r">Purple Comet Math Meet</span><span class="d">2026</span></div>
           </div>
         </div>
       </div>
@@ -209,19 +206,28 @@
 </main>
 
 <footer class="foot">
-  <div class="page foot-inner">
-    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
-    Rules drawn by the Thue–Morse word. ∎</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="research.html">Research</a>
-      <a href="lean.html">Formalization</a>
-      <a href="manim.html">Animations</a>
-      <a href="personal.html">Personal</a>
-      <a href="cv.html">CV</a>
-    </nav>
-    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
-    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
+  <div class="page">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-sig">Daniel Liao · San Ramon, California</p>
+        <blockquote class="foot-quote">
+          <p>Mathematics is the art of giving the same name to different things.</p>
+          <footer>Henri Poincar&#233;</footer>
+        </blockquote>
+      </div>
+      <nav class="foot-nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
+      <a href="cv.html"><span class="num">06</span>Curriculum vitae</a>
+      </nav>
+    </div>
+    <div class="foot-rule">
+      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
+    </div>
   </div>
 </footer>
 

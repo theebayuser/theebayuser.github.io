@@ -44,21 +44,15 @@
 
     <section class="section" style="padding-top: 0;" id="what">
       <div class="prose stack">
-        <p class="lede">Write an infinite sequence of letters from a small alphabet, say just
-        <em>a</em>, <em>b</em>, <em>c</em>. Can you do it forever without ever repeating a block
-        back-to-back? On two letters, no: every long enough word contains a doubled block. On three,
-        yes, and Axel Thue built such a word in 1912.</p>
+        <p class="lede">Write an endless sequence of letters from a small alphabet. Can you keep going
+        without ever repeating a block back-to-back? On two letters, no. On three, yes, and Axel Thue
+        built such a word in 1912.</p>
 
-        <p>That gap between two letters and three is the whole subject. Combinatorics on words asks
-        which patterns are <em>unavoidable</em>, meaning forced to appear in any sufficiently long
-        word, and which can be dodged forever by a clever enough construction. The questions are
-        elementary to state and stubborn to answer, which is exactly what I like about them.</p>
-
-        <p>My own work sits on the counting side of this: given a kind of repetition to avoid, how much
-        room does an alphabet actually buy you? The answers tend to be exact formulas that hold past
-        some threshold, with a finite, messy, interesting region below it that has to be settled by
-        exhaustive search. Getting a machine to do that search honestly, and then proving the search
-        was complete, is half the research.</p>
+        <p>I chose this field because I could understand the question in a minute and still not answer
+        it, which is a rare and addictive combination. My own work is on the counting side: given a
+        repetition to avoid, how much room does a bigger alphabet actually buy you? The answers come
+        out as exact formulas past some threshold, with a small stubborn region below it that has to
+        be settled one case at a time.</p>
       </div>
     </section>
 
@@ -193,20 +187,70 @@
           page: <a href="lean.html">&#167; 02, proofs a computer believes</a>.</p>
         </div>
         <div class="prose stack">
-          <h2>Writing</h2>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Manuscript title</span></span><span class="d">in prep</span></div>
-            <p class="meta" style="margin-top: 6px;">Preprint link on submission.</p>
+          <h2>Where the writing is</h2>
+          <p>Two manuscripts are in preparation, listed on the <a href="index.html#publications">front
+          page</a>. Neither is posted yet, which is why nothing here states a theorem in full: I would
+          rather show you the shape of a result than a version of it I have to walk back.</p>
+          <p>Drafts go to anyone who asks. When the preprints post, the cards on the front page are
+          already shaped to hold the real statements.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;" id="marginalia">
+      <div class="section-head" data-reveal>
+        <p class="kicker">Marginalia</p>
+        <h2>What gets drawn when a proof stalls</h2>
+        <p class="prose lede">Both of these are the same joke my own research keeps telling: something
+        simple, iterated, refusing to become simple.</p>
+      </div>
+
+      <div class="figure-row">
+        <div data-reveal>
+          <pre class="code sierpinski" aria-label="Pascal's triangle modulo 2 for sixteen rows, forming a Sierpinski triangle of ones and zeros.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 0 0 0 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 0 0 0 0 <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 0 0 0 0 <b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> 0 0 0 0 <b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b>
+&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
+&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
+<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b></pre>
+          <p class="figcap">fig. 2 · Pascal's triangle mod 2</p>
+        </div>
+        <div class="prose stack" data-reveal>
+          <p class="kicker">Figure 2</p>
+          <h2 style="font-size: var(--fs-h2);">Ones and zeros only</h2>
+          <p>Write out Pascal's triangle, then keep only whether each entry is odd. Sixteen rows in, a
+          Sierpinski triangle has appeared, built from nothing but ones and zeros.</p>
+          <p>There is a clean reason. A binomial coefficient is odd exactly when the bits of
+          <em>k</em> sit inside the bits of <em>n</em>, so the picture was about binary all along,
+          which is the same thing the Thue–Morse word says in every rule on this site.</p>
+        </div>
+      </div>
+
+      <div class="figure-row" style="margin-top: var(--s6);">
+        <div class="prose stack" data-reveal>
+          <p class="kicker">Figure 3</p>
+          <h2 style="font-size: var(--fs-h2);">One rule, run everywhere</h2>
+          <p>Square a number, add where you started, repeat. Keep the starting points that never run
+          away and you get this. One line of arithmetic, and a boundary nobody can write down.</p>
+          <p>I keep it here as a reminder of what my own field looks like from far enough away: a rule
+          short enough to fit on a napkin, and a structure that takes a career to describe.</p>
+        </div>
+        <div data-reveal>
+          <div class="canvas-wrap" style="aspect-ratio: 5 / 4;">
+            <canvas id="figure-mandelbrot" role="img"
+              aria-label="The Mandelbrot set, stippled in ink."></canvas>
           </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r"><span class="fill">Manuscript title</span></span><span class="d">in prep</span></div>
-            <p class="meta" style="margin-top: 6px;">Preprint link on submission.</p>
-          </div>
-          <div class="entry">
-            <div class="entry-head"><span class="r">Research journal</span><span class="d">ongoing</span></div>
-            <p class="meta" style="margin-top: 6px;">A public ledger of attempts that did not work.
-            <span class="fill">link</span></p>
-          </div>
+          <p class="figcap">fig. 3 · the Mandelbrot set, stippled by this page</p>
         </div>
       </div>
     </section>
@@ -215,19 +259,28 @@
 </main>
 
 <footer class="foot">
-  <div class="page foot-inner">
-    <p class="colophon">Set in STIX Two Text and IBM Plex Mono. Hand-written HTML and CSS, no framework.
-    Rules drawn by the Thue–Morse word. ∎</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="lean.html">Formalization</a>
-      <a href="manim.html">Animations</a>
-      <a href="education.html">Education</a>
-      <a href="personal.html">Personal</a>
-      <a href="cv.html">CV</a>
-    </nav>
-    <p class="colophon meta">currently · <span data-now>closing the last open obligations in the P2 formalization</span></p>
-    <p class="colophon keys-hint">keys · 1–5 sections · 6 CV · 0 home</p>
+  <div class="page">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-sig">Daniel Liao · San Ramon, California</p>
+        <blockquote class="foot-quote">
+          <p>Mathematics is the art of giving the same name to different things.</p>
+          <footer>Henri Poincar&#233;</footer>
+        </blockquote>
+      </div>
+      <nav class="foot-nav" aria-label="Sections">
+      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="lean.html"><span class="num">02</span>Formalization</a>
+      <a href="manim.html"><span class="num">03</span>Animations</a>
+      <a href="education.html"><span class="num">04</span>Education</a>
+      <a href="personal.html"><span class="num">05</span>Personal</a>
+      <a href="cv.html"><span class="num">06</span>Curriculum vitae</a>
+      </nav>
+    </div>
+    <div class="foot-rule">
+      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
+    </div>
   </div>
 </footer>
 
