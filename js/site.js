@@ -1884,8 +1884,11 @@
     var fig0 = document.getElementById("figure-pendulum");
     if (fig0) plotter(fig0, { draw: pendulum, seconds: 15, hold: 1.4 });
 
-    var fig1 = document.getElementById("figure-lorenz");
-    if (fig1) plotter(fig1, { draw: lorenz, seconds: 11, hold: 2.4 });
+    /* the same attractor stands on two pages: § 03 and the homepage */
+    Array.prototype.forEach.call(
+      document.querySelectorAll("#figure-lorenz, #figure-lorenz-home"),
+      function (el) { plotter(el, { draw: lorenz, seconds: 11, hold: 2.4 }); }
+    );
 
     var fig2 = document.getElementById("figure-tmgrid");
     if (fig2) plotter(fig2, { draw: tmGrid, seconds: 3.2, hold: 2.6 });

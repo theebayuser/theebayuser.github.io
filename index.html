@@ -137,20 +137,20 @@
     <section class="section" id="films" style="padding-top: 0;">
       <div class="onair" data-reveal>
         <div class="onair-reel">
-          <figure class="plate" style="margin: 0;">
-            <video class="plate-frame" data-film muted loop playsinline preload="metadata"
-              aria-label="A Galton board dropping balls through pegs into bins that build a curve.">
-              <source src="assets/video/GaltonBoard.mp4" type="video/mp4">
-            </video>
-          </figure>
+          <div class="canvas-wrap" style="aspect-ratio: 1;">
+            <canvas id="figure-lorenz-home" role="img"
+              aria-label="The Lorenz attractor, its two lobes traced slowly as a single unbroken ink line."></canvas>
+          </div>
+          <p class="figcap">fig. 2 &#183; the Lorenz system, &#963;&#8202;=&#8202;10, &#961;&#8202;=&#8202;28,
+          &#946;&#8202;=&#8202;8/3, drawn in the x&#8211;z plane</p>
         </div>
         <div class="onair-say prose">
           <p class="kicker">Also in motion</p>
           <h2 style="font-size: var(--fs-h2);">The films go out to fifty thousand people</h2>
           <p>Short animated proofs, built in Manim and posted as
           <span style="font-family: var(--mono); font-size: 15px;">@math.visualizations</span>.
-          Every ball on the left takes an independent coin flip at each peg, and the bins
-          underneath still build the same curve every time.</p>
+          The attractor beside this is the same idea at small scale: three coupled equations
+          integrated one step at a time, drawn live by this page rather than embedded as a film.</p>
           <p class="onair-n"><span data-reach-total data-count="52244">52,244</span>
             <span class="onair-k">followers across three platforms</span></p>
           <p><a href="manim.html">The films and the ledger &#8594; &#167; 03</a></p>
@@ -178,7 +178,7 @@
         <canvas id="figure-walk" role="img"
           aria-label="A long random walk drawn in ink, thickening into texture where the path crosses itself."></canvas>
       </div>
-      <p class="figcap">fig. 2 · a random walk, ninety thousand steps</p>
+      <p class="figcap">fig. 3 · a random walk, ninety thousand steps</p>
     </div>
 
   </div>

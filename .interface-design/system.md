@@ -91,8 +91,10 @@ Each appears on more than one page — that is what makes it a signature rather 
    the drawings are ink and ink does not come in a box, plus a mono `fig. N · caption`
    beneath. Each draws itself like a pen plotter: a faint full guide underneath, the
    ballpoint line tracing over it, a laurel mark at the pen. Lorenz and a double pendulum on
-   animations, the Thue–Morse difference table on formalization, Ulam's spiral on the
-   index, the Mandelbrot on 404.
+   animations, the Thue–Morse difference table on formalization, Ulam's spiral and the Lorenz
+   again on the index, the Mandelbrot on 404. The Lorenz stands on two pages off one plotter:
+   `lorenzPoints()` caches the integration at module level and the registration takes both ids
+   (`#figure-lorenz, #figure-lorenz-home`), so a second instance costs nothing.
 7. **Contents filed among the primes** — on the index the spiral *is* the contents. The
    numerals are absolutely positioned onto six real primes (`.ulam-node`, paper backplate,
    hairline ring, 44px hit area via `::after`) and are **real links**, not decoration. A
@@ -167,10 +169,12 @@ Each appears on more than one page — that is what makes it a signature rather 
     no-JS readers still get the whole solution. The LaTeX source must compile to exactly what
     the preview shows, and the mathematics is checked before shipping.
 22. **Figures are numbered globally** — one `fig. N` sequence runs across the whole site in
-    nav order from the homepage (1–2 index, 3–6 research, 7–10 lean, 11–13 animations, 14–15
-    education, 16–17 projects, 18 the 404), interactive widgets and tailpieces included. Film
+    nav order from the homepage (1–3 index, 4–7 research, 8–11 lean, 12–14 animations, 15–16
+    education, 17–18 projects, 19 the 404), interactive widgets and tailpieces included. Film
     plates keep their own Plate I–III roman series. Renumber the whole run when inserting a
-    figure; the captions still have to be true.
+    figure; the captions still have to be true. Do it highest-number-first
+    (`for n in 18 17 … 2; do perl -pi -e "s/fig\. $n\b/fig. $((n+1))/g" *.html; done`) or the
+    replacements collide.
 23. **All tailpieces draw in one ink** — `--ballpoint`, so the closing figures read as a set.
     The faint ones were darkened (walk α .22, roots α .20); the dense ones keep their original
     density (attractor α .16) and only changed hue (Mandelbrot ink → ballpoint). Judge new
@@ -222,14 +226,24 @@ Each appears on more than one page — that is what makes it a signature rather 
 33. **Structural rhythm beats decoration** — research and formalization had drifted into the
     same shape: three stacked `figure-row`s, cards left, figure right. Two identical spines
     read as one template however good the components are. They were pulled apart by giving
-    each page a different sequence, not different styling: research now runs
-    `figure-row → .pair → .wide-fig → .mid-fig`, formalization runs
-    `grid-2 → stats → .catalog → figure-row`. **When two pages feel the same, compare their
-    spines before touching their surfaces.**
+    each page a different sequence, not different styling: research runs
+    `figure-row → .pair → .wide-fig → figure-row`, formalization runs
+    `grid-2 → stats → .catalog-rail → figure-row.listing`. **When two pages feel the same,
+    compare their spines before touching their surfaces.** The two rows that survived on both
+    pages are still not the same row: research sets a drawing against cards as peers and
+    centres it, formalization hangs a plate in a narrow rail beside a table and sets a code
+    listing that runs the full height of its cards.
 34. **`.pair`** — two things of equal standing, side by side. A column implies sequence; the
     two definitions on research are peers and now read as peers. `.wide-fig` gives a widget
-    the full measure (the morphism reaches 256 letters and a half-column made it a wall);
-    `.mid-fig` centres a closing figure at ~420px instead of pitting it against a card stack.
+    the full measure (the morphism reaches 256 letters and a half-column made it a wall).
+    Two more row shapes, each with a reason a plain `.figure-row` could not give:
+    **`.catalog-rail`** hangs the Thue–Morse difference table in a ~230px rail beside the
+    catalog, top-aligned rather than centred, because the table leads and the figure annotates
+    it; **`.figure-row.listing`** widens the figure column to `1.18fr` because Lean lines have
+    a width the source chose and wrapping or scrolling them misrepresents it. Both must be
+    named alongside `.figure-row` in the ≤900px collapse, or their own template outranks it
+    and mobile and print stay two-column. (There was a `.mid-fig` for centred closing figures;
+    both its users moved into rows and it was deleted rather than left as dead CSS.)
 35. **`.morph`** — the morphism shown as a derivation, not a list of longer strings. Each
     generation is a labelled row (`n = 4 · 16 letters` in a mono gutter), each letter is its
     own glyph so `0` and `1` carry different ink and the self-similar texture reads as
@@ -238,10 +252,15 @@ Each appears on more than one page — that is what makes it a signature rather 
     the same six generations the static HTML ships, so enabling JS never shows *less* than
     disabling it.
 36. **`.catalog`** — a library has a catalog, not a stack of cards: ruled rows, the identifier
-    in mono, the description in the body face, status pinned right in its own colour. It
-    exists to be structurally unlike the theorem cards on research. **No invented numbers**: a
-    per-module "lines" column was cut mid-build because the counts would have been fabricated,
-    and this site's whole argument is that its claims are checkable.
+    in mono, the description in the body face. It exists to be structurally unlike the theorem
+    cards on research. **No invented numbers**: a per-module "lines" column was cut mid-build
+    because the counts would have been fabricated, and this site's whole argument is that its
+    claims are checkable. The **status column came out too**, to give the table's namesake
+    figure a rail beside it. Nothing checkable was lost, but the removal is only safe because
+    the rows already say in words where the research half stops ("four named obligations remain
+    open") and the stats row above still counts the two closed classical results. The page lede
+    had to be rewritten in the same edit: it used to say "every claim marked machine-checked",
+    and after this nothing on the page is marked.
 37. **Films are not cards** (`.plate`) — the plates were the one component with a border and a
     raised background on a site whose depth strategy is hairlines only. The box is gone: the
     reel sits on paper with a 1px inset outline, caption beneath like any figure. **Hover-scrub**
@@ -251,10 +270,15 @@ Each appears on more than one page — that is what makes it a signature rather 
     cursor. Touch keeps tap-to-toggle.
 38. **`.reach` and `.onair`** — 52,244 followers was the last thing on § 03, below the fold.
     The number is now a figure at the top of that page (rules above and below, like the
-    epigraph) and a compact line beside a real film on the homepage. Both read from
-    `data/socials.json` through `initLedger`, so the headline and the itemised ledger at the
-    foot cannot disagree. The ledger stays: the headline is the claim, the ledger is the
-    evidence.
+    epigraph) and a compact line on the homepage. Both read from `data/socials.json` through
+    `initLedger`, so the headline and the itemised ledger at the foot cannot disagree. The
+    ledger stays: the headline is the claim, the ledger is the evidence. The figure beside the
+    homepage line **was** a film, and it was the Galton board, byte for byte the same file
+    § 03 already shows as Plate III. The front page's one motion slot should not be a reprint,
+    so it is now the Lorenz drawn live (`#figure-lorenz-home`, square, column widened from the
+    260px a portrait reel wanted to 340px). Two consequences that are easy to miss: the copy
+    described the balls and pegs and had to be rewritten, and the drawing is a figure, so it
+    took a number and the whole run shifted by one.
 39. **Widgets end somewhere real** — the texview's compile used to terminate in nothing. It now
     ends in a link to the actual handout library at trivalleytutoring.org/resources, shipped in
     the static HTML so no-JS readers get it too. A fake interaction that leads to a real
@@ -319,6 +343,11 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 - `.show-frame` — 3:2, images `object-fit: cover` with a 1px inset
   `rgba(0,0,0,0.1)` outline
 - `.canvas-wrap` — 4:3, 1px `--board-rule`, canvas DPR-scaled in JS
+- `.catalog-rail` — `1fr / minmax(230px, 0.46fr)`, `align-items: start`, gap `--s5`; collapses
+  at 860px
+- `.figure-row.listing` — `1fr / 1.18fr`, the widest a Lean listing needs before it scrolls.
+  Below 1.18 the longest line (`elliott_halberstam.variants.bombieri_vinogradov`) clips; above
+  it the third theorem card's status wraps off its head. Both were measured, not guessed
 - `.record` — education's four-column record, now a 2-up grid (`minmax(300px, 1fr)`)
 
 ## Motion

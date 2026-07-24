@@ -13,12 +13,12 @@ Then open <http://localhost:4173>.
 
 | Path | What it is |
 |---|---|
-| `index.html` | Title block, abstract, the spiral contents, the manuscript deskstack, the films block, contact, an ink-walk tailpiece |
-| `research.html` | Combinatorics on words: intro + ternary word-art, two definitions side by side, the morphism derivation full width, manuscripts, a Mandelbrot tailpiece |
-| `lean.html` | Formalization: the goal stepper, the library measured, the catalog of contents, upstream contributions with the Elliott–Halberstam snippet, a Sierpinski tailpiece |
+| `index.html` | Title block, abstract, the spiral contents, the manuscript deskstack, the animation block (a live Lorenz beside the reach line), contact, an ink-walk tailpiece |
+| `research.html` | Combinatorics on words: intro + ternary word-art, two definitions side by side, the morphism derivation full width, manuscripts with the turtle figure beside them, a Mandelbrot tailpiece |
+| `lean.html` | Formalization: the goal stepper, the library measured, the catalog with its namesake figure in the rail, upstream contributions with the Elliott–Halberstam listing, a Sierpinski tailpiece |
 | `manim.html` | Self-drawing figures (Lorenz, then a double pendulum), the reach headline, the three films (hover to scrub), the channel ledger, a strange-attractor tailpiece |
 | `education.html` | The prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
-| `projects.html` | Tri-Valley Tutoring (Overleaf-style worked problem, blank until compiled) and USAMO Guide (video showcase + 2×3 stats), a cubic-roots tailpiece |
+| `projects.html` | Tri-Valley Tutoring (Overleaf-style worked problem, blank until compiled), USAMO Guide (video showcase + 2×3 stats), a short "also running" list, a cubic-roots tailpiece |
 | `404.html` | A proof-by-contradiction not-found page, with a Clifford-attractor tailpiece |
 | `cv.pdf` | The CV, a static PDF. To update it, replace this file |
 | `css/paper.css` | The entire design system: every colour, size, and rule |
@@ -87,7 +87,8 @@ follows you. The animations page fills each row and a running total from this fi
 
 ### Films
 
-The three films are already in place on `manim.html`. To add another, drop the `.mp4` into
+The three films live on `manim.html` (the homepage used to repeat one of them and now draws
+a Lorenz instead). To add another, drop the `.mp4` into
 `assets/video/` and copy an existing `figure.plate` block:
 
 ```html
@@ -120,10 +121,11 @@ repainted, because a chalk-coloured raster prints as nothing on white.
 
 ### Figures and the social card
 
-Every captioned figure carries a **global `fig. N`** number: one sequence, 1–18, running in
+Every captioned figure carries a **global `fig. N`** number: one sequence, 1–19, running in
 nav order from the homepage through the 404 (interactive widgets and tailpieces included;
 film plates keep their own Plate I–III series). Inserting a figure means renumbering the run,
-so grep `fig\.` across the pages after any change.
+so grep `fig\.` across the pages after any change. Renumber from the highest number down, or
+the replacements collide.
 
 `assets/og.png` (the link-preview card, 1200×630) is **drawn**, not photographed: the same
 `mulberry32` ink-walk the tailpieces use, over paper stock, with the STIX title. Regenerate

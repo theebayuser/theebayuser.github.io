@@ -33,9 +33,9 @@ Read in this order before changing anything:
 
 | Path | What it is |
 |---|---|
-| `index.html` | Title block, abstract, the Ulam-spiral contents, the manuscript deskstack, the films block, contact |
-| `research.html` | § 01. Ternary word art, two definitions, the morphism widget, two manuscripts, the turtle figure |
-| `lean.html` | § 02. The goal stepper, the library measured, the catalog, upstream contributions |
+| `index.html` | Title block, abstract, the Ulam-spiral contents, the manuscript deskstack, the animation block (a live Lorenz beside the reach line), contact |
+| `research.html` | § 01. Ternary word art, two definitions, the morphism widget, two manuscripts with the turtle figure beside them |
+| `lean.html` | § 02. The goal stepper, the library measured, the catalog with its figure in the rail, upstream contributions |
 | `manim.html` | § 03. Two live figures, the reach headline, three film plates, the follower ledger |
 | `education.html` | § 04. The prerequisite graph as navigation, the record grid |
 | `projects.html` | § 05. Tri-Valley Tutoring with the LaTeX viewer, USAMO Guide with the showcase reel |
@@ -68,8 +68,9 @@ These are the ones that keep the site coherent. Breaking any of them is visible 
 - **Decorative drawings are not figures.** If a proposed illustration has no checkable content,
   it does not belong. Every drawing here is a real object: a spiral of primes, an integrated
   attractor, a square-free word, the roots of every integer cubic.
-- **Figures are numbered globally.** One `fig. N` run, currently 1–18, in nav order from the
-  homepage through the 404. Insert one and you renumber the rest: `grep -o 'fig\. [0-9]*' *.html`.
+- **Figures are numbered globally.** One `fig. N` run, currently 1–19, in nav order from the
+  homepage through the 404. Insert one and you renumber the rest, highest number first or the
+  replacements collide: `grep -o 'fig\. [0-9]*' *.html`.
   Film plates keep their own Plate I–III series.
 - **Every widget is progressive enhancement over complete HTML.** The static markup must be
   usable and honest on its own; JS may only improve it. See §5.
@@ -109,6 +110,12 @@ and the night board leaves black ink on a black board.
    positioned from the DOM (the spiral numerals, the graph chips) lands against nothing and
    stays there. Two defences, both required: any layout function bails when its canvas measures
    under 40px, and `visibilitychange` calls `repaintAll()` the first time the page is looked at.
+
+**A row that overrides `grid-template-columns` must be named in the collapse.** `.figure-row`
+drops to one column under 900px, which is also what print gets. `.figure-row.listing` and
+`.catalog-rail` set their own templates at higher specificity, so unless they are listed in
+that media query too they stay two columns on a phone and on paper. This fails quietly: the
+page does not overflow, it just goes cramped where nobody is looking.
 
 **Do not depend on `requestAnimationFrame` for direct manipulation.** rAF is throttled in
 background tabs. The film hover-scrub is throttled on the clock (40ms) for exactly this reason;

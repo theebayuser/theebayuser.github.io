@@ -617,6 +617,10 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: var(--s5); align-items: center;
 }
+/* One row whose figure is a code listing rather than a drawing. Lean lines have
+   a width the source chose; wrapping or scrolling them misrepresents it, so the
+   figure column takes the extra room and the prose beside it gives it up. */
+.figure-row.listing { grid-template-columns: minmax(0, 1fr) minmax(0, 1.18fr); }
 /* Two things that are peers, set as peers. A column would imply an order that
    two definitions of equal standing do not have. */
 .pair {
@@ -626,13 +630,6 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 /* A figure or widget that has earned the whole measure rather than a column:
    the morphism runs to 256 letters, and half a page makes it a wall. */
 .wide-fig { margin-top: var(--s5); }
-/* A figure that closes a section: centred, held to a readable size, not
-   fighting a column of cards for attention. */
-.mid-fig {
-  margin: var(--s5) auto 0; max-width: 420px;
-  display: flex; flex-direction: column; align-items: center;
-}
-.mid-fig .figcap { text-align: center; }
 /* Figures sit directly on the paper: no frame, no fill. The drawings are
    ink, and ink does not come in a box. */
 .canvas-wrap { position: relative; width: 100%; aspect-ratio: 4 / 3; }
@@ -1078,10 +1075,13 @@ a.btn .fill { color: var(--ink-3); }
 
 /* --------------------------------------------------------------- onair --- */
 
-/* The animation work, on the front page. A portrait reel next to what it is,
-   so a visitor sees the films before section three rather than after. */
+/* The animation work, on the front page. The figure beside it used to be a copy
+   of the Galton-board film that § 03 already shows as Plate III; it is now the
+   Lorenz drawn live, so the homepage spends its one motion slot on something
+   the rest of the site does not repeat. Square figure, so the column is wider
+   than the 260px a portrait reel wanted. */
 .onair {
-  display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
   gap: var(--s5); align-items: center;
 }
 .onair-n {
@@ -1096,7 +1096,7 @@ a.btn .fill { color: var(--ink-3); }
 }
 @media (max-width: 700px) {
   .onair { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
-  .onair-reel { max-width: 240px; }
+  .onair-reel { max-width: 340px; }
 }
 
 /* --------------------------------------------------------------- reach --- */
@@ -1121,17 +1121,29 @@ a.btn .fill { color: var(--ink-3); }
 /* ------------------------------------------------------------- catalog --- */
 
 /* A library has a catalog, not a stack of cards. Ruled rows, the name in mono
-   because it is an identifier, the description in the body face, the status
-   pinned right in its own colour. Denser than theorem cards and, deliberately,
-   structurally unlike anything on the research page. */
+   because it is an identifier, the description in the body face. Denser than
+   theorem cards and, deliberately, structurally unlike anything on the research
+   page. Two columns, not three: the per-row status column came out to give the
+   table's namesake figure a rail beside it, and the rows still say in words
+   where the research half stops. */
 .catalog { border-top: 1px solid var(--rule); }
 .cat-head, .cat-row, .cat-foot {
   display: grid;
-  grid-template-columns: minmax(150px, 0.9fr) minmax(0, 2.2fr) minmax(120px, 0.8fr);
+  grid-template-columns: minmax(140px, 0.8fr) minmax(0, 2fr);
   gap: var(--s2) var(--s3);
   padding: var(--s3) 0;
   border-bottom: 1px solid var(--rule-soft);
   align-items: baseline;
+}
+/* The catalog with its namesake plate in the margin. Not a .figure-row: that
+   sets two peers side by side, and here the table leads and the figure
+   annotates it, so the rail is narrow and top-aligned rather than centred. */
+.catalog-rail {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(230px, 0.46fr);
+  gap: var(--s5); align-items: start;
+}
+@media (max-width: 860px) {
+  .catalog-rail { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
 }
 .cat-head {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.12em;
@@ -1144,12 +1156,6 @@ a.btn .fill { color: var(--ink-3); }
 }
 .cat-what i { font-style: normal; color: var(--ink-3); display: block; }
 .cat-body { font-size: 15.5px; color: var(--ink-2); line-height: 1.55; }
-.cat-status {
-  font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3);
-  white-space: nowrap;
-}
-.cat-status.done { color: var(--qed); }
-.cat-status.wip  { color: var(--ink-3); }
 .cat-foot { border-bottom: 1px solid var(--rule); }
 .cat-foot .cat-what { color: var(--ink); }
 
@@ -1247,7 +1253,11 @@ a.btn .fill { color: var(--ink-3); }
   /* A one-column track still takes its width from the widest child, and a
      pre-formatted code block is as wide as its longest line. Without this the
      Lean snippet drags the whole page sideways on a phone. */
-  .figure-row { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+  /* .listing carries its own template, so it has to be named here or its two
+     columns survive the collapse and print and mobile both stay cramped */
+  .figure-row, .figure-row.listing {
+    grid-template-columns: minmax(0, 1fr); gap: var(--s4);
+  }
   .figure-row > * { min-width: 0; }
   .topbar-inner { flex-wrap: wrap; gap: var(--s1); padding-top: 6px; padding-bottom: 6px; }
   .nav { margin-left: 0; width: 100%; }

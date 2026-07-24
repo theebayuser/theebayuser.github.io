@@ -54,8 +54,9 @@
           <p class="lede">Lean 4 is a proof assistant that uses mathematical logic to guarantee "absolute correctness in mathematical proof", which naturally lends itself to projects such as this.</p>
           <p>I am building a Lean 4 library for combinatorics on words (words, morphisms, powers,
           overlaps, avoidance) and using it to machine-check both the classical theorems of the field
-          and my own research. Every definition below type-checks against Mathlib, and every claim marked
-          machine-checked has <em class="uline">no gaps left open</em> behind it.</p>
+          and my own research. Every definition below type-checks against Mathlib, and both of Thue's
+          1912 theorems are closed end to end, with <em class="uline">no gaps left open</em> behind them.
+          The research half is not, and the catalog says where it stops.</p>
         </div>
 
         <div>
@@ -66,7 +67,7 @@ hw : w = thueMorse</span>
 <span class="goal-target"><span class="turn">⊢</span> OverlapFree w</span></div>
             <div class="goal-ok"><span>No goals. ∎</span></div>
           </div>
-          <p class="figcap">fig. 7 · Thue's 1912 overlap-freeness theorem, simplified for reading</p>
+          <p class="figcap">fig. 8 · Thue's 1912 overlap-freeness theorem, simplified for reading</p>
         </div>
       </div>
     </section>
@@ -93,55 +94,52 @@ hw : w = thueMorse</span>
         <h2>Contents of the library</h2>
       </div>
 
-      <div class="catalog" data-reveal-group>
-        <div class="cat-head">
-          <span>What</span><span>Contents</span><span>Status</span>
+      <div class="catalog-rail">
+        <div class="catalog" data-reveal-group>
+          <div class="cat-head">
+            <span>What</span><span>Contents</span>
+          </div>
+
+          <div class="cat-row">
+            <span class="cat-what">Module <i>Word</i></span>
+            <span class="cat-body">Finite and infinite words, concatenation, factors, morphisms and
+            their iteration, powers, squares, overlaps, and the avoidance predicates, plus the API
+            lemmas that make any of it usable in a real proof.</span>
+          </div>
+
+          <div class="cat-row">
+            <span class="cat-what">Thue 1912 <i>binary</i></span>
+            <span class="cat-body">The Thue&#8211;Morse word is overlap-free. Formalized from the
+            fixed-point definition through to the full theorem, with no assumptions left open.</span>
+          </div>
+
+          <div class="cat-row">
+            <span class="cat-what">Thue 1912 <i>ternary</i></span>
+            <span class="cat-body">There exists an infinite square-free word over three letters. The
+            construction and the proof that it works, both checked.</span>
+          </div>
+
+          <div class="cat-row">
+            <span class="cat-what">Manuscript I <i>in progress</i></span>
+            <span class="cat-body">The classification wired end to end: the structural argument, the
+            upper bound, and the finite base cases compile together. Four named obligations remain
+            open and are stated as such in the source, not papered over.</span>
+          </div>
+
+          <div class="cat-foot">
+            <span class="cat-what">In total</span>
+            <span class="cat-body">7,665 lines of Lean, 394 theorems and lemmas, counted from the
+            working repository in July 2026.</span>
+          </div>
         </div>
 
-        <div class="cat-row">
-          <span class="cat-what">Module <i>Word</i></span>
-          <span class="cat-body">Finite and infinite words, concatenation, factors, morphisms and
-          their iteration, powers, squares, overlaps, and the avoidance predicates, plus the API
-          lemmas that make any of it usable in a real proof.</span>
-          <span class="cat-status done">&#10003; no gaps</span>
+        <div data-reveal>
+          <div class="canvas-wrap" style="aspect-ratio: 1;">
+            <canvas id="figure-tmgrid" role="img"
+              aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
+          </div>
+          <p class="figcap">fig. 9 &#183; the library's namesake: cell (i, j) inked when t(i) &#8800; t(j)</p>
         </div>
-
-        <div class="cat-row">
-          <span class="cat-what">Thue 1912 <i>binary</i></span>
-          <span class="cat-body">The Thue&#8211;Morse word is overlap-free. Formalized from the
-          fixed-point definition through to the full theorem, with no assumptions left open.</span>
-          <span class="cat-status done">&#10003; machine-checked</span>
-        </div>
-
-        <div class="cat-row">
-          <span class="cat-what">Thue 1912 <i>ternary</i></span>
-          <span class="cat-body">There exists an infinite square-free word over three letters. The
-          construction and the proof that it works, both checked.</span>
-          <span class="cat-status done">&#10003; machine-checked</span>
-        </div>
-
-        <div class="cat-row">
-          <span class="cat-what">Manuscript I <i>in progress</i></span>
-          <span class="cat-body">The classification wired end to end: the structural argument, the
-          upper bound, and the finite base cases compile together. Four named obligations remain
-          open and are stated as such in the source, not papered over.</span>
-          <span class="cat-status wip">&#8943; ~72% verified</span>
-        </div>
-
-        <div class="cat-foot">
-          <span class="cat-what">In total</span>
-          <span class="cat-body">7,665 lines of Lean, 394 theorems and lemmas, counted from the
-          working repository in July 2026.</span>
-          <span class="cat-status">2 classical results closed</span>
-        </div>
-      </div>
-
-      <div class="mid-fig" data-reveal>
-        <div class="canvas-wrap" style="aspect-ratio: 1;">
-          <canvas id="figure-tmgrid" role="img"
-            aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
-        </div>
-        <p class="figcap">fig. 8 &#183; the library's namesake: cell (i, j) inked when t(i) &#8800; t(j)</p>
       </div>
 
     </section>
@@ -153,7 +151,7 @@ hw : w = thueMorse</span>
         <p class="prose lede">Math is inherently collaborative, so I am a contributor to several cool open-source projects.</p>
       </div>
 
-      <div class="figure-row" style="align-items: start;">
+      <div class="figure-row listing" style="align-items: start;">
       <div data-reveal-group>
         <div class="env">
           <div class="env-head">
@@ -184,7 +182,7 @@ hw : w = thueMorse</span>
         <div class="env" style="border-bottom: 1px solid var(--rule);">
           <div class="env-head">
             <span class="env-kind">Formal-Conjectures</span>
-            <span class="env-name">(Google Deepmind).</span>
+            <span class="env-name">(DeepMind).</span>
             <span class="env-status done">✓ 2 merged</span>
           </div>
           <p class="env-body">Formal Lean statements of open problems for
@@ -197,15 +195,31 @@ hw : w = thueMorse</span>
       </div>
 
         <div class="stack" data-reveal style="position: sticky; top: var(--s5);">
-          <div class="code"><span class="cm">-- Elliott–Halberstam, as a machine can read it</span>
+          <div class="code"><span class="cm">-- the error term the conjecture is about</span>
+<span class="kw">noncomputable def</span> E (x q : ℕ) : ℝ :=
+  ⨆ a : (ZMod q)ˣ, |(primesInAPCount x q a : ℝ)
+    - (x.primeCounting : ℝ) / (q.totient : ℝ)|
+
 <span class="kw">@[category</span> research open, <span class="kw">AMS</span> 11]
 <span class="kw">theorem</span> elliott_halberstam (θ : ℝ) (hθ : θ &lt; 1)
     (A : ℝ) (hA : 0 &lt; A) :
     ∃ C &gt; (0 : ℝ), ∀ x : ℕ, 2 &lt; x →
       ∑ q ∈ Finset.Icc 1 ⌊(x : ℝ) ^ θ⌋₊, E x q
         ≤ C * x / Real.log x ^ A := <span class="kw">by</span>
+  <span class="cm">sorry</span>
+
+<span class="cm">-- the same bound, proved, below θ = 1/2</span>
+<span class="kw">@[category</span> research solved, <span class="kw">AMS</span> 11]
+<span class="kw">theorem</span>
+  elliott_halberstam.variants.bombieri_vinogradov
+    (θ : ℝ) (hθ : θ &lt; 1 / 2)
+    (A : ℝ) (hA : 0 &lt; A) :
+    ∃ C &gt; (0 : ℝ), ∀ x : ℕ, 2 &lt; x →
+      ∑ q ∈ Finset.Icc 1 ⌊(x : ℝ) ^ θ⌋₊, E x q
+        ≤ C * x / Real.log x ^ A := <span class="kw">by</span>
   <span class="cm">sorry</span></div>
-          <p class="figcap">fig. 9 · merged into google-deepmind/formal-conjectures</p>
+          <p class="figcap">fig. 10 · the same statement twice, open at θ &lt; 1 and proved at
+          θ &lt; 1/2. From google-deepmind/formal-conjectures.</p>
         </div>
       </div>
     </section>
@@ -230,7 +244,7 @@ hw : w = thueMorse</span>
 &nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
 &nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
 <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b></pre>
-      <p class="figcap">fig. 10 · Pascal's triangle mod 2, sixteen rows</p>
+      <p class="figcap">fig. 11 · Pascal's triangle mod 2, sixteen rows</p>
     </div>
     <nav class="pager" aria-label="Sections, in order">
       <a class="to-prev" href="research.html" rel="prev">
