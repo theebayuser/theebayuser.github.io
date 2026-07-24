@@ -124,14 +124,17 @@ Each appears on more than one page — that is what makes it a signature rather 
     a landscape one shows its centre strip. The uncovered edge falls back to film-black.
 13. **Link marks** — contact buttons carry a 15px inline SVG in `currentColor`, inheriting
     `--ink-3` and turning ballpoint on hover. Real brand marks; never emoji.
-14. **The tailpiece** (`.tailpiece`) — a chapter-end ornament: one figure set small
-    (~200px), centred, muted, at the very foot of a page, with no caption and no prose. A
-    typeset book closes a section with a cul-de-lampe. Meaning by placement, not words:
-    this is where a figure earns its place without exposition. **Every content page has one,
-    and each is an exact construction, never a stock decoration:** golden spiral (index),
-    Mandelbrot (research), Sierpinski (formalization), Recamán (animations), spirograph /
-    hypotrochoid (education), Lissajous (projects). All drawn through `palette()` so they
-    follow the night board; all bail when `clientWidth < 40` (background-tab guard).
+14. **The tailpiece** (`.tailpiece`) — a chapter-end ornament: one figure set ~320px,
+    centred, muted (opacity .85), at the very foot of a page, no caption and no prose. A
+    typeset book closes a section with a cul-de-lampe; meaning by placement, not words.
+    **The taste, learned the hard way: closing art must be DENSE and EMERGENT** (a walk
+    that thickens into cloud, a strange attractor stippled into smoke, a clustered
+    network, a text triangle) **never a thin single closed curve** — the round of golden
+    spiral / Recamán / spirograph / Lissajous was rejected outright for reading as
+    clip-art. The set now: ink-walk (index), strange attractor (animations), ink-network
+    (projects), Mandelbrot (research), Sierpinski mod 2 (formalization), Pascal mod 3
+    (education). Canvas pieces draw through `palette()` (night-board safe), off a seeded
+    `mulberry32` (identical every repaint), and bail when `clientWidth < 40`.
 15. **The goal stepper** — the Lean panel walks a real proof one tactic per click
     (`GOAL_STEPS` in site.js): each press rewrites `.goal-body` to the next state and puts
     the next tactic on the bar, ending on `No goals. ∎`; reset returns to step 0. The

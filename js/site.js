@@ -868,111 +868,122 @@
   }
 
   /* --- tailpieces: one closing ornament per page -------------------------
-     Each is an exact construction drawn once through palette(), so they follow
-     the night board. They bail while the canvas is unlaid-out (background tab). */
+     Dense, emergent things rather than thin closed curves: a random walk that
+     thickens where it revisits, a strange attractor stippled into smoke, a
+     clustered network. Each draws through palette() (so the night board flips
+     them) and off a seeded PRNG (so every repaint is the identical picture).
+     All bail while the canvas is unlaid-out, e.g. a backgrounded tab. */
 
-  function goldenSpiral(canvas) {
-    if (canvas.clientWidth < 40) return;
-    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
-    var fib = [1, 1, 2, 3, 5, 8, 13];
-    /* Tile Fibonacci squares by attaching each new one to a rotating side of the
-       growing rectangle (right, up, left, down, ...), then sweep a quarter-circle
-       through each so the arcs join into one continuous curve. */
-    var span = 21;                                  /* 13 + 8 = final width */
-    var unit = Math.min((w - 20) / span, (h - 20) / 13);
-    var order = ["right", "up", "left", "down"];
-    var bx = 0, by = 0, bw = unit, bh = unit;        /* bounding rect, world coords */
-    var sq = [[0, 0, unit, "seed"]];
-    for (var k = 1; k < fib.length; k++) {
-      var sz = fib[k] * unit, o = order[(k - 1) % 4];
-      if (o === "right") { sq.push([bx + bw, by, sz, o]); bw += sz; }
-      else if (o === "up") { sq.push([bx, by - sz, sz, o]); by -= sz; bh += sz; }
-      else if (o === "left") { sq.push([bx - sz, by, sz, o]); bx -= sz; bw += sz; }
-      else { sq.push([bx, by + bh, sz, o]); bh += sz; }
-    }
-    var ox = (w - bw) / 2 - bx, oy = (h - bh) / 2 - by;
-    ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = pal.guide; ctx.lineWidth = 1;
-    sq.forEach(function (s) { ctx.strokeRect(ox + s[0], oy + s[1], s[2], s[2]); });
-    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1.6; ctx.lineJoin = "round";
-    ctx.beginPath();
-    sq.forEach(function (s) {
-      var X = ox + s[0], Y = oy + s[1], S = s[2], o = s[3], cx, cy, a0, a1;
-      /* arc centred on the inner corner, sweeping the quarter that continues the spiral */
-      if (o === "seed" || o === "right") { cx = X; cy = Y + S; a0 = -Math.PI / 2; a1 = 0; }
-      else if (o === "up") { cx = X; cy = Y; a0 = 0; a1 = Math.PI / 2; }
-      else if (o === "left") { cx = X + S; cy = Y; a0 = Math.PI / 2; a1 = Math.PI; }
-      else { cx = X + S; cy = Y + S; a0 = Math.PI; a1 = 1.5 * Math.PI; }
-      ctx.arc(cx, cy, S, a0, a1);
-    });
-    ctx.stroke();
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   }
 
-  function recaman(canvas) {
+  /* index: one pen, left to run, thickening the paper where it crosses itself.
+     A tight heading wander keeps it compact so the ink builds real density
+     rather than a thin scribble sprawling across the frame. */
+  function inkWalk(canvas) {
     if (canvas.clientWidth < 40) return;
     var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
-    var N = 46, seen = {}, a = 0, seq = [0], mx = 0;
-    seen[0] = true;
-    for (var i = 1; i < N; i++) {
-      var back = a - i;
-      a = (back > 0 && !seen[back]) ? back : a + i;
-      seen[a] = true; seq.push(a); if (a > mx) mx = a;
+    var rnd = mulberry32(20260724), N = 90000, step = 1.5;
+    var x = 0, y = 0, a = 0, cx = 0, cy = 0;
+    var xs = new Float32Array(N), ys = new Float32Array(N);
+    var minx = 0, maxx = 0, miny = 0, maxy = 0;
+    for (var i = 0; i < N; i++) {
+      a += (rnd() - 0.5) * 2.6;                 /* turns hard, so it folds back on itself */
+      x += Math.cos(a) * step; y += Math.sin(a) * step;
+      cx += (x - cx) * 0.0006; cy += (y - cy) * 0.0006;   /* gentle pull toward the mean */
+      x -= cx * 0.0006; y -= cy * 0.0006;
+      xs[i] = x; ys[i] = y;
+      if (x < minx) minx = x; if (x > maxx) maxx = x;
+      if (y < miny) miny = y; if (y > maxy) maxy = y;
     }
-    var pad = 12, unit = (w - pad * 2) / mx, baseY = h * 0.62;
+    var pad = 14;
+    var s = Math.min((w - pad * 2) / (maxx - minx), (h - pad * 2) / (maxy - miny));
+    var ox = (w - (maxx - minx) * s) / 2 - minx * s;
+    var oy = (h - (maxy - miny) * s) / 2 - miny * s;
     ctx.clearRect(0, 0, w, h);
-    ctx.lineWidth = 1.4; ctx.lineJoin = "round";
-    for (var j = 1; j < seq.length; j++) {
-      var x0 = pad + seq[j - 1] * unit, x1 = pad + seq[j] * unit;
-      var cx = (x0 + x1) / 2, r = Math.abs(x1 - x0) / 2;
-      var up = (j % 2 === 1);
-      ctx.strokeStyle = pal.ballpoint;
-      ctx.globalAlpha = 0.85;
-      ctx.beginPath();
-      ctx.arc(cx, baseY, r, Math.PI, 0, !up);
-      ctx.stroke();
-    }
+    ctx.strokeStyle = pal.ballpoint;
+    ctx.globalAlpha = 0.14; ctx.lineWidth = 1; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(ox + xs[0] * s, oy + ys[0] * s);
+    for (var j = 1; j < N; j++) ctx.lineTo(ox + xs[j] * s, oy + ys[j] * s);
+    ctx.stroke();
     ctx.globalAlpha = 1;
   }
 
-  function spirograph(canvas) {
+  /* animations: a Clifford strange attractor, 40k points stippled into density */
+  function attractor(canvas) {
     if (canvas.clientWidth < 40) return;
     var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
-    var R = 5, r = 3, d = 5;                 /* hypotrochoid; closes after 3 turns */
-    var scale = Math.min(w, h) / (2 * (R - r + d)) * 0.92;
-    var cx = w / 2, cy = h / 2;
-    ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1.3; ctx.lineJoin = "round";
-    ctx.beginPath();
-    var turns = r / gcd(R, r);               /* = 3 here */
-    var steps = 900;
-    for (var i = 0; i <= steps; i++) {
-      var t = (i / steps) * turns * 2 * Math.PI;
-      var k = R - r;
-      var x = cx + scale * (k * Math.cos(t) + d * Math.cos(k / r * t));
-      var y = cy + scale * (k * Math.sin(t) - d * Math.sin(k / r * t));
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    var A = 1.5, B = -1.8, C = 1.6, D = 0.9, N = 42000;
+    var x = 0.1, y = 0.1, i;
+    var minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
+    var xs = new Float32Array(N), ys = new Float32Array(N);
+    for (i = 0; i < N; i++) {
+      var nx = Math.sin(A * y) + C * Math.cos(A * x);
+      var ny = Math.sin(B * x) + D * Math.cos(B * y);
+      x = nx; y = ny; xs[i] = x; ys[i] = y;
+      if (i > 100) {
+        if (x < minx) minx = x; if (x > maxx) maxx = x;
+        if (y < miny) miny = y; if (y > maxy) maxy = y;
+      }
     }
-    ctx.stroke();
+    var pad = 12;
+    var s = Math.min((w - pad * 2) / (maxx - minx), (h - pad * 2) / (maxy - miny));
+    var ox = (w - (maxx - minx) * s) / 2 - minx * s;
+    var oy = (h - (maxy - miny) * s) / 2 - miny * s;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = pal.ballpoint; ctx.globalAlpha = 0.16;
+    for (i = 100; i < N; i++) ctx.fillRect(ox + xs[i] * s, oy + ys[i] * s, 1, 1);
+    ctx.globalAlpha = 1;
   }
 
-  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
-
-  function lissajous(canvas) {
+  /* projects: a clustered network in ink, the way an organization actually looks */
+  function inkNetwork(canvas) {
     if (canvas.clientWidth < 40) return;
     var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
-    var A = 3, B = 4, delta = Math.PI / 2;    /* closed 3:4 curve */
-    var ax = Math.min(w, h) * 0.42, ay = ax, cx = w / 2, cy = h / 2;
-    ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1.3; ctx.lineJoin = "round";
-    ctx.beginPath();
-    var steps = 700;
-    for (var i = 0; i <= steps; i++) {
-      var t = (i / steps) * 2 * Math.PI;
-      var x = cx + ax * Math.sin(A * t + delta);
-      var y = cy + ay * Math.sin(B * t);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    var rnd = mulberry32(510), pad = 22;
+    var hubs = [[0.24, 0.34], [0.72, 0.26], [0.6, 0.74], [0.32, 0.72]];
+    var nodes = [], ni;
+    hubs.forEach(function (hb, hc) {
+      var cx = pad + hb[0] * (w - pad * 2), cy = pad + hb[1] * (h - pad * 2);
+      var count = 7 + Math.floor(rnd() * 6);
+      for (var k = 0; k < count; k++) {
+        var ang = rnd() * Math.PI * 2, rad = Math.pow(rnd(), 0.6) * Math.min(w, h) * 0.14;
+        nodes.push({ x: cx + Math.cos(ang) * rad, y: cy + Math.sin(ang) * rad, c: hc, deg: 0 });
+      }
+    });
+    var edges = [];
+    function link(i, j) { edges.push([i, j]); nodes[i].deg++; nodes[j].deg++; }
+    for (ni = 0; ni < nodes.length; ni++) {
+      for (var nj = ni + 1; nj < nodes.length; nj++) {
+        var d = Math.hypot(nodes[ni].x - nodes[nj].x, nodes[ni].y - nodes[nj].y);
+        var same = nodes[ni].c === nodes[nj].c;
+        if (same && d < Math.min(w, h) * 0.18 && rnd() < 0.55) link(ni, nj);
+        else if (!same && rnd() < 0.012) link(ni, nj);   /* a few bridges */
+      }
     }
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = pal.ink3; ctx.globalAlpha = 0.4; ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    edges.forEach(function (e) {
+      ctx.moveTo(nodes[e[0]].x, nodes[e[0]].y);
+      ctx.lineTo(nodes[e[1]].x, nodes[e[1]].y);
+    });
     ctx.stroke();
+    ctx.globalAlpha = 1;
+    nodes.forEach(function (nd) {
+      var r = 1.6 + Math.min(nd.deg, 6) * 0.7;
+      ctx.fillStyle = pal.paper;
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, r + 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = pal.ballpoint;
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, r, 0, Math.PI * 2); ctx.fill();
+    });
   }
 
   /* --- the goal panel, made runnable -------------------------------------- */
@@ -984,14 +995,13 @@
   var GOAL_STEPS = [
     { hyp: ["w : Word Bool", "hw : w = thueMorse"],
       goal: "⊢ OverlapFree w",
-      tactic: "rw [hw, overlapFree_iff]" },
+      tactic: "rw [hw]" },
     { hyp: ["w : Word Bool", "hw : w = thueMorse"],
-      goal: "⊢ ∀ u n, 0 < u.length → ¬ (u ^ n ++ u.take 1) <:+: thueMorse",
-      tactic: "intro u n hu hcon" },
-    { hyp: ["w : Word Bool", "hw : w = thueMorse", "u : Word Bool", "n : ℕ",
-            "hu : 0 < u.length", "hcon : (u ^ n ++ u.take 1) <:+: thueMorse"],
+      goal: "⊢ OverlapFree thueMorse",
+      tactic: "intro u hu hov" },
+    { hyp: ["u : Word Bool", "hu : 0 < u.length", "hov : Overlaps u thueMorse"],
       goal: "⊢ False",
-      tactic: "exact tm_overlap_free u n hu hcon" }
+      tactic: "exact parity_clash hu hov" }
   ];
 
   function initGoal(panel) {
@@ -1285,8 +1295,8 @@
     var turtle = document.getElementById("figure-turtle");
     if (turtle) plotter(turtle, { draw: tmTurtle, seconds: 6, hold: 2.4 });
 
-    [["figure-golden", goldenSpiral], ["figure-recaman", recaman],
-     ["figure-spirograph", spirograph], ["figure-lissajous", lissajous]
+    [["figure-walk", inkWalk], ["figure-attractor", attractor],
+     ["figure-network", inkNetwork]
     ].forEach(function (pair) {
       var el = document.getElementById(pair[0]);
       if (el) onRepaint(function () { pair[1](el); });

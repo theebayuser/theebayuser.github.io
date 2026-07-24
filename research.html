@@ -56,51 +56,6 @@
       </div>
     </section>
 
-    <section class="section" style="padding-top: 0;" id="figure">
-      <div class="figure-row">
-        <div data-reveal data-morphism>
-          <div class="code" data-morphism-out aria-live="polite"
-            aria-label="Generations of the rewriting rule 0 to 01 and 1 to 10.">0
-01
-0110
-01101001
-0110100110010110
-01101001100101101001011001101001</div>
-          <p class="figcap">fig. 1 · the morphism 0 → 01, 1 → 10</p>
-        </div>
-        <div class="prose stack" data-reveal>
-          <p class="kicker">Figure 1</p>
-          <h2 style="font-size: var(--fs-h2);">One rule, run forever</h2>
-          <p>Start with a single 0. Replace every 0 by 01 and every 1 by 10, then do it again. Each
-          line is the whole previous line rewritten, so each is twice as long as the one before, and
-          each begins with the one before it. Press the button and watch it grow.</p>
-          <p>Keep going and the lines converge on one infinite word. It is the Thue–Morse word, and it
-          is the same word drawn as tick marks in every rule on this site.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" style="padding-top: 0;" id="turtle">
-      <div class="figure-row">
-        <div class="prose stack" data-reveal>
-          <p class="kicker">Figure 2</p>
-          <h2 style="font-size: var(--fs-h2);">The same word, handed to a pen</h2>
-          <p>Read the Thue–Morse word one letter at a time and let it steer: on a 1 take a step, on a
-          0 turn sixty degrees. This is what four thousand letters draw.</p>
-          <p>I like it because it resists a tidy ending. The path never closes and slowly wanders off
-          the way it came, so there is no neat fractal to claim, just the word insisting on its own
-          shape. The honest figures are often the ones that refuse to behave.</p>
-        </div>
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 1;">
-            <canvas id="figure-turtle" role="img"
-              aria-label="A path drawn by reading the Thue-Morse word as turtle steps: forward on a one, turn sixty degrees on a zero."></canvas>
-          </div>
-          <p class="figcap">fig. 2 · the word as turtle steps, 1 forward · 0 turn 60°</p>
-        </div>
-      </div>
-    </section>
-
     <div class="tm" data-n="24"></div>
 
     <section class="section" style="padding-top: 0;" id="definitions">
@@ -111,29 +66,42 @@
         intimidating than they sound.</p>
       </div>
 
-      <div data-reveal-group>
-        <div class="env">
-          <div class="env-head">
-            <span class="env-kind">Definition&nbsp;1</span>
-            <span class="env-name">(square).</span>
+      <div class="figure-row">
+        <div data-reveal-group>
+          <div class="env">
+            <div class="env-head">
+              <span class="env-kind">Definition&nbsp;1</span>
+              <span class="env-name">(square).</span>
+            </div>
+            <p class="env-body">A block repeated immediately after itself. Any word of the form</p>
+            <p class="eq">x x</p>
+            <p class="env-body">where <em>x</em> is any non-empty block. The word <em>banana</em>
+            contains two of them, <em>anan</em> and <em>nana</em>. A word with none anywhere inside it
+            is called square-free, and on three letters you can keep that up forever.</p>
           </div>
-          <p class="env-body">A block repeated immediately after itself. Any word of the form</p>
-          <p class="eq">x x</p>
-          <p class="env-body">where <em>x</em> is any non-empty block. The word <em>banana</em>
-          contains two of them, <em>anan</em> and <em>nana</em>. A word with none anywhere inside it
-          is called square-free, and on three letters you can keep that up forever.</p>
+
+          <div class="env" style="border-bottom: 1px solid var(--rule);">
+            <div class="env-head">
+              <span class="env-kind">Definition&nbsp;2</span>
+              <span class="env-name">(overlap).</span>
+            </div>
+            <p class="env-body">Slightly more than a square: a block repeated twice, plus its first
+            letter once more. Any word of the form</p>
+            <p class="eq">a x a x a</p>
+            <p class="env-body">where <em>a</em> is a single letter. On two letters squares are
+            unavoidable, but overlaps are not, which is exactly the gap Thue's theorem lives in.</p>
+          </div>
         </div>
 
-        <div class="env">
-          <div class="env-head">
-            <span class="env-kind">Definition&nbsp;2</span>
-            <span class="env-name">(overlap).</span>
-          </div>
-          <p class="env-body">Slightly more than a square: a block repeated twice, plus its first
-          letter once more. Any word of the form</p>
-          <p class="eq">a x a x a</p>
-          <p class="env-body">where <em>a</em> is a single letter. On two letters squares are
-          unavoidable, but overlaps are not, which is exactly the gap Thue's theorem lives in.</p>
+        <div data-reveal data-morphism>
+          <div class="code" data-morphism-out aria-live="polite"
+            aria-label="Generations of the rewriting rule 0 to 01 and 1 to 10.">0
+01
+0110
+01101001
+0110100110010110
+01101001100101101001011001101001</div>
+          <p class="figcap">fig. 1 · the morphism 0 → 01, 1 → 10. Press Apply and the word grows.</p>
         </div>
       </div>
     </section>
@@ -146,40 +114,49 @@
         manuscripts, and I am happy to share drafts with anyone who asks.</p>
       </div>
 
-      <div data-reveal-group>
-        <div class="env">
-          <div class="env-head">
-            <span class="env-kind">Project&nbsp;P2</span>
-            <span class="env-name">(an exact threshold formula).</span>
-            <span class="env-status wip">⋯ manuscript in preparation</span>
+      <div class="figure-row">
+        <div data-reveal-group>
+          <div class="env">
+            <div class="env-head">
+              <span class="env-kind">Project&nbsp;P2</span>
+              <span class="env-name">(an exact threshold formula).</span>
+              <span class="env-status wip">⋯ manuscript in preparation</span>
+            </div>
+            <p class="env-body">For a family of avoidance problems, I determine the exact answer for every
+            alphabet size past a small explicit bound, together with a complete classification of the
+            extremal configurations that achieve it. The proof pairs a structural argument with an
+            exhaustive finite search; the search has been independently re-run from scratch by a second,
+            deliberately different implementation, and the structural half is being verified in Lean.</p>
+            <p class="env-foot">
+              <span>complete at computer-assisted rigor</span><span>·</span>
+              <span>Lean verification ~72%</span>
+            </p>
           </div>
-          <p class="env-body">For a family of avoidance problems, I determine the exact answer for every
-          alphabet size past a small explicit bound, together with a complete classification of the
-          extremal configurations that achieve it. The proof pairs a structural argument with an
-          exhaustive finite search; the search has been independently re-run from scratch by a second,
-          deliberately different implementation, and the structural half is being verified in Lean.</p>
-          <p class="env-foot">
-            <span>status: complete at computer-assisted rigor</span><span>·</span>
-            <span>Lean verification ~72%</span>
-          </p>
+
+          <div class="env" style="border-bottom: 1px solid var(--rule);">
+            <div class="env-head">
+              <span class="env-kind">Project&nbsp;P3</span>
+              <span class="env-name">(a classification of admissible alphabets).</span>
+              <span class="env-status wip">⋯ manuscript in preparation</span>
+            </div>
+            <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
+            with a demanding combination of avoidance and richness properties. The criterion turns out to be
+            strikingly simple, which took a long certificate to establish: a bounded search over a large but
+            finite space, audited twice, with the boundary cases hunted down individually.</p>
+            <p class="env-foot">
+              <span>classification complete, under review</span><span>·</span>
+              <span>reproduction package written</span>
+            </p>
+          </div>
         </div>
 
-        <div class="env">
-          <div class="env-head">
-            <span class="env-kind">Project&nbsp;P3</span>
-            <span class="env-name">(a classification of admissible alphabets).</span>
-            <span class="env-status wip">⋯ manuscript in preparation</span>
+        <div data-reveal>
+          <div class="canvas-wrap" style="aspect-ratio: 1;">
+            <canvas id="figure-turtle" role="img"
+              aria-label="A path drawn by reading the Thue-Morse word as turtle steps: forward on a one, turn sixty degrees on a zero."></canvas>
           </div>
-          <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
-          with a demanding combination of avoidance and richness properties. The criterion turns out to be
-          strikingly simple, which took a long certificate to establish: a bounded search over a large but
-          finite space, audited twice, with the boundary cases hunted down individually.</p>
-          <p class="env-foot">
-            <span>status: classification complete, under review</span><span>·</span>
-            <span>reproduction package written</span>
-          </p>
+          <p class="figcap">fig. 2 · the same word handed to a pen: 1 forward, 0 turn 60°. It never closes.</p>
         </div>
-
       </div>
     </section>
 

@@ -13,12 +13,12 @@ Then open <http://localhost:4173>.
 
 | Path | What it is |
 |---|---|
-| `index.html` | Title block, abstract, the spiral contents, publications, contact |
-| `research.html` | Combinatorics on words, the projects, the turtle figure, and a Mandelbrot tailpiece |
-| `lean.html` | Formalization: the goal stepper, library contents with the difference table, upstream contributions, a Sierpinski tailpiece |
-| `manim.html` | Self-drawing figures, the three films, the channel ledger, a Recamán tailpiece |
-| `education.html` | The prerequisite graph as navigation; the record; a spirograph tailpiece |
-| `projects.html` | Tri-Valley Tutoring and USAMO Guide, with a Lissajous tailpiece |
+| `index.html` | Title block, abstract, the spiral contents, publications, contact, an ink-walk tailpiece |
+| `research.html` | Combinatorics on words: vocabulary + morphism, projects + turtle, a Mandelbrot tailpiece |
+| `lean.html` | Formalization: the goal stepper, the difference table beside the library, upstream contributions (with the Elliott–Halberstam snippet), a Sierpinski tailpiece |
+| `manim.html` | Self-drawing figures, the three films, the channel ledger, a strange-attractor tailpiece |
+| `education.html` | The prerequisite graph as navigation; the record (four columns); a Pascal-mod-3 tailpiece |
+| `projects.html` | Tri-Valley Tutoring and USAMO Guide (clipping + ladder), an ink-network tailpiece |
 | `cv.pdf` | The CV, a static PDF. To update it, replace this file |
 | `404.html` | Not-found page, proved by contradiction |
 | `css/paper.css` | The entire design system: every colour, size, and rule |

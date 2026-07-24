@@ -156,6 +156,28 @@ hw : w = thueMorse</span>
         is public, and I am a contributor to each, nothing more.</p>
       </div>
 
+      <div class="figure-row" style="margin-bottom: var(--s5);" data-reveal>
+        <div class="prose stack">
+          <p>Some of the work is not proving things, but <em>stating</em> them: writing a famous open
+          problem down precisely enough that a proof assistant could one day check an answer. This is my
+          merged formalization of the Elliott&#8211;Halberstam conjecture for
+          <a href="https://github.com/google-deepmind/formal-conjectures" target="_blank" rel="noopener">formal-conjectures</a>.
+          The <code style="font-family: var(--mono); font-size: 14px;">sorry</code> is the point: the
+          statement is the contribution, the proof is the open problem.</p>
+        </div>
+        <div>
+          <div class="code"><span class="cm">-- Elliott–Halberstam, as a machine can read it</span>
+<span class="kw">@[category</span> research open, <span class="kw">AMS</span> 11]
+<span class="kw">theorem</span> elliott_halberstam (θ : ℝ) (hθ : θ &lt; 1)
+    (A : ℝ) (hA : 0 &lt; A) :
+    ∃ C &gt; (0 : ℝ), ∀ x : ℕ, 2 &lt; x →
+      ∑ q ∈ Finset.Icc 1 ⌊(x : ℝ) ^ θ⌋₊, E x q
+        ≤ C * x / Real.log x ^ A := <span class="kw">by</span>
+  <span class="cm">sorry</span></div>
+          <p class="figcap">merged into google-deepmind/formal-conjectures</p>
+        </div>
+      </div>
+
       <div data-reveal-group>
         <div class="env">
           <div class="env-head">
