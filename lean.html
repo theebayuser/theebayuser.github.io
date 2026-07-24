@@ -51,16 +51,11 @@
     <section class="section" style="padding-top: 0;">
       <div class="grid-2">
         <div class="prose stack">
-          <p class="lede">A proof assistant will not accept "clearly," "similarly," or "the other case is
-          analogous." You either have the argument or you find out, at three in the morning, that you
-          don't.</p>
+          <p class="lede">Lean 4 is a proof assistant that uses mathematical logic to guarantee "absolute correctness in mathematical proof", which naturally lends itself to projects such as this.</p>
           <p>I am building a Lean 4 library for combinatorics on words (words, morphisms, powers,
           overlaps, avoidance) and using it to machine-check both the classical theorems of the field
           and my own research. Every definition below type-checks against Mathlib, and every claim marked
-          machine-checked has <em class="uline">no gaps left open</em> behind it.</p>
-          <p>I keep at it for two reasons. It has already caught a real error: a uniform version of one of
-          my obligations was false, and I did not know until Lean produced counterexamples. And it is the
-          honest way to learn a field, because you cannot formalize a definition you only half understand.</p>
+          machine-checked has no gaps left open behind it.</p>
         </div>
 
         <div>
@@ -71,16 +66,8 @@ hw : w = thueMorse</span>
 <span class="goal-target"><span class="turn">⊢</span> OverlapFree w</span></div>
             <div class="goal-ok"><span>No goals. ∎</span></div>
           </div>
-          <div class="goal-tree">
-            <canvas role="img"
-              aria-label="The proof as a tree: a chain of four goals that splits into two cases, the overlap position even and odd, each closing separately."></canvas>
-          </div>
-          <p class="meta" style="margin-top: 10px;">Thue's 1912 overlap-freeness theorem, as the
-          assistant sees it. Press the tactic on the bar to walk the proof forward, one line at a time.
-          The tree beneath tracks it: hollow is open, blue is where you are, green is discharged, and the
-          argument branches exactly once, on the parity of the position. Simplified for reading; the real
-          script carries more bookkeeping.</p>
-          <p class="figcap">fig. 7 · the goal state and its proof tree, one tactic per press</p>
+          <p class="meta" style="margin-top: 10px;"></p>
+          <p class="figcap">fig. 7 · Thue's 1912 overlap-freeness theorem, simplified for reading</p>
         </div>
       </div>
     </section>
@@ -97,8 +84,7 @@ hw : w = thueMorse</span>
         <div class="stat"><p class="v" data-count="2">2</p><p class="k">classical results, closed</p></div>
       </div>
       <p class="meta" style="margin-top: var(--s2);">Counted from the working repository, July 2026.
-      Research-level results in progress carry named, explicitly open obligations. I would rather show you
-      the frontier than hide it.</p>
+     </p>
     </section>
 
     <div class="tm" data-n="24"></div>
@@ -146,8 +132,7 @@ hw : w = thueMorse</span>
             </div>
             <p class="env-body">The classification from Project P2 is wired end to end in Lean: the
             structural argument, the upper bound, and the finite base cases compile together. Four named
-            obligations remain open and are stated as such in the source, not papered over. One earlier
-            version of them was refuted outright by the assistant, which is the system working.</p>
+            obligations remain open and are stated as such in the source, not papered over.</p>
           </div>
         </div>
 
@@ -164,62 +149,51 @@ hw : w = thueMorse</span>
     <section class="section" style="padding-top: 0;" id="talos">
       <div class="section-head" data-reveal>
         <p class="kicker">Elsewhere in Lean</p>
-        <h2>Contributions upstream</h2>
-        <p class="prose lede">The same discipline, pointed at other people's libraries. Everything here
-        is public, and I am a contributor to each, nothing more.<span class="mn"><sup
-          class="mn-mark">&#8224;</sup><span class="mn-note"><span class="mn-mark">&#8224;</span><code
-          style="font-family: var(--mono); font-size: 12px; font-style: normal;">sorry</code> is Lean's
-          hole: it closes any goal and taints everything built on it, so the compiler keeps telling you
-          the proof is not finished.</span></span></p>
+        <h2>Upstream Contributions</h2>
+        <p class="prose lede">Math is inherently collaborative, so I am a contributor to several cool open-source projects.</p>
       </div>
 
       <div class="figure-row" style="align-items: start;">
       <div data-reveal-group>
         <div class="env">
           <div class="env-head">
-            <span class="env-kind">Contribution</span>
-            <span class="env-name">(Talos, open source).</span>
+            <span class="env-kind">Talos</span>
+            <span class="env-name">(Cajal).</span>
             <span class="env-status wip">&#8943; ongoing</span>
           </div>
           <p class="env-body"><a href="https://github.com/theebayuser/talos" target="_blank" rel="noopener">Talos</a>
           is a WebAssembly interpreter written in Lean 4, where the definitions that
           <em>run</em> a program are the same ones you <em>reason about</em>. There is no second
           specification to drift out of sync with the implementation, which is the whole point.</p>
-          <p class="env-body" style="margin-top: var(--s2);">My patches live on the proof side: total
-          correctness for small programs, machine-checked equivalence between an unoptimized build and
-          an optimized build of the same function, and the memory-region disjointness algebra those
-          proofs stand on. Reviewing against a real codebase has taught me more about stating a theorem
-          usefully than any amount of solo work.</p>
-          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>open-source contributor</span></p>
+          <p class="env-body" style="margin-top: var(--s2);"></p>
+          <p class="env-foot"><span>Wasm</span><span>&#183;</span><span>Lean 4</span></p>
         </div>
 
         <div class="env">
           <div class="env-head">
-            <span class="env-kind">Contribution</span>
-            <span class="env-name">(Mathlib).</span>
+            <span class="env-kind">Mathlib</span>
+            <span class="env-name">(Lean Prover Community).</span>
             <span class="env-status wip">&#8943; in review</span>
           </div>
-          <p class="env-body">Two pull requests to
-          <a href="https://github.com/leanprover-community/mathlib4/pulls/theebayuser" target="_blank" rel="noopener">Mathlib</a>,
-          extending the list API exactly where combinatorics on words kept needing it: an enumerator for
-          the contiguous factors of a list, and decidability of periodicity for repeated lists. Both are
-          open and under review, which is its own education in how a large library holds its standards.</p>
-          <p class="env-foot"><span>Lean 4 + Mathlib</span><span>&#183;</span><span>2 pull requests</span></p>
+          <p class="env-body">
+          <a href="https://github.com/leanprover-community/mathlib4/pulls/theebayuser" target="_blank" rel="noopener">Mathlib</a>
+          is a massive crowdsourced library of formalized mathematics, all in Lean. It allows mathematicians to work and use Lean
+          without having to formalize prior results. </p>
+          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>combinatorics</span></p>
         </div>
 
         <div class="env" style="border-bottom: 1px solid var(--rule);">
           <div class="env-head">
-            <span class="env-kind">Contribution</span>
-            <span class="env-name">(formal-conjectures).</span>
+            <span class="env-kind">Formal-Conjectures</span>
+            <span class="env-name">(Google Deepmind).</span>
             <span class="env-status done">✓ 2 merged</span>
           </div>
           <p class="env-body">Formal Lean statements of open problems for
           <a href="https://github.com/google-deepmind/formal-conjectures" target="_blank" rel="noopener">formal-conjectures</a>,
-          Google DeepMind's open library of unproved mathematics. Two are merged (the
-          Elliott&#8211;Halberstam conjecture, and a Green open problem on the largest product-free sets in
-          finite groups) and two Erdős problems are in review. The work is stating a conjecture precisely
-          enough that a machine could one day check a proof of it.</p>
-          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>open-source contributor</span></p>
+          Google DeepMind's open library of unproved mathematics. I formalized the
+          Elliott&#8211;Halberstam conjecture, a Green open problem on the largest product-free sets in
+          finite groups, and have two Erdős problems in review. </p>
+          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>number theory</span></p>
         </div>
       </div>
 
