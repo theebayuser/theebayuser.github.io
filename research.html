@@ -8,6 +8,10 @@
 <meta property="og:title" content="Research · Daniel Liao">
 <meta property="og:description" content="Which patterns are forced to appear in an infinite word, and which can be avoided forever.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://theebayuser.github.io/assets/og.png">
+<meta property="og:url" content="https://theebayuser.github.io/research.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://theebayuser.github.io/assets/og.png">
 <meta name="theme-color" content="#F7F3E9">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,15 +47,29 @@
     </div>
 
     <section class="section" style="padding-top: 0;" id="what">
-      <div class="prose stack">
-        <p class="lede">Write an endless sequence of letters from a small alphabet. Can you keep going
-        without ever repeating a block back-to-back? On two letters, no. On three, yes, and Axel Thue
-        built such a word in 1912.</p>
+      <div class="figure-row" style="align-items: center;">
+        <div class="prose stack">
+          <p class="lede">Write an endless sequence of letters from a small alphabet. Can you keep going
+          without ever repeating a block back-to-back? On two letters, no. On three, yes, and Axel Thue
+          built such a word in 1912.</p>
 
-        <p>My own work is on the counting side: given a
-        repetition to avoid, how much room does a bigger alphabet actually buy you? The answers come
-        out as exact formulas past some threshold, with a small stubborn region below it that has to
-        be settled one case at a time.</p>
+          <p>My own work is on the counting side: given a
+          repetition to avoid, how much room does a bigger alphabet actually buy you? The answers come
+          out as exact formulas past some threshold, with a small stubborn region below it that has to
+          be settled one case at a time.</p>
+        </div>
+        <div data-reveal>
+          <pre class="wordart" aria-label="The first 216 letters of a square-free ternary word, the fixed point of the map that sends 2 to 210, 1 to 20, and 0 to 1, set as a block of three ink shades."><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i>
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i>
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1
+<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i>
+<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1</pre>
+          <p class="figcap">fig. 3 · a square-free word on three letters, the fixed point of 2 &#8594; 210, 1 &#8594; 20, 0 &#8594; 1</p>
+        </div>
       </div>
     </section>
 
@@ -100,10 +118,12 @@
 01101001
 0110100110010110
 01101001100101101001011001101001</div>
-          <p class="figcap">fig. 1 · the morphism 0 → 01, 1 → 10. Press Apply and the word grows.</p>
+          <p class="figcap">fig. 4 · the morphism 0 → 01, 1 → 10. Press Apply and the word grows.</p>
         </div>
       </div>
     </section>
+
+    <div class="tm" data-n="24"></div>
 
     <section class="section" style="padding-top: 0;" id="projects">
       <div class="section-head" data-reveal>
@@ -154,7 +174,7 @@
             <canvas id="figure-turtle" role="img"
               aria-label="A path drawn by reading the Thue-Morse word as turtle steps: forward on a one, turn sixty degrees on a zero."></canvas>
           </div>
-          <p class="figcap">fig. 2 · the same word handed to a pen: 1 forward, 0 turn 60°. It never closes.</p>
+          <p class="figcap">fig. 5 · the same word handed to a pen: 1 forward, 0 turn 60°. It never closes.</p>
         </div>
       </div>
     </section>
@@ -164,7 +184,7 @@
         <canvas id="figure-mandelbrot" role="img"
           aria-label="The Mandelbrot set, stippled small in ink as a closing ornament."></canvas>
       </div>
-      <p class="figcap">the Mandelbrot set, stippled in ink</p>
+      <p class="figcap">fig. 6 · the Mandelbrot set, stippled in ink</p>
     </div>
 
   </div>

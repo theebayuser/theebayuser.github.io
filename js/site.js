@@ -650,12 +650,16 @@
     { x: 0.80, y: 0.70, t: "Lean 4 · Mathlib",
       kind: "Lean 4 and Mathlib", when: "2025 – present",
       body: "No course, no mentor, and nobody at school who had heard of it. I read the manual, broke things, and read the errors until they stopped being noise.",
-      more: "lean.html", moreText: "the formalization" }
+      more: "lean.html", moreText: "the formalization" },
+    { x: 0.66, y: 0.60, t: "combinatorics, proof writing",
+      kind: "Combinatorics and proof writing", when: "college",
+      body: "A small branch off the linear-algebra term: organized casework, generating functions, and writing an argument to be checked rather than believed. The habits research actually runs on.",
+      more: "#coursework", moreText: "coursework" }
   ];
 
   var EDU_EDGES = [
     [0, 2], [0, 3], [1, 4], [4, 8], [3, 5], [3, 6], [6, 7],
-    [2, 10], [5, 10], [7, 9], [8, 9], [9, 10]
+    [2, 10], [5, 10], [7, 9], [8, 9], [9, 10], [7, 11]
   ];
 
   function eduGraph(root) {
@@ -679,7 +683,7 @@
     /* Wide, the chart reads left to right as two chains meeting. Narrow, that
        cannot fit, so the same nodes stack into one column in the order they
        actually happened. Same graph, same edges, one turn of the page. */
-    var EDU_COLUMN = [0, 2, 3, 6, 7, 5, 1, 4, 8, 9, 10];
+    var EDU_COLUMN = [0, 2, 3, 6, 7, 11, 5, 1, 4, 8, 9, 10];
 
     function pt(i, w, h) {
       if (w < 560) {
@@ -809,11 +813,11 @@
           it++;
         }
         if (it === 40) {
-          ctx.fillStyle = pal.ink;
+          ctx.fillStyle = pal.ballpoint;
           ctx.globalAlpha = 0.82;
           ctx.fillRect(px, py, step, step);
         } else if (it > 6) {
-          ctx.fillStyle = pal.ink;
+          ctx.fillStyle = pal.ballpoint;
           ctx.globalAlpha = Math.min(0.4, it / 90);
           ctx.fillRect(px, py, step, step);
         }
@@ -908,7 +912,7 @@
     var oy = (h - (maxy - miny) * s) / 2 - miny * s;
     ctx.clearRect(0, 0, w, h);
     ctx.strokeStyle = pal.ballpoint;
-    ctx.globalAlpha = 0.14; ctx.lineWidth = 1; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.globalAlpha = 0.22; ctx.lineWidth = 1; ctx.lineJoin = "round"; ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(ox + xs[0] * s, oy + ys[0] * s);
     for (var j = 1; j < N; j++) ctx.lineTo(ox + xs[j] * s, oy + ys[j] * s);
@@ -969,7 +973,7 @@
       }
     }
     ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = pal.ink3; ctx.globalAlpha = 0.4; ctx.lineWidth = 0.6;
+    ctx.strokeStyle = pal.ballpoint; ctx.globalAlpha = 0.35; ctx.lineWidth = 0.6;
     ctx.beginPath();
     edges.forEach(function (e) {
       ctx.moveTo(nodes[e[0]].x, nodes[e[0]].y);
@@ -1033,7 +1037,7 @@
 
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = pal.ballpoint;
-    ctx.globalAlpha = 0.12;
+    ctx.globalAlpha = 0.20;
     for (var a = 1; a <= N; a++) {           /* a > 0 covers the sign symmetry */
       for (var b = -N; b <= N; b++) {
         for (var c = -N; c <= N; c++) {
@@ -1337,6 +1341,52 @@
     });
   }
 
+  /* --- texview: the recompile button ------------------------------------
+     The preview pane ships fully rendered in the HTML. Pressing recompile clears
+     it to a one-line "compiling" beat, then re-reveals the same typeset formulas
+     with a short stagger, the way Overleaf flashes when you hit the button.
+     No-JS readers keep the finished render and never see the button do nothing:
+     the button is only wired up here. */
+  function initTexview() {
+    var view = document.querySelector("[data-texview]");
+    if (!view) return;
+    var out = view.querySelector("[data-tv-out]");
+    var run = view.querySelector("[data-tv-run]");
+    if (!out || !run) return;
+
+    var rendered = out.innerHTML;
+    var busy = false;
+
+    run.addEventListener("click", function () {
+      if (busy) return;
+      busy = true;
+      run.setAttribute("disabled", "");
+
+      if (reduced) {
+        /* no beat under reduced motion: just confirm the recompile */
+        window.setTimeout(function () { busy = false; run.removeAttribute("disabled"); }, 120);
+        return;
+      }
+
+      out.classList.remove("tv-fresh");
+      out.classList.add("tv-compiling");
+      out.innerHTML = '<span class="tv-wait">compiling…</span>';
+
+      window.setTimeout(function () {
+        out.classList.remove("tv-compiling");
+        out.innerHTML = rendered;
+        /* reflow so the animation restarts, then reveal */
+        void out.offsetWidth;
+        out.classList.add("tv-fresh");
+        window.setTimeout(function () {
+          out.classList.remove("tv-fresh");
+          busy = false;
+          run.removeAttribute("disabled");
+        }, 500);
+      }, 380);
+    });
+  }
+
   /* --- keys: sections by number, and the board after dark ----------------- */
 
   function typingContext() {
@@ -1434,6 +1484,7 @@
     initCounts();
     initLedger();
     initFilms();
+    initTexview();
     initProgress();
     initKeys();
 

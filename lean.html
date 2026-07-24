@@ -8,6 +8,10 @@
 <meta property="og:title" content="Formalization · Daniel Liao">
 <meta property="og:description" content="A Lean 4 library for combinatorics on words, and machine-checked classical theorems.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://theebayuser.github.io/assets/og.png">
+<meta property="og:url" content="https://theebayuser.github.io/lean.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://theebayuser.github.io/assets/og.png">
 <meta name="theme-color" content="#F7F3E9">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,6 +72,7 @@ hw : w = thueMorse</span>
           <p class="meta" style="margin-top: 10px;">Thue's 1912 overlap-freeness theorem, as the
           assistant sees it. Press the tactic on the bar to walk the proof forward, one line at a time,
           until the goal closes. Simplified for reading; the real script carries more bookkeeping.</p>
+          <p class="figcap">fig. 7 · the goal state, walked forward one tactic per press</p>
         </div>
       </div>
     </section>
@@ -143,10 +148,12 @@ hw : w = thueMorse</span>
             <canvas id="figure-tmgrid" role="img"
               aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
           </div>
-          <p class="figcap">fig. 2 · the library's namesake: cell (i, j) inked when t(i) ≠ t(j)</p>
+          <p class="figcap">fig. 8 · the library's namesake: cell (i, j) inked when t(i) ≠ t(j)</p>
         </div>
       </div>
     </section>
+
+    <div class="tm" data-n="24"></div>
 
     <section class="section" style="padding-top: 0;" id="talos">
       <div class="section-head" data-reveal>
@@ -215,7 +222,7 @@ hw : w = thueMorse</span>
       ∑ q ∈ Finset.Icc 1 ⌊(x : ℝ) ^ θ⌋₊, E x q
         ≤ C * x / Real.log x ^ A := <span class="kw">by</span>
   <span class="cm">sorry</span></div>
-          <p class="figcap">merged into google-deepmind/formal-conjectures</p>
+          <p class="figcap">fig. 9 · merged into google-deepmind/formal-conjectures</p>
         </div>
       </div>
     </section>
@@ -240,7 +247,7 @@ hw : w = thueMorse</span>
 &nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
 &nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
 <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b></pre>
-      <p class="figcap">Pascal's triangle mod 2, sixteen rows</p>
+      <p class="figcap">fig. 10 · Pascal's triangle mod 2, sixteen rows</p>
     </div>
   </div>
 </main>

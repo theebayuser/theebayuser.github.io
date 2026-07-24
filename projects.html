@@ -8,6 +8,10 @@
 <meta property="og:title" content="Projects · Daniel Liao">
 <meta property="og:description" content="Built, staffed, and shipped: a tutoring organization and an olympiad-prep platform.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://theebayuser.github.io/assets/og.png">
+<meta property="og:url" content="https://theebayuser.github.io/projects.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://theebayuser.github.io/assets/og.png">
 <meta name="theme-color" content="#F7F3E9">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,8 +54,10 @@
       </div>
     </section>
 
+    <div class="tm" data-n="24"></div>
+
     <section class="section" style="padding-top: 0;" id="tutoring">
-      <div class="env" style="border-top: 1px solid var(--rule);">
+      <div class="env">
         <div class="env-head">
           <span class="env-kind">Tri-Valley Tutoring</span>
           <span class="env-name">(founder &amp; director).</span>
@@ -65,27 +71,45 @@
           <div class="stat"><p class="v" data-count="2000">2,000+</p><p class="k">hours delivered</p></div>
           <div class="stat"><p class="v" data-count="100">100+</p><p class="k">students reached</p></div>
         </div>
-        <div class="texview" style="margin-top: var(--s3);">
+        <div class="texview" data-texview style="margin-top: var(--s3);">
           <div class="texview-bar">
-            <span>olympiad-formulae.pdf</span>
-            <span class="dot">compiled &#183; p. 1 / 42</span>
+            <span>olympiad-formulae.tex</span>
+            <button class="tv-run" type="button" data-tv-run>&#9654;&nbsp;recompile</button>
           </div>
-          <div class="texview-body">
-            <p class="sub">1.1.1 &nbsp; Sophie Germain Identity</p>
-            <p class="tex"><i>x</i><sup>4</sup> <span class="op">+</span> 4<i>y</i><sup>4</sup>
-              <span class="op">=</span> (<i>x</i><sup>2</sup> <span class="op">+</span> 2<i>xy</i>
-              <span class="op">+</span> 2<i>y</i><sup>2</sup>)(<i>x</i><sup>2</sup>
-              <span class="op">&#8722;</span> 2<i>xy</i> <span class="op">+</span> 2<i>y</i><sup>2</sup>)</p>
-            <p class="sub">2.3.2 &nbsp; Ptolemy's Theorem</p>
-            <p class="tex"><i>AC</i> <span class="op">&#183;</span> <i>BD</i>
-              <span class="op">=</span> <i>AB</i> <span class="op">&#183;</span> <i>CD</i>
-              <span class="op">+</span> <i>AD</i> <span class="op">&#183;</span> <i>BC</i></p>
-            <p class="sub">3.1.6 &nbsp; Legendre's Formula</p>
-            <p class="tex"><i>&#957;<sub>p</sub></i>(<i>n</i>!) <span class="op">=</span>
-              <span class="bigsum"><span>&#8734;</span><span class="sig">&#8721;</span><span><i>i</i>=1</span></span>
-              &#8970;<i>n</i>/<i>p</i><sup><i>i</i></sup>&#8971;</p>
+          <div class="texview-panes">
+            <pre class="texview-code" aria-label="The LaTeX source for the three formulas">\documentclass{amsart}
+\begin{document}
+
+\subsection*{Sophie Germain identity}
+\[ x^4 + 4y^4 =
+   (x^2 + 2xy + 2y^2)(x^2 - 2xy + 2y^2) \]
+
+\subsection*{Ptolemy's theorem}
+\[ AC \cdot BD = AB \cdot CD + AD \cdot BC \]
+
+\subsection*{Legendre's formula}
+\[ \nu_p(n!) =
+   \sum_{i=1}^{\infty}
+   \left\lfloor \frac{n}{p^i} \right\rfloor \]
+
+\end{document}</pre>
+            <div class="texview-out" data-tv-out>
+              <p class="sub">Sophie Germain identity</p>
+              <p class="tex"><i>x</i><sup>4</sup> <span class="op">+</span> 4<i>y</i><sup>4</sup>
+                <span class="op">=</span> (<i>x</i><sup>2</sup> <span class="op">+</span> 2<i>xy</i>
+                <span class="op">+</span> 2<i>y</i><sup>2</sup>)(<i>x</i><sup>2</sup>
+                <span class="op">&#8722;</span> 2<i>xy</i> <span class="op">+</span> 2<i>y</i><sup>2</sup>)</p>
+              <p class="sub">Ptolemy's theorem</p>
+              <p class="tex"><i>AC</i> <span class="op">&#183;</span> <i>BD</i>
+                <span class="op">=</span> <i>AB</i> <span class="op">&#183;</span> <i>CD</i>
+                <span class="op">+</span> <i>AD</i> <span class="op">&#183;</span> <i>BC</i></p>
+              <p class="sub">Legendre's formula</p>
+              <p class="tex"><i>&#957;<sub>p</sub></i>(<i>n</i>!) <span class="op">=</span>
+                <span class="bigsum"><span>&#8734;</span><span class="sig">&#8721;</span><span><i>i</i>=1</span></span>
+                &#8970;<i>n</i>/<i>p</i><sup><i>i</i></sup>&#8971;</p>
+            </div>
           </div>
-          <div class="texview-src">rendered from Olympiad Theorems and Formulas, my own compilation</div>
+          <div class="texview-src">fig. 16 · a formula sheet from my own compilation, source left and typeset right</div>
         </div>
         <p class="env-foot" style="margin-top: var(--s3);">
           <span>district-wide</span><span>·</span>
@@ -95,8 +119,10 @@
       </div>
     </section>
 
+    <div class="tm" data-n="24"></div>
+
     <section class="section" style="padding-top: 0;" id="usamo-guide">
-      <div class="env" style="border-top: 1px solid var(--rule);">
+      <div class="env">
         <div class="env-head">
           <span class="env-kind">USAMO Guide</span>
           <span class="env-name">(CMO &amp; content contributor).</span>
@@ -112,19 +138,24 @@
               <source src="assets/video/UsamoGuideShowcase.mp4" type="video/mp4">
             </video>
           </div>
-          <div class="stats-col">
+          <div class="stats-grid2">
             <div class="stat"><p class="v" data-count="20">20</p><p class="k">on staff</p></div>
             <div class="stat"><p class="v" data-count="25000">25,000</p><p class="k">unique users</p></div>
             <div class="stat"><p class="v" data-count="200000">200,000</p><p class="k">monthly visits</p></div>
+            <div class="stat"><p class="v" data-count="42000">42,000+</p><p class="k">lines of code</p></div>
+            <div class="stat"><p class="v" data-count="993">993</p><p class="k">problems banked</p></div>
+            <div class="stat"><p class="v" data-count="158">158</p><p class="k">study sections</p></div>
           </div>
         </div>
         <p class="env-foot" style="margin-top: var(--s3);">
           <span>open source</span><span>·</span>
           <span><a href="https://usamoguide.com" target="_blank" rel="noopener">usamoguide.com</a></span><span>·</span>
-          <span><a href="https://github.com/theebayuser/usamo-guide" target="_blank" rel="noopener">source</a></span>
+          <span><a href="https://github.com/usamoguide/usamo-guide" target="_blank" rel="noopener">source</a></span>
         </p>
       </div>
     </section>
+
+    <div class="tm" data-n="24"></div>
 
     <section class="section" style="padding-top: 0;" id="also">
       <div class="prose">
@@ -136,10 +167,10 @@
 
     <div class="tailpiece">
       <div class="canvas-wrap">
-        <canvas id="figure-network" role="img"
-          aria-label="A clustered network drawn in ink: four groups of nodes joined by fine edges, with a few bridges between clusters."></canvas>
+        <canvas id="figure-roots" role="img"
+          aria-label="The complex roots of every cubic with small integer coefficients, stippled in ink into a dense self-similar cloud."></canvas>
       </div>
-      <p class="figcap">an ink network, four clusters and a few bridges</p>
+      <p class="figcap">fig. 17 · roots of every integer cubic, coefficients in &#8722;5 to 5</p>
     </div>
 
   </div>

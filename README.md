@@ -14,11 +14,12 @@ Then open <http://localhost:4173>.
 | Path | What it is |
 |---|---|
 | `index.html` | Title block, abstract, the spiral contents, publications, contact, an ink-walk tailpiece |
-| `research.html` | Combinatorics on words: vocabulary + morphism, projects + turtle, a Mandelbrot tailpiece |
+| `research.html` | Combinatorics on words: intro + ternary word-art, vocabulary + morphism, projects + turtle, a Mandelbrot tailpiece |
 | `lean.html` | Formalization: the goal stepper, the difference table beside the library, upstream contributions with the Elliott–Halberstam snippet beside the three cards, a Sierpinski tailpiece |
 | `manim.html` | Self-drawing figures (Lorenz then deltoid), the three films, the channel ledger, a strange-attractor tailpiece |
 | `education.html` | The prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
-| `projects.html` | Tri-Valley Tutoring (mock LaTeX viewer) and USAMO Guide (video showcase + vertical stats), an ink-network tailpiece |
+| `projects.html` | Tri-Valley Tutoring (Overleaf-style formula viewer) and USAMO Guide (video showcase + 2×3 stats), a cubic-roots tailpiece |
+| `404.html` | A proof-by-contradiction not-found page, with a Clifford-attractor tailpiece |
 | `cv.pdf` | The CV, a static PDF. To update it, replace this file |
 | `404.html` | Not-found page, proved by contradiction |
 | `css/paper.css` | The entire design system: every colour, size, and rule |
@@ -105,7 +106,19 @@ control bar, autoplays it muted while it is on screen, pauses it off-screen, and
 play/pause on click; under `prefers-reduced-motion` it never autoplays. Strip the audio
 track on export (`ffmpeg -i in.mov -an … out.mp4`) since it plays muted anyway. The projects
 showcase reel (`.reel`, 4:5) uses the same `data-film` behaviour in a portrait frame beside
-a vertical `.stats-col`.
+a `.stats-grid2` (six numbers, 2×3).
+
+### Figures and the social card
+
+Every captioned figure carries a **global `fig. N`** number: one sequence, 1–18, running in
+nav order from the homepage through the 404 (interactive widgets and tailpieces included;
+film plates keep their own Plate I–III series). Inserting a figure means renumbering the run,
+so grep `fig\.` across the pages after any change.
+
+`assets/og.png` (the link-preview card, 1200×630) is **drawn**, not photographed: the same
+`mulberry32` ink-walk the tailpieces use, over paper stock, with the STIX title. Regenerate
+it with that walk code (a short Python/PIL or canvas script) if the name or look changes;
+it is linked from every page via `og:image` + `twitter:card`.
 
 ### Research detail
 

@@ -11,10 +11,14 @@ directly, push to `main`, GitHub Pages redeploys in about a minute.
   colors, spacing, or components. Read `README.md` for the file map and click-through
   list. Both are current as of the last commit.
 - Every page ends in a **tailpiece**: a small figure with one quiet mono caption, drawn on
-  canvas through `palette()` so it repaints on the hidden night-board toggle (press `b`).
-  Taste rule, hard-won: dense/emergent art (random walks, attractors, networks, text
-  tables), never a thin single closed curve — see system.md item 14 for the rejected round.
-  Captions are true claims (verify the count/construction before writing one).
+  canvas through `palette()` in `--ballpoint` so it repaints on the hidden night-board toggle
+  (press `b`). Taste rule, hard-won: dense/emergent art (random walks, attractors, networks,
+  text tables), never a thin single closed curve — see system.md item 14 for the rejected
+  round. Captions are true claims (verify the count/construction before writing one).
+- **Figures are numbered globally** (`fig. 1`…`18`, nav order from the homepage through the
+  404). Insert one and you renumber the run — grep `fig\.` across the pages afterward.
+- The **social card** is `assets/og.png`, drawn with the same ink-walk code, linked from
+  every page. Regenerate it (not a stock image) if the name or look changes.
 - Real content is in: schools, coursework, competition results, three uploaded films,
   two run projects (Tri-Valley Tutoring, USAMO Guide, both linked to their live sites),
   upstream Lean contributions (Talos, Mathlib PRs, a merged formal-conjectures theorem).

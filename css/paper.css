@@ -379,18 +379,59 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   border-bottom: 1px solid var(--rule);
 }
 .stats-col .stat:last-child { border-bottom: 0; }
+/* six numbers as a 2×3 block beside the reel, the hairline gaps doing the dividing */
+.stats-grid2 {
+  flex: 1 1 260px; display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+}
+.stats-grid2 .stat { background: var(--paper); display: flex; flex-direction: column; justify-content: center; }
 
-/* the texview: a mock formula sheet, the way a LaTeX preview looks, set in STIX
-   rather than screenshotted. Header bar and page count in mono, numbered
-   subsection heads exactly as the source PDF numbers them, formulas typeset in
-   the body font. No math engine, no external anything. */
+/* the texview: a small Overleaf, the way a LaTeX editor looks. A source pane of
+   real LaTeX on the left, the typeset result on the right (set in STIX, no math
+   engine), and a recompile button that retypesets the preview. Static HTML ships
+   both panes complete, so no-JS sees source and finished render. */
 .texview { border: 1px solid var(--rule); background: var(--paper-raised); }
 .texview-bar {
   display: flex; align-items: center; justify-content: space-between; gap: var(--s2);
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.06em;
-  color: var(--ink-3); padding: 8px var(--s3); border-bottom: 1px solid var(--rule);
+  color: var(--ink-3); padding: 6px 6px 6px var(--s3); border-bottom: 1px solid var(--rule);
 }
 .texview-bar .dot { color: var(--ink-4); }
+/* the recompile button: compact, mono, ballpoint on hover — an editor control */
+.tv-run {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.04em;
+  color: var(--ink-2); background: var(--paper); border: 1px solid var(--rule-strong);
+  padding: 6px 12px; min-height: 32px; cursor: pointer;
+  transition: color 140ms var(--ease), border-color 140ms var(--ease);
+}
+.tv-run:hover { color: var(--ballpoint); border-color: var(--ballpoint); }
+.tv-run:active { transform: scale(0.97); }
+.tv-run[disabled] { color: var(--ink-4); cursor: default; }
+/* two panes: source left, typeset right, split by a hairline */
+.texview-panes { display: grid; grid-template-columns: 1fr 1fr; }
+.texview-code {
+  margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.6;
+  color: var(--ink-3); background: var(--paper-inset);
+  border-right: 1px solid var(--rule); padding: var(--s3);
+  white-space: pre; overflow-x: auto; -webkit-font-smoothing: auto;
+}
+.texview-out { padding: var(--s3) var(--s4) var(--s4); min-height: 0; }
+/* the compile beat: the preview clears to one centred mono line */
+.texview-out.tv-compiling { display: flex; align-items: center; justify-content: center; }
+.texview-out .tv-wait {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+.texview-out.tv-fresh .sub, .texview-out.tv-fresh .tex {
+  animation: tvIn 320ms var(--ease) both;
+}
+.texview-out.tv-fresh .sub:nth-child(3), .texview-out.tv-fresh .tex:nth-child(4) { animation-delay: 60ms; }
+.texview-out.tv-fresh .sub:nth-child(5), .texview-out.tv-fresh .tex:nth-child(6) { animation-delay: 120ms; }
+@keyframes tvIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 560px) {
+  .texview-panes { grid-template-columns: 1fr; }
+  .texview-code { border-right: 0; border-bottom: 1px solid var(--rule); }
+}
 .texview-body { padding: var(--s3) var(--s4) var(--s4); }
 .texview .sub {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.04em;
@@ -657,6 +698,16 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 .sierpinski i { color: var(--ink-2); font-style: normal; }
 /* the mod-3 triangle is wider and denser; give it room to scroll if it must */
 .tri3 { font-size: 10px; letter-spacing: 0.1em; line-height: 1.2; }
+
+/* the ternary word set as a solid block: the same word the page is about, its
+   three letters at three ink shades so the square-free texture reads as art */
+.wordart {
+  border: 0; background: none; padding: 0; margin: 0;
+  font-family: var(--mono); font-size: 15px; line-height: 1.5; letter-spacing: 0.22em;
+  color: var(--ink-3); text-align: center; overflow-x: auto;
+}
+.wordart b { color: var(--ballpoint); font-weight: 500; }
+.wordart i { color: var(--ink-4); font-style: normal; }
 
 /* the tailpiece: a chapter-end ornament. A figure set small and centred at the
    very foot of a page, no caption and no prose, the way a typeset book closes a
