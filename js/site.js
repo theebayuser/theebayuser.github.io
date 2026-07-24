@@ -20,8 +20,10 @@
     PAL = {
       ink: v("--ink"),
       ink3: v("--ink-3"),
+      ink4: v("--ink-4"),
       guide: v("--fig-guide"),
       ballpoint: v("--ballpoint"),
+      qed: v("--qed"),
       laurel: v("--laurel"),
       paper: v("--paper")
     };
@@ -192,6 +194,31 @@
       /* last resort, same as the reveals: never leave type invisible */
       window.setTimeout(done, 8000);
     });
+  }
+
+  /* The ballpoint underlines. CSS ships them drawn, so nothing depends on this
+     running; here we take the stroke back to zero and let it draw itself as the
+     phrase arrives. One shot, then the classes come off. */
+  function initUlines() {
+    var marks = document.querySelectorAll(".uline");
+    if (!marks.length || reduced || document.visibilityState === "hidden") return;
+
+    Array.prototype.forEach.call(marks, function (el) {
+      el.classList.add("uline-pre");
+      onceInView(el, function () {
+        window.setTimeout(function () { el.classList.add("uline-in"); }, 140);
+        window.setTimeout(function () {
+          el.classList.remove("uline-pre", "uline-in");
+        }, 1100);
+      }, 0.9);
+    });
+
+    /* last resort: never leave a phrase without its mark */
+    window.setTimeout(function () {
+      Array.prototype.forEach.call(marks, function (el) {
+        el.classList.remove("uline-pre", "uline-in");
+      });
+    }, 9000);
   }
 
   function initTitleBlock() {
@@ -1100,14 +1127,98 @@
   var GOAL_STEPS = [
     { hyp: ["w : Word Bool", "hw : w = thueMorse"],
       goal: "⊢ OverlapFree w",
-      tactic: "rw [hw]" },
+      tactic: "rw [hw]", node: 0 },
     { hyp: ["w : Word Bool", "hw : w = thueMorse"],
       goal: "⊢ OverlapFree thueMorse",
-      tactic: "intro u hu hov" },
-    { hyp: ["u : Word Bool", "hu : 0 < u.length", "hov : Overlaps u thueMorse"],
+      tactic: "by_contra hov", node: 1 },
+    { hyp: ["hov : ¬ OverlapFree thueMorse"],
       goal: "⊢ False",
-      tactic: "exact parity_clash hu hov" }
+      tactic: "obtain ⟨i, hmin⟩ := shortest_overlap hov", node: 2 },
+    { hyp: ["i : ℕ", "hmin : ShortestOverlapAt thueMorse i"],
+      goal: "⊢ False",
+      tactic: "rcases Nat.even_or_odd i with he | ho", node: 3 },
+    { hyp: ["hmin : ShortestOverlapAt thueMorse i", "he : Even i"],
+      goal: "⊢ False    (case 1 of 2)",
+      tactic: "exact descend_even hmin he", node: 4 },
+    { hyp: ["hmin : ShortestOverlapAt thueMorse i", "ho : Odd i"],
+      goal: "⊢ False    (case 2 of 2)",
+      tactic: "exact descend_odd hmin ho", node: 5 }
   ];
+
+  /* The same proof as a tree. The script is a straight line until the parity
+     split, which is the one place the argument actually branches, so that is
+     the one place the picture branches too. `closedAt` is the step index by
+     which a node's whole subtree is discharged. */
+  var PROOF_TREE = {
+    nodes: [
+      { x: 0.07, y: 0.50, activeAt: 0, closedAt: 6 },
+      { x: 0.26, y: 0.50, activeAt: 1, closedAt: 6 },
+      { x: 0.45, y: 0.50, activeAt: 2, closedAt: 6 },
+      { x: 0.63, y: 0.50, activeAt: 3, closedAt: 6 },
+      { x: 0.86, y: 0.22, activeAt: 4, closedAt: 5, label: "i even" },
+      { x: 0.86, y: 0.78, activeAt: 5, closedAt: 6, label: "i odd" }
+    ],
+    edges: [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5]]
+  };
+
+  function drawProofTree(canvas, step) {
+    if (canvas.clientWidth < 40) return;
+    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
+    var pad = 16;
+    function pt(n) {
+      return { x: pad + n.x * (w - pad * 2), y: pad + n.y * (h - pad * 2) };
+    }
+
+    ctx.clearRect(0, 0, w, h);
+
+    /* edges first, so the nodes sit on top of them */
+    ctx.lineWidth = 1;
+    PROOF_TREE.edges.forEach(function (e) {
+      var a = pt(PROOF_TREE.nodes[e[0]]), b = pt(PROOF_TREE.nodes[e[1]]);
+      var reached = step >= PROOF_TREE.nodes[e[1]].activeAt;
+      ctx.strokeStyle = reached ? pal.ink3 : pal.guide;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      /* a branch bows out so the two cases read as two paths, not one line */
+      if (a.y !== b.y) ctx.quadraticCurveTo((a.x + b.x) / 2, b.y, b.x, b.y);
+      else ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    });
+
+    PROOF_TREE.nodes.forEach(function (n) {
+      var p = pt(n);
+      var closed = step >= n.closedAt;
+      var active = !closed && step === n.activeAt;
+      var reached = step >= n.activeAt;
+
+      /* knock the paper out behind each node so edges never show through */
+      ctx.fillStyle = pal.paper;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 6.5, 0, Math.PI * 2); ctx.fill();
+
+      if (closed) {
+        ctx.fillStyle = pal.qed;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+      } else if (active) {
+        ctx.fillStyle = pal.ballpoint;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = pal.ballpoint;
+        ctx.globalAlpha = 0.35;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.strokeStyle = reached ? pal.ink3 : pal.ink4;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      if (n.label) {
+        ctx.fillStyle = closed ? pal.qed : (reached ? pal.ink3 : pal.ink4);
+        ctx.font = '10px ' + '"IBM Plex Mono", monospace';
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText(n.label, p.x + 11, p.y);
+      }
+    });
+  }
 
   function initGoal(panel) {
     var bar = panel.querySelector(".goal-bar");
@@ -1130,8 +1241,14 @@
     bar.appendChild(reset);
 
     var step = 0;
+    var tree = panel.parentNode.querySelector(".goal-tree canvas");
+    if (tree) {
+      onRepaint(function () { drawProofTree(tree, step); });
+      window.addEventListener("resize", function () { drawProofTree(tree, step); });
+    }
 
     function render() {
+      if (tree) drawProofTree(tree, step);
       if (step < GOAL_STEPS.length) {
         var s = GOAL_STEPS[step];
         var hyp = document.createElement("span");
@@ -1162,6 +1279,12 @@
 
     run.addEventListener("click", function () { if (step < GOAL_STEPS.length) { step++; render(); } });
     reset.addEventListener("click", function () { step = 0; render(); });
+
+    /* On paper the reader cannot press anything, so print the closed proof */
+    window.addEventListener("beforeprint", function () {
+      step = GOAL_STEPS.length;
+      render();
+    });
 
     render();
   }
@@ -1399,6 +1522,15 @@
     out.classList.add("tv-idle");
     out.innerHTML = '<span class="tv-wait">no output yet · press compile</span>';
 
+    /* Paper has no buttons. Anyone printing the page gets the solution, not an
+       empty pane waiting for a press that can never happen. */
+    window.addEventListener("beforeprint", function () {
+      if (out.classList.contains("tv-idle")) {
+        out.classList.remove("tv-idle");
+        out.innerHTML = rendered;
+      }
+    });
+
     function show() {
       out.classList.remove("tv-compiling", "tv-idle");
       out.innerHTML = rendered;
@@ -1473,6 +1605,27 @@
     try { window.localStorage.setItem("board", on ? "1" : "0"); } catch (err) {}
   }
 
+  /* The print sheet forces the paper palette, but a canvas is a raster: a figure
+     drawn in chalk stays chalk and prints as nothing on white. Drop the board for
+     the duration of the print and redraw every figure in ink, then put it back. */
+  function initPrint() {
+    var wasBoard = false;
+    window.addEventListener("beforeprint", function () {
+      wasBoard = document.documentElement.classList.contains("board");
+      if (wasBoard) {
+        document.documentElement.classList.remove("board");
+        repaintAll();
+      }
+    });
+    window.addEventListener("afterprint", function () {
+      if (wasBoard) {
+        document.documentElement.classList.add("board");
+        repaintAll();
+        wasBoard = false;
+      }
+    });
+  }
+
   function initKeys() {
     var map = {
       "1": "research.html", "2": "lean.html", "3": "manim.html",
@@ -1516,6 +1669,7 @@
     initTitleBlock();
     initReveals();
     initInkRows();
+    initUlines();
     Array.prototype.forEach.call(document.querySelectorAll("[data-show]"), initShow);
 
     var fig0 = document.getElementById("figure-deltoid");
@@ -1568,6 +1722,7 @@
     initFilms();
     initTexview();
     initProgress();
+    initPrint();
     initKeys();
 
     /* A tab that boots in the background lays out at zero size, so anything

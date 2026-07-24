@@ -108,6 +108,28 @@ track on export (`ffmpeg -i in.mov -an … out.mp4`) since it plays muted anyway
 showcase reel (`.reel`, 4:5) uses the same `data-film` behaviour in a portrait frame beside
 a `.stats-grid2` (six numbers, 2×3).
 
+### Sidenotes, underlines, and printing
+
+A margin note is written inline where it belongs:
+
+```html
+Axel Thue built such a word in 1912.<span class="mn"><sup class="mn-mark">†</sup><span
+  class="mn-note"><span class="mn-mark">†</span>The note itself.</span></span>
+```
+
+Past 1024px it floats into the margin; below that it folds inline. Put them only in
+full-width `.prose` blocks (a `.figure-row` column has no margin to float into), one per
+page, on a term a reader might genuinely not know.
+
+`<em class="uline">phrase</em>` marks a phrase in ballpoint; the stroke draws itself as the
+line scrolls into view and is simply present without JS.
+
+**The site prints.** `@media print` in `paper.css` strips the chrome, folds sidenotes
+inline, keeps figures with their captions, and prints external links with their URLs. Two
+things happen in JS on `beforeprint`: the interactive widgets complete themselves (the
+texview renders, the proof closes) and the night board is dropped and every canvas
+repainted, because a chalk-coloured raster prints as nothing on white.
+
 ### Figures and the social card
 
 Every captioned figure carries a **global `fig. N`** number: one sequence, 1–18, running in

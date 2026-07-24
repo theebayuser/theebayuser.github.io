@@ -57,7 +57,7 @@
           <p>I am building a Lean 4 library for combinatorics on words (words, morphisms, powers,
           overlaps, avoidance) and using it to machine-check both the classical theorems of the field
           and my own research. Every definition below type-checks against Mathlib, and every claim marked
-          machine-checked has no gaps left open behind it.</p>
+          machine-checked has <em class="uline">no gaps left open</em> behind it.</p>
           <p>I keep at it for two reasons. It has already caught a real error: a uniform version of one of
           my obligations was false, and I did not know until Lean produced counterexamples. And it is the
           honest way to learn a field, because you cannot formalize a definition you only half understand.</p>
@@ -71,10 +71,16 @@ hw : w = thueMorse</span>
 <span class="goal-target"><span class="turn">⊢</span> OverlapFree w</span></div>
             <div class="goal-ok"><span>No goals. ∎</span></div>
           </div>
+          <div class="goal-tree">
+            <canvas role="img"
+              aria-label="The proof as a tree: a chain of four goals that splits into two cases, the overlap position even and odd, each closing separately."></canvas>
+          </div>
           <p class="meta" style="margin-top: 10px;">Thue's 1912 overlap-freeness theorem, as the
-          assistant sees it. Press the tactic on the bar to walk the proof forward, one line at a time,
-          until the goal closes. Simplified for reading; the real script carries more bookkeeping.</p>
-          <p class="figcap">fig. 7 · the goal state, walked forward one tactic per press</p>
+          assistant sees it. Press the tactic on the bar to walk the proof forward, one line at a time.
+          The tree beneath tracks it: hollow is open, blue is where you are, green is discharged, and the
+          argument branches exactly once, on the parity of the position. Simplified for reading; the real
+          script carries more bookkeeping.</p>
+          <p class="figcap">fig. 7 · the goal state and its proof tree, one tactic per press</p>
         </div>
       </div>
     </section>
@@ -160,7 +166,11 @@ hw : w = thueMorse</span>
         <p class="kicker">Elsewhere in Lean</p>
         <h2>Contributions upstream</h2>
         <p class="prose lede">The same discipline, pointed at other people's libraries. Everything here
-        is public, and I am a contributor to each, nothing more.</p>
+        is public, and I am a contributor to each, nothing more.<span class="mn"><sup
+          class="mn-mark">&#8224;</sup><span class="mn-note"><span class="mn-mark">&#8224;</span><code
+          style="font-family: var(--mono); font-size: 12px; font-style: normal;">sorry</code> is Lean's
+          hole: it closes any goal and taints everything built on it, so the compiler keeps telling you
+          the proof is not finished.</span></span></p>
       </div>
 
       <div class="figure-row" style="align-items: start;">

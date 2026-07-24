@@ -29,6 +29,11 @@ directly, push to `main`, GitHub Pages redeploys in about a minute.
   `setBoard` in site.js, so don't add a second code path for it.
 - **Thue–Morse strips are rationed to one per page** (the single real hinge). A round that
   put one between every section was pulled back; sibling cards get whitespace instead.
+- **The site prints as a preprint.** Test any change with an actual print preview, not just
+  the screen: `beforeprint` completes the interactive widgets and drops the night board so
+  canvases repaint in ink. Break that and figures print blank.
+- Margin notes (`.mn`) only float inside full-width `.prose`; anywhere else they stay inline
+  by design. One per page.
 
 ## Known open items
 
