@@ -126,10 +126,27 @@ Each appears on more than one page — that is what makes it a signature rather 
     `--ink-3` and turning ballpoint on hover. Real brand marks; never emoji.
 14. **The tailpiece** (`.tailpiece`) — a chapter-end ornament: one figure set small
     (~200px), centred, muted, at the very foot of a page, with no caption and no prose. A
-    typeset book closes a section with a cul-de-lampe; the Mandelbrot does it on the index,
-    the Sierpinski on formalization. Meaning by placement, not words. This is where a
-    figure goes when it belongs on a page but does not want a paragraph, and it is how the
-    Sierpinski and Mandelbrot earn their place without exposition.
+    typeset book closes a section with a cul-de-lampe. Meaning by placement, not words:
+    this is where a figure earns its place without exposition. **Every content page has one,
+    and each is an exact construction, never a stock decoration:** golden spiral (index),
+    Mandelbrot (research), Sierpinski (formalization), Recamán (animations), spirograph /
+    hypotrochoid (education), Lissajous (projects). All drawn through `palette()` so they
+    follow the night board; all bail when `clientWidth < 40` (background-tab guard).
+15. **The goal stepper** — the Lean panel walks a real proof one tactic per click
+    (`GOAL_STEPS` in site.js): each press rewrites `.goal-body` to the next state and puts
+    the next tactic on the bar, ending on `No goals. ∎`; reset returns to step 0. The
+    static HTML still ships the closed proof, so no-JS sees a finished theorem.
+16. **The record** (`.record`) — everything under the education graph, packed into a quiet
+    auto-fit grid of labelled columns (small mono kicker, tightened `.entry` rows), instead
+    of four full sections repeating what the graph already shows.
+17. **The footer contact row** — five icon-only links (`.foot-contact`, 40×40 hit areas,
+    `--ink-3` going ballpoint on hover) replace the old keyboard-hint line. Reaching out is
+    on every page; the key map lives on the home contents note and in this doc.
+
+The reading-progress strip is the Thue–Morse word as a fixed row of boxes: dim at
+`0.12`, and the first `round(p·n)` light up (1-boxes full, 0-boxes `0.55`) as you scroll,
+dimming again on the way back. Synchronous on the scroll listener, never rAF (throttled in
+background tabs); `scrollHeight` cached on resize.
 
 ## Figures must be true
 

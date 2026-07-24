@@ -389,6 +389,58 @@
     }
   }
 
+  /* --- the Thue–Morse turtle ---------------------------------------------
+     Drive a pen with the word: on a 1 step forward, on a 0 turn 60°. The path
+     never closes and wanders off, which is the honest and interesting part, so
+     the caption claims nothing more than that. */
+
+  var tmTurtleCache = null;
+  function tmTurtlePoints() {
+    if (tmTurtleCache) return tmTurtleCache;
+    var N = 4096, word = thueMorse(N);
+    var x = 0, y = 0, th = 0, pts = [[0, 0]];
+    var minx = 0, maxx = 0, miny = 0, maxy = 0;
+    for (var n = 0; n < N; n++) {
+      if (word[n]) { x += Math.cos(th); y += Math.sin(th); pts.push([x, y]); }
+      else { th += Math.PI / 3; }
+      if (x < minx) minx = x; if (x > maxx) maxx = x;
+      if (y < miny) miny = y; if (y > maxy) maxy = y;
+    }
+    tmTurtleCache = { pts: pts, minx: minx, maxx: maxx, miny: miny, maxy: maxy };
+    return tmTurtleCache;
+  }
+
+  function tmTurtle(ctx, w, h, progress, pal) {
+    var T = tmTurtlePoints(), pts = T.pts, pad = 16;
+    var s = Math.min((w - pad * 2) / (T.maxx - T.minx), (h - pad * 2) / (T.maxy - T.miny));
+    var ox = (w - (T.maxx - T.minx) * s) / 2 - T.minx * s;
+    var oy = (h - (T.maxy - T.miny) * s) / 2 - T.miny * s;
+    function at(i) { return [ox + pts[i][0] * s, oy + pts[i][1] * s]; }
+
+    ctx.strokeStyle = pal.guide; ctx.lineWidth = 0.7;
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath();
+    for (var g = 0; g < pts.length; g++) {
+      var gp = at(g); if (g === 0) ctx.moveTo(gp[0], gp[1]); else ctx.lineTo(gp[0], gp[1]);
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1; ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    var upTo = Math.max(1, Math.floor(pts.length * progress));
+    for (var i = 0; i < upTo; i++) {
+      var p = at(i); if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    if (progress < 1 && upTo > 0) {
+      var tip = at(upTo - 1);
+      ctx.fillStyle = pal.laurel;
+      ctx.beginPath(); ctx.arc(tip[0], tip[1], 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
   /* --- fig. 2: the Thue–Morse difference table --------------------------- */
 
   function tmGrid(ctx, w, h, progress, pal) {
@@ -815,24 +867,143 @@
     }
   }
 
+  /* --- tailpieces: one closing ornament per page -------------------------
+     Each is an exact construction drawn once through palette(), so they follow
+     the night board. They bail while the canvas is unlaid-out (background tab). */
+
+  function goldenSpiral(canvas) {
+    if (canvas.clientWidth < 40) return;
+    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
+    var fib = [1, 1, 2, 3, 5, 8, 13];
+    /* Tile Fibonacci squares by attaching each new one to a rotating side of the
+       growing rectangle (right, up, left, down, ...), then sweep a quarter-circle
+       through each so the arcs join into one continuous curve. */
+    var span = 21;                                  /* 13 + 8 = final width */
+    var unit = Math.min((w - 20) / span, (h - 20) / 13);
+    var order = ["right", "up", "left", "down"];
+    var bx = 0, by = 0, bw = unit, bh = unit;        /* bounding rect, world coords */
+    var sq = [[0, 0, unit, "seed"]];
+    for (var k = 1; k < fib.length; k++) {
+      var sz = fib[k] * unit, o = order[(k - 1) % 4];
+      if (o === "right") { sq.push([bx + bw, by, sz, o]); bw += sz; }
+      else if (o === "up") { sq.push([bx, by - sz, sz, o]); by -= sz; bh += sz; }
+      else if (o === "left") { sq.push([bx - sz, by, sz, o]); bx -= sz; bw += sz; }
+      else { sq.push([bx, by + bh, sz, o]); bh += sz; }
+    }
+    var ox = (w - bw) / 2 - bx, oy = (h - bh) / 2 - by;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = pal.guide; ctx.lineWidth = 1;
+    sq.forEach(function (s) { ctx.strokeRect(ox + s[0], oy + s[1], s[2], s[2]); });
+    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1.6; ctx.lineJoin = "round";
+    ctx.beginPath();
+    sq.forEach(function (s) {
+      var X = ox + s[0], Y = oy + s[1], S = s[2], o = s[3], cx, cy, a0, a1;
+      /* arc centred on the inner corner, sweeping the quarter that continues the spiral */
+      if (o === "seed" || o === "right") { cx = X; cy = Y + S; a0 = -Math.PI / 2; a1 = 0; }
+      else if (o === "up") { cx = X; cy = Y; a0 = 0; a1 = Math.PI / 2; }
+      else if (o === "left") { cx = X + S; cy = Y; a0 = Math.PI / 2; a1 = Math.PI; }
+      else { cx = X + S; cy = Y + S; a0 = Math.PI; a1 = 1.5 * Math.PI; }
+      ctx.arc(cx, cy, S, a0, a1);
+    });
+    ctx.stroke();
+  }
+
+  function recaman(canvas) {
+    if (canvas.clientWidth < 40) return;
+    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
+    var N = 46, seen = {}, a = 0, seq = [0], mx = 0;
+    seen[0] = true;
+    for (var i = 1; i < N; i++) {
+      var back = a - i;
+      a = (back > 0 && !seen[back]) ? back : a + i;
+      seen[a] = true; seq.push(a); if (a > mx) mx = a;
+    }
+    var pad = 12, unit = (w - pad * 2) / mx, baseY = h * 0.62;
+    ctx.clearRect(0, 0, w, h);
+    ctx.lineWidth = 1.4; ctx.lineJoin = "round";
+    for (var j = 1; j < seq.length; j++) {
+      var x0 = pad + seq[j - 1] * unit, x1 = pad + seq[j] * unit;
+      var cx = (x0 + x1) / 2, r = Math.abs(x1 - x0) / 2;
+      var up = (j % 2 === 1);
+      ctx.strokeStyle = pal.ballpoint;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.arc(cx, baseY, r, Math.PI, 0, !up);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function spirograph(canvas) {
+    if (canvas.clientWidth < 40) return;
+    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
+    var R = 5, r = 3, d = 5;                 /* hypotrochoid; closes after 3 turns */
+    var scale = Math.min(w, h) / (2 * (R - r + d)) * 0.92;
+    var cx = w / 2, cy = h / 2;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1.3; ctx.lineJoin = "round";
+    ctx.beginPath();
+    var turns = r / gcd(R, r);               /* = 3 here */
+    var steps = 900;
+    for (var i = 0; i <= steps; i++) {
+      var t = (i / steps) * turns * 2 * Math.PI;
+      var k = R - r;
+      var x = cx + scale * (k * Math.cos(t) + d * Math.cos(k / r * t));
+      var y = cy + scale * (k * Math.sin(t) - d * Math.sin(k / r * t));
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+  function lissajous(canvas) {
+    if (canvas.clientWidth < 40) return;
+    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
+    var A = 3, B = 4, delta = Math.PI / 2;    /* closed 3:4 curve */
+    var ax = Math.min(w, h) * 0.42, ay = ax, cx = w / 2, cy = h / 2;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = pal.ballpoint; ctx.lineWidth = 1.3; ctx.lineJoin = "round";
+    ctx.beginPath();
+    var steps = 700;
+    for (var i = 0; i <= steps; i++) {
+      var t = (i / steps) * 2 * Math.PI;
+      var x = cx + ax * Math.sin(A * t + delta);
+      var y = cy + ay * Math.sin(B * t);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
   /* --- the goal panel, made runnable -------------------------------------- */
+
+  /* The proof, one tactic per click. Each state is what the assistant would
+     print at that point; the tactic on the button is the next line of the
+     script. Simplified for reading, and the static HTML keeps the closed
+     proof so a no-JS reader still sees a finished theorem. */
+  var GOAL_STEPS = [
+    { hyp: ["w : Word Bool", "hw : w = thueMorse"],
+      goal: "⊢ OverlapFree w",
+      tactic: "rw [hw, overlapFree_iff]" },
+    { hyp: ["w : Word Bool", "hw : w = thueMorse"],
+      goal: "⊢ ∀ u n, 0 < u.length → ¬ (u ^ n ++ u.take 1) <:+: thueMorse",
+      tactic: "intro u n hu hcon" },
+    { hyp: ["w : Word Bool", "hw : w = thueMorse", "u : Word Bool", "n : ℕ",
+            "hu : 0 < u.length", "hcon : (u ^ n ++ u.take 1) <:+: thueMorse"],
+      goal: "⊢ False",
+      tactic: "exact tm_overlap_free u n hu hcon" }
+  ];
 
   function initGoal(panel) {
     var bar = panel.querySelector(".goal-bar");
-    var target = panel.querySelector(".goal-target");
-    if (!bar || !target) return;
+    var body = panel.querySelector(".goal-body");
+    if (!bar || !body) return;
 
     panel.setAttribute("data-enhanced", "");
-
-    var cursor = document.createElement("span");
-    cursor.className = "goal-cursor";
-    cursor.setAttribute("aria-hidden", "true");
-    target.appendChild(cursor);
 
     var run = document.createElement("button");
     run.type = "button";
     run.className = "btn-tactic";
-    run.textContent = "by exact tm_overlapFree";
 
     var reset = document.createElement("button");
     reset.type = "button";
@@ -843,19 +1014,41 @@
     bar.appendChild(run);
     bar.appendChild(reset);
 
-    run.addEventListener("click", function () {
-      panel.classList.add("is-run");
-      run.disabled = true;
-      run.textContent = "✓ kernel accepted";
-      reset.hidden = false;
-    });
+    var step = 0;
 
-    reset.addEventListener("click", function () {
-      panel.classList.remove("is-run");
-      run.disabled = false;
-      run.textContent = "by exact tm_overlapFree";
-      reset.hidden = true;
-    });
+    function render() {
+      if (step < GOAL_STEPS.length) {
+        var s = GOAL_STEPS[step];
+        var hyp = document.createElement("span");
+        hyp.className = "hyp";
+        hyp.textContent = s.hyp.join("\n");
+        var tgt = document.createElement("span");
+        tgt.className = "goal-target";
+        tgt.textContent = s.goal + " ";
+        var cur = document.createElement("span");
+        cur.className = "goal-cursor";
+        cur.setAttribute("aria-hidden", "true");
+        tgt.appendChild(cur);
+        body.textContent = "";
+        body.appendChild(hyp);
+        body.appendChild(document.createTextNode("\n"));
+        body.appendChild(tgt);
+        run.disabled = false;
+        run.textContent = s.tactic;
+        panel.classList.remove("is-run");
+        reset.hidden = (step === 0);
+      } else {
+        panel.classList.add("is-run");
+        run.disabled = true;
+        run.textContent = "✓ kernel accepted";
+        reset.hidden = false;
+      }
+    }
+
+    run.addEventListener("click", function () { if (step < GOAL_STEPS.length) { step++; render(); } });
+    reset.addEventListener("click", function () { step = 0; render(); });
+
+    render();
   }
 
   /* --- the morphism, one press at a time ---------------------------------- */
@@ -983,42 +1176,49 @@
   function initProgress() {
     var bar = document.querySelector("[data-progress]");
     if (!bar) return;
+    /* the whole strip is always present; reading lights its boxes left to right,
+       and scrolling back turns them off again. No stretching, just blinking in. */
+    bar.style.width = "100%";
     var canvas = document.createElement("canvas");
     bar.appendChild(canvas);
     var ctx = canvas.getContext("2d");
 
-    function paint() {
-      var w = window.innerWidth;
+    var STEP = 7, BOX = 4;
+    var word = [], n = 0, max = 0, w = 0;
+
+    function layout() {
+      w = window.innerWidth;
+      n = Math.ceil(w / STEP);
+      word = thueMorse(n);
       var dpr = window.devicePixelRatio || 1;
-      var pal = palette();
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(2 * dpr);
       canvas.style.width = w + "px";
       canvas.style.height = "2px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw() {
+      var pal = palette();
+      var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      var lit = Math.round(p * n);
       ctx.clearRect(0, 0, w, 2);
-      var word = thueMorse(Math.ceil(w / 7));
-      for (var i = 0; i < word.length; i++) {
-        ctx.globalAlpha = word[i] ? 1 : 0.3;
-        ctx.fillStyle = pal.ink;
-        ctx.fillRect(i * 7, 0, 4, 2);
+      ctx.fillStyle = pal.ink;
+      for (var i = 0; i < n; i++) {
+        if (i < lit) ctx.globalAlpha = word[i] ? 1 : 0.55;
+        else ctx.globalAlpha = 0.12;
+        ctx.fillRect(i * STEP, 0, BOX, 2);
       }
       ctx.globalAlpha = 1;
     }
 
-    var max = 0;
     function measure() { max = document.documentElement.scrollHeight - window.innerHeight; }
-    function update() {
-      var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      bar.style.width = (p * 100) + "%";
-    }
 
-    onRepaint(paint);
+    onRepaint(function () { layout(); draw(); });
     measure();
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", function () { paint(); measure(); update(); });
-    window.setTimeout(function () { measure(); update(); }, 600);
+    window.addEventListener("scroll", draw, { passive: true });
+    window.addEventListener("resize", function () { layout(); measure(); draw(); });
+    window.setTimeout(function () { measure(); draw(); }, 600);
   }
 
   /* --- keys: sections by number, and the board after dark ----------------- */
@@ -1037,7 +1237,7 @@
   function initKeys() {
     var map = {
       "1": "research.html", "2": "lean.html", "3": "manim.html",
-      "4": "education.html", "5": "personal.html", "6": "cv.html",
+      "4": "education.html", "5": "projects.html", "6": "cv.pdf",
       "0": "index.html"
     };
 
@@ -1081,6 +1281,16 @@
 
     var mb = document.getElementById("figure-mandelbrot");
     if (mb) onRepaint(function () { mandelbrot(mb); });
+
+    var turtle = document.getElementById("figure-turtle");
+    if (turtle) plotter(turtle, { draw: tmTurtle, seconds: 6, hold: 2.4 });
+
+    [["figure-golden", goldenSpiral], ["figure-recaman", recaman],
+     ["figure-spirograph", spirograph], ["figure-lissajous", lissajous]
+    ].forEach(function (pair) {
+      var el = document.getElementById(pair[0]);
+      if (el) onRepaint(function () { pair[1](el); });
+    });
 
     var eg = document.querySelector("[data-edu-graph]");
     if (eg) eduGraph(eg);

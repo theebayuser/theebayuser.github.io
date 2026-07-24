@@ -485,7 +485,7 @@ a.env:hover .env-kind { color: var(--ballpoint); }
    are real focusable links; the legend beneath is the plain-text equivalent
    and the no-JS fallback. */
 .contents-hero { display: flex; flex-direction: column; align-items: center; }
-.contents-hero .canvas-wrap { max-width: 520px; }
+.contents-hero .canvas-wrap { max-width: 380px; }
 /* the caption is also the hover readout, so reserve its line and let the text
    change without nudging the layout */
 .contents-hero .figcap {
@@ -494,7 +494,7 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 }
 
 .toc-line {
-  list-style: none; margin: var(--s3) 0 0; padding: 0;
+  list-style: none; margin: var(--s2) 0 0; padding: 0;
   display: flex; flex-wrap: wrap; justify-content: center;
   gap: 2px var(--s1);
 }
@@ -714,6 +714,17 @@ a.btn .fill { color: var(--ink-3); }
 .entry ul { margin: var(--s1) 0 0; padding-left: 1.1em; color: var(--ink-2); font-size: 16px; }
 .entry li { margin-bottom: 4px; }
 
+/* the record: everything below the education graph, packed into a quiet grid.
+   Each column is a labelled stack of tightened entries, no big section heads. */
+.record {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--s5) var(--s6); align-items: start;
+}
+.record-col > .kicker { margin-bottom: var(--s1); }
+.record-col .entry { padding: var(--s2) 0; }
+.record-col .entry:first-of-type { border-top: 1px solid var(--rule); }
+.record-col .entry ul { font-size: 15px; }
+
 .cv-head { text-align: center; padding: var(--s6) 0 var(--s4); border-bottom: 1px solid var(--rule); }
 .cv-contact { font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-2); margin-top: var(--s2); }
 .cv-contact a { border-bottom-color: rgba(35,88,167,.24); }
@@ -755,11 +766,19 @@ a.btn .fill { color: var(--ink-3); }
 .foot-nav a:hover .num { color: var(--ballpoint); }
 
 .foot-rule {
-  display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4);
-  align-items: baseline; margin-top: var(--s5);
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4);
+  align-items: center; margin-top: var(--s5);
   padding-top: var(--s2); border-top: 1px solid var(--rule-soft);
 }
-.foot-rule .keys-hint { flex-basis: auto; margin-left: auto; }
+/* the reach-me row: icon-only links, generous hit area, quiet until hover */
+.foot-contact { display: flex; gap: 2px; margin-left: auto; }
+.foot-contact a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border: 0; color: var(--ink-3);
+  transition: color 140ms var(--ease), background-color 140ms var(--ease);
+}
+.foot-contact a:hover { color: var(--ballpoint); background: var(--hover); }
+.foot-contact svg { width: 17px; height: 17px; }
 
 /* -------------------------------------------------------------- mobile --- */
 
@@ -779,7 +798,7 @@ a.btn .fill { color: var(--ink-3); }
   .foot-grid { grid-template-columns: 1fr; gap: var(--s4); }
   .foot-quote p { font-size: 17px; }
   .foot-rule { margin-top: var(--s4); }
-  .keys-hint { display: none; }
+  .foot-contact { margin-left: 0; }
   .quote { padding: var(--s3) 0; }
   .quote p { font-size: 20px; }
   /* narrow, the graph turns into one column, so it needs height not width */

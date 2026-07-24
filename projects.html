@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found · Daniel Liao</title>
-<meta name="description" content="This page does not exist.">
+<title>Projects · Daniel Liao</title>
+<meta name="description" content="Things Daniel Liao runs: Tri-Valley Tutoring and USAMO Guide.">
+<meta property="og:title" content="Projects · Daniel Liao">
+<meta property="og:description" content="Built, staffed, and shipped: a tutoring organization and an olympiad-prep platform.">
+<meta property="og:type" content="website">
 <meta name="theme-color" content="#F7F3E9">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +26,7 @@
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>
-      <a href="projects.html"><span class="num">05</span>Projects</a>
+      <a href="projects.html" aria-current="page"><span class="num">05</span>Projects</a>
       <a href="cv.pdf" target="_blank" rel="noopener">CV</a>
     </nav>
     <div class="progress" data-progress aria-hidden="true"></div>
@@ -31,31 +34,82 @@
 </header>
 
 <main id="main">
-  <div class="page" style="max-width: 760px;">
+  <div class="page">
 
-    <div class="titleblock" style="text-align: left; padding-bottom: var(--s4);">
-      <p class="kicker">Error 404</p>
-      <h1 class="display" style="font-size: clamp(32px, 4.6vw, 44px);">Page not found</h1>
+    <div class="titleblock" style="text-align: left; padding-bottom: var(--s5);">
+      <p class="kicker">§ 05 · Projects</p>
+      <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Things I run</h1>
+      <p class="byline">built, staffed, and shipped, outside the margin</p>
     </div>
 
     <section class="section" style="padding-top: 0;">
-      <div class="prose stack">
-        <div class="env" style="border-bottom: 1px solid var(--rule);">
-          <div class="env-head">
-            <span class="env-kind">Theorem</span>
-            <span class="env-name">(this page does not exist).</span>
-            <span class="env-status done">∎ proved</span>
-          </div>
-          <p class="env-body"><span class="ital">Proof.</span> Suppose it did. Then the server would
-          have returned it, since the server returns every page it has. It returned this one instead,
-          which is not that page. Contradiction. ∎</p>
-        </div>
-        <p>The link that brought you here is wrong, or something moved. Neither is your fault.</p>
-        <div style="display: flex; gap: var(--s2); flex-wrap: wrap;">
-          <a class="btn" href="index.html">← Back to the front page</a>
-        </div>
+      <div class="prose">
+        <p class="lede">Two of these are organizations with other people counting on them, which turns
+        out to be a different kind of hard from a proof. Both started because the thing I wanted did not
+        exist yet.</p>
       </div>
     </section>
+
+    <section class="section" style="padding-top: 0;" id="tutoring">
+      <div class="env" style="border-top: 1px solid var(--rule);">
+        <div class="env-head">
+          <span class="env-kind">Tri-Valley Tutoring</span>
+          <span class="env-name">(founder &amp; director).</span>
+          <span class="env-status">2024 – present</span>
+        </div>
+        <p class="env-body">A peer-to-peer tutoring organization I started in my school district, run by
+        high schoolers for the students right behind them. The hard part was never the mathematics, it
+        was building something two dozen other people could rely on and keeping it running once they did.</p>
+        <div class="stats" style="margin-top: var(--s3);">
+          <div class="stat"><p class="v" data-count="25">25+</p><p class="k">peer tutors</p></div>
+          <div class="stat"><p class="v" data-count="2000">2,000+</p><p class="k">hours delivered</p></div>
+          <div class="stat"><p class="v" data-count="100">100+</p><p class="k">students reached</p></div>
+        </div>
+        <p class="env-foot" style="margin-top: var(--s3);">
+          <span>district-wide</span><span>·</span>
+          <span>$100k in tutoring delivered</span><span>·</span>
+          <span><a href="https://github.com/theebayuser/trivalleytutoring.github.io" target="_blank" rel="noopener">website in progress</a></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;" id="usamo-guide">
+      <div class="env" style="border-top: 1px solid var(--rule);">
+        <div class="env-head">
+          <span class="env-kind">USAMO Guide</span>
+          <span class="env-name">(CMO &amp; content contributor).</span>
+          <span class="env-status">2026 – present</span>
+        </div>
+        <p class="env-body">A free, open-source platform for olympiad preparation, built around the one
+        path most resources leave scattered: AMC to AIME to USAMO. Curated study material, recurring
+        contests, and a contributor community, with a staff of about twenty keeping it moving.</p>
+        <div class="stats" style="margin-top: var(--s3);">
+          <div class="stat"><p class="v" data-count="20">20</p><p class="k">on staff</p></div>
+          <div class="stat"><p class="v" data-count="25000">25,000</p><p class="k">unique users</p></div>
+          <div class="stat"><p class="v" data-count="200000">200,000</p><p class="k">monthly visits</p></div>
+        </div>
+        <p class="env-foot" style="margin-top: var(--s3);">
+          <span>open source</span><span>·</span>
+          <span><a href="https://usamoguide.com" target="_blank" rel="noopener">usamoguide.com</a></span><span>·</span>
+          <span><a href="https://github.com/theebayuser/usamo-guide" target="_blank" rel="noopener">source</a></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;" id="also">
+      <div class="prose">
+        <p class="kicker">Also running</p>
+        <p><span class="ital">Math Visualizations</span>, the animation channel, is its own ongoing
+        project: the films and the follower ledger live on <a href="manim.html">§ 03</a>.</p>
+      </div>
+    </section>
+
+    <div class="tailpiece">
+      <div class="canvas-wrap" style="aspect-ratio: 1;">
+        <canvas id="figure-lissajous" role="img"
+          aria-label="A Lissajous curve, two perpendicular oscillations in a three-to-four ratio, closing on itself."></canvas>
+      </div>
+    </div>
 
   </div>
 </main>

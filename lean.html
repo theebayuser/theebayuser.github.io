@@ -26,8 +26,8 @@
       <a href="lean.html" aria-current="page"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>
-      <a href="personal.html"><span class="num">05</span>Personal</a>
-      <a href="cv.html">CV</a>
+      <a href="projects.html"><span class="num">05</span>Projects</a>
+      <a href="cv.pdf" target="_blank" rel="noopener">CV</a>
     </nav>
     <div class="progress" data-progress aria-hidden="true"></div>
   </div>
@@ -61,13 +61,13 @@
           <div class="goal">
             <div class="goal-bar"><span>Lean&nbsp;4</span><span class="goal-label" style="margin-left:auto">goal state</span></div>
 <div class="goal-body"><span class="hyp">w : Word Bool
-h : Infinite w
-tm : w = thueMorse</span>
+hw : w = thueMorse</span>
 <span class="goal-target"><span class="turn">⊢</span> OverlapFree w</span></div>
             <div class="goal-ok"><span>No goals. ∎</span></div>
           </div>
           <p class="meta" style="margin-top: 10px;">Thue's 1912 overlap-freeness theorem, as the
-          assistant sees it. Run the tactic and watch the goal close.</p>
+          assistant sees it. Press the tactic on the bar to walk the proof forward, one line at a time,
+          until the goal closes. Simplified for reading; the real script carries more bookkeeping.</p>
         </div>
       </div>
     </section>
@@ -90,71 +90,61 @@ tm : w = thueMorse</span>
 
     <div class="tm" data-n="24"></div>
 
-    <section class="section" style="padding-top: 0;" id="turtle">
-      <div class="figure-row">
-        <div class="prose stack" data-reveal>
-          <p class="kicker">Figure 2</p>
-          <h2 style="font-size: var(--fs-h2);">The word, seen from above</h2>
-          <p>Take the Thue–Morse word twice, once along each edge of a square, and ink the cell where
-          the two letters disagree. Because the parity of a binary digit sum adds under exclusive or,
-          that cell is exactly the word's own letter at position <em>i</em> xor <em>j</em>. The square
-          is one more picture of the same sequence.</p>
-          <p>It comes out self-similar: every quadrant is the whole picture one size down. That is the
-          doubling rule from the research page, viewed from overhead.</p>
-        </div>
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 1;">
-            <canvas id="figure-tmgrid" role="img"
-              aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
-          </div>
-          <p class="figcap">fig. 2 · cell (i, j) inked when t(i) ≠ t(j)</p>
-        </div>
-      </div>
-    </section>
-
     <section class="section" style="padding-top: 0;">
       <div class="section-head" data-reveal>
         <p class="kicker">What is in it</p>
         <h2>Contents of the library</h2>
       </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">Module</span><span class="env-name">(the spine).</span>
-          <span class="env-status done">✓ no gaps</span>
-        </div>
-        <p class="env-body">Definitions for finite and infinite words, concatenation, factors,
-        morphisms and their iteration, powers, squares, overlaps, and the avoidance predicates,
-        plus the API lemmas that make any of it usable in a real proof.</p>
-      </div>
+      <div class="figure-row">
+        <div data-reveal-group>
+          <div class="env">
+            <div class="env-head">
+              <span class="env-kind">Module</span><span class="env-name">(the spine).</span>
+              <span class="env-status done">✓ no gaps</span>
+            </div>
+            <p class="env-body">Definitions for finite and infinite words, concatenation, factors,
+            morphisms and their iteration, powers, squares, overlaps, and the avoidance predicates,
+            plus the API lemmas that make any of it usable in a real proof.</p>
+          </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912, binary).</span>
-          <span class="env-status done">✓ machine-checked</span>
-        </div>
-        <p class="env-body">The Thue–Morse word is overlap-free. Formalized from the fixed-point
-        definition through to the full theorem, with no assumptions left open.</p>
-      </div>
+          <div class="env">
+            <div class="env-head">
+              <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912, binary).</span>
+              <span class="env-status done">✓ machine-checked</span>
+            </div>
+            <p class="env-body">The Thue–Morse word is overlap-free. Formalized from the fixed-point
+            definition through to the full theorem, with no assumptions left open.</p>
+          </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912, ternary).</span>
-          <span class="env-status done">✓ machine-checked</span>
-        </div>
-        <p class="env-body">There exists an infinite square-free word over three letters. The
-        construction and the proof that it works, both checked.</p>
-      </div>
+          <div class="env">
+            <div class="env-head">
+              <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912, ternary).</span>
+              <span class="env-status done">✓ machine-checked</span>
+            </div>
+            <p class="env-body">There exists an infinite square-free word over three letters. The
+            construction and the proof that it works, both checked.</p>
+          </div>
 
-      <div class="env">
-        <div class="env-head">
-          <span class="env-kind">In progress</span><span class="env-name">(research results).</span>
-          <span class="env-status wip">⋯ ~72% verified</span>
+          <div class="env" style="border-bottom: 1px solid var(--rule);">
+            <div class="env-head">
+              <span class="env-kind">In progress</span><span class="env-name">(research results).</span>
+              <span class="env-status wip">⋯ ~72% verified</span>
+            </div>
+            <p class="env-body">The classification from Project P2 is wired end to end in Lean: the
+            structural argument, the upper bound, and the finite base cases compile together. Four named
+            obligations remain open and are stated as such in the source, not papered over. One earlier
+            version of them was refuted outright by the assistant, which is the system working.</p>
+          </div>
         </div>
-        <p class="env-body">The classification from Project P2 is wired end to end in Lean: the
-        structural argument, the upper bound, and the finite base cases compile together. Four named
-        obligations remain open and are stated as such in the source, not papered over. One earlier
-        version of them was refuted outright by the assistant, which is the system working.</p>
+
+        <div data-reveal>
+          <div class="canvas-wrap" style="aspect-ratio: 1;">
+            <canvas id="figure-tmgrid" role="img"
+              aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
+          </div>
+          <p class="figcap">fig. 2 · the library's namesake: cell (i, j) inked when t(i) ≠ t(j)</p>
+        </div>
       </div>
     </section>
 
@@ -244,10 +234,10 @@ tm : w = thueMorse</span>
   <div class="page">
     <div class="foot-grid">
       <div>
-        <p class="foot-sig">Daniel Liao · San Ramon, California</p>
+        <p class="foot-sig">Daniel Liao &#183; San Ramon, California</p>
         <blockquote class="foot-quote">
-          <p>Mathematics is the art of giving the same name to different things.</p>
-          <footer>Henri Poincar&#233;</footer>
+          <p>Quod erat demonstrandum.</p>
+          <footer>which was to be demonstrated &#8718;</footer>
         </blockquote>
       </div>
       <nav class="foot-nav" aria-label="Sections">
@@ -255,13 +245,19 @@ tm : w = thueMorse</span>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>
-      <a href="personal.html"><span class="num">05</span>Personal</a>
-      <a href="cv.html"><span class="num">06</span>Curriculum vitae</a>
+      <a href="projects.html"><span class="num">05</span>Projects</a>
+      <a href="cv.pdf"><span class="num">06</span>Curriculum vitae</a>
       </nav>
     </div>
     <div class="foot-rule">
       <p class="meta">currently &#183; <span data-now>out and about</span></p>
-      <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
+      <div class="foot-contact">
+        <a href="mailto:artificialintelligencealt33@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14"/><path d="m2.5 6 9.5 7.5L21.5 6"/></svg></a>
+        <a href="https://github.com/theebayuser" aria-label="GitHub" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+        <a href="https://www.linkedin.com/in/daniel-liao-ca/" aria-label="LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/></svg></a>
+        <a href="https://www.instagram.com/theebayuser/" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://x.com/theebayuser" aria-label="X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a>
+      </div>
     </div>
   </div>
 </footer>

@@ -14,12 +14,12 @@ Then open <http://localhost:4173>.
 | Path | What it is |
 |---|---|
 | `index.html` | Title block, abstract, the spiral contents, publications, contact |
-| `research.html` | What combinatorics on words is, the projects, and the marginalia figures |
-| `lean.html` | Formalization: goal-state panel, library stats, contents, Talos |
-| `manim.html` | Self-drawing figures, the three films, and the channel ledger |
-| `education.html` | The prerequisite graph as navigation; schools, coursework, clubs, results |
-| `personal.html` | Photographs, the honest paragraph, and where to find you |
-| `cv.html` | Typeset CV; the Print button produces a clean PDF |
+| `research.html` | Combinatorics on words, the projects, the turtle figure, and a Mandelbrot tailpiece |
+| `lean.html` | Formalization: the goal stepper, library contents with the difference table, upstream contributions, a Sierpinski tailpiece |
+| `manim.html` | Self-drawing figures, the three films, the channel ledger, a Recamán tailpiece |
+| `education.html` | The prerequisite graph as navigation; the record; a spirograph tailpiece |
+| `projects.html` | Tri-Valley Tutoring and USAMO Guide, with a Lissajous tailpiece |
+| `cv.pdf` | The CV, a static PDF. To update it, replace this file |
 | `404.html` | Not-found page, proved by contradiction |
 | `css/paper.css` | The entire design system: every colour, size, and rule |
 | `js/site.js` | Every figure, widget, and key binding |
@@ -45,8 +45,9 @@ If the file fails to load, the counts stay as dashes and every link still works.
 
 ### Things you can click
 
-- **Formalization**: press `by exact tm_overlapFree` in the goal panel and the goal
-  closes; `reset` reopens it. The stats count up the first time they scroll into view.
+- **Formalization**: the goal panel is a stepper. Press the tactic on the bar to walk the
+  proof forward one line at a time (three steps) until the goal closes; `reset` starts
+  over. The stats count up the first time they scroll into view.
 - **Research**: press `Apply 0 → 01, 1 → 10` to grow the Thue–Morse word one generation
   at a time, up to generation 8.
 - **Home**: the contents *are* Ulam's spiral. The six numerals are pinned to six actual
@@ -58,7 +59,9 @@ If the file fails to load, the counts stay as dashes and every link still works.
   reads left to right as two chains meeting. Under 560px the same graph becomes one
   column, in the order things actually happened.
 - **Anywhere**: keys `1`–`5` jump to the sections, `6` opens the CV, `0` goes home. The
-  strip under the nav is the Thue–Morse word filling in as you scroll.
+  strip under the nav is the Thue–Morse word, its boxes lighting left to right as you
+  scroll and dimming again as you go back up. Every page ends with a small drawn ornament
+  (a tailpiece); each footer carries the five ways to reach out.
 - **Hidden**: press `b` for the night board, the same paper after dark. Every figure
   repaints itself in chalk. Press it again to come back; the choice is remembered.
 
@@ -68,22 +71,12 @@ numbers.
 
 ## Filling it in
 
-Every placeholder is gone: nothing on the site says ⟨like this⟩ any more. Two things are
-still waiting on you.
+Every placeholder is gone: nothing on the site says ⟨like this⟩ any more.
 
-### Photographs
+### The CV
 
-`assets/photos/` is **empty**, so the slideshow on `personal.html` shows a deliberate
-empty state ("no plates filed"). Drop files into `assets/photos/`, then replace the single
-placeholder slide with one `div` per photo:
-
-```html
-<div class="show-slide" data-active="true" data-caption="Your caption."><img src="assets/photos/01.jpg" alt="Describe the photo."></div>
-<div class="show-slide" data-caption="Another caption."><img src="assets/photos/02.jpg" alt="Describe the photo."></div>
-```
-
-Update the `of 1` in `data-show-count`; the Plate numerals recompute themselves. Three to
-eight photos is the right number.
+The CV is a static PDF, `cv.pdf`, linked from the nav, the footer, the spiral, and the
+`6` key. To update it, replace that one file. (The old typeset `cv.html` page is retired.)
 
 ### Follower counts
 
