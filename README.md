@@ -13,10 +13,10 @@ Then open <http://localhost:4173>.
 
 | Path | What it is |
 |---|---|
-| `index.html` | Title block, abstract, the spiral contents, publications, contact, an ink-walk tailpiece |
+| `index.html` | Title block, abstract, the spiral contents, the manuscript deskstack, contact, an ink-walk tailpiece |
 | `research.html` | Combinatorics on words: intro + ternary word-art, vocabulary + morphism, projects + turtle, a Mandelbrot tailpiece |
 | `lean.html` | Formalization: the goal stepper, the difference table beside the library, upstream contributions with the Elliott–Halberstam snippet beside the three cards, a Sierpinski tailpiece |
-| `manim.html` | Self-drawing figures (Lorenz then deltoid), the three films, the channel ledger, a strange-attractor tailpiece |
+| `manim.html` | Self-drawing figures (Lorenz, then a double pendulum), the three films, the channel ledger, a strange-attractor tailpiece |
 | `education.html` | The prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
 | `projects.html` | Tri-Valley Tutoring (Overleaf-style worked problem, blank until compiled) and USAMO Guide (video showcase + 2×3 stats), a cubic-roots tailpiece |
 | `404.html` | A proof-by-contradiction not-found page, with a Clifford-attractor tailpiece |
@@ -108,24 +108,12 @@ track on export (`ffmpeg -i in.mov -an … out.mp4`) since it plays muted anyway
 showcase reel (`.reel`, 4:5) uses the same `data-film` behaviour in a portrait frame beside
 a `.stats-grid2` (six numbers, 2×3).
 
-### Sidenotes, underlines, and printing
-
-A margin note is written inline where it belongs:
-
-```html
-Axel Thue built such a word in 1912.<span class="mn"><sup class="mn-mark">†</sup><span
-  class="mn-note"><span class="mn-mark">†</span>The note itself.</span></span>
-```
-
-Past 1024px it floats into the margin; below that it folds inline. Put them only in
-full-width `.prose` blocks (a `.figure-row` column has no margin to float into), one per
-page, on a term a reader might genuinely not know.
+### Underlines and printing
 
 `<em class="uline">phrase</em>` marks a phrase in ballpoint; the stroke draws itself as the
 line scrolls into view and is simply present without JS.
 
-**The site prints.** `@media print` in `paper.css` strips the chrome, folds sidenotes
-inline, keeps figures with their captions, and prints external links with their URLs. Two
+**The site prints.** `@media print` in `paper.css` strips the chrome, keeps figures with their captions, and prints external links with their URLs. Two
 things happen in JS on `beforeprint`: the interactive widgets complete themselves (the
 texview renders, the proof closes) and the night board is dropped and every canvas
 repainted, because a chalk-coloured raster prints as nothing on white.

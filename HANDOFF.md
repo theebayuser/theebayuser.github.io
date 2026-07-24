@@ -25,15 +25,17 @@ directly, push to `main`, GitHub Pages redeploys in about a minute.
 - Live follower counts for `@math.visualizations` live in `data/socials.json`, hand-kept
   (the platforms don't expose them to a static page) — update the file to refresh them.
 - Keyboard nav: `1`–`5` jump sections, `6` opens the CV, `0` goes home, `b` flips the night
-  board. The board also has a visible `◐ board` button in every topbar; both go through one
-  `setBoard` in site.js, so don't add a second code path for it.
+  board. The board also has a visible `◐` button in every topbar (glyph only, named by its
+  `aria-label`); both go through one `setBoard` in site.js, so don't add a second code path.
 - **Thue–Morse strips are rationed to one per page** (the single real hinge). A round that
   put one between every section was pulled back; sibling cards get whitespace instead.
 - **The site prints as a preprint.** Test any change with an actual print preview, not just
   the screen: `beforeprint` completes the interactive widgets and drops the night board so
   canvases repaint in ink. Break that and figures print blank.
-- Margin notes (`.mn`) only float inside full-width `.prose`; anywhere else they stay inline
-  by design. One per page.
+- **Every page carries at least one `.uline`** phrase. The CSS default is the finished
+  stroke; JS pulls it to zero and draws it in, so no-JS still shows the emphasis.
+- Section pages end in a `.pager` (previous/next). Insert a page and the two neighbours
+  need updating too.
 
 ## Known open items
 

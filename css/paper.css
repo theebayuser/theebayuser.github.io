@@ -176,49 +176,6 @@ img, video, canvas, svg { max-width: 100%; display: block; }
 
 section { scroll-margin-top: 84px; }
 
-/* --------------------------------------------------------- marginalia --- */
-/* A sidenote in the outer margin, the way a printed monograph carries the
-   aside the sentence did not have room for. The mark stays inline with the
-   phrase; the note floats out beside it on a wide screen and folds back inline
-   underneath when the margin is gone. Never a hover tooltip: on paper and on a
-   phone the note has to be readable without a pointer. */
-.mn-mark {
-  font-family: var(--mono); font-size: 0.72em; color: var(--ballpoint);
-  vertical-align: super; line-height: 0; padding-left: 1px;
-}
-/* Default, and the whole story on a narrow screen: the note sits inline just
-   under the line that raised it, ruled off to the left like a block quote. */
-.mn-note {
-  display: block; font-size: 14px; line-height: 1.5; font-style: italic;
-  color: var(--ink-3); margin: var(--s1) 0 var(--s2) var(--s2);
-  padding-left: var(--s2); border-left: 1px solid var(--rule);
-  max-width: 46ch;
-}
-.mn-note .mn-mark { vertical-align: baseline; padding-right: 5px; }
-
-/* Once the viewport clears the 940px page, the measure (68ch, ~600px) leaves
-   roughly 270px of margin inside it. Float the note out there with a negative
-   right margin, the way a monograph sets a sidenote: it lands beside the line
-   that called it and the text keeps its measure. */
-@media (min-width: 1024px) {
-  /* only a full-width prose column has the margin to spare; the abstract is a
-     narrow centred block, so its notes stay inline */
-  .prose .mn-note {
-    float: right; clear: right; width: 200px;
-    margin: 0.25em -232px 0.9em 0;
-    padding: 6px 0 0; border-left: 0; border-top: 1px solid var(--rule);
-    font-size: 13px; text-align: left;
-  }
-  /* A prose column inside a figure row has no margin to spare, so those notes
-     stay inline rather than colliding with the figure beside them. */
-  .figure-row .prose .mn-note {
-    float: none; width: auto; max-width: 46ch;
-    margin: var(--s1) 0 var(--s2) var(--s2);
-    padding: 0 0 0 var(--s2); border-top: 0; border-left: 1px solid var(--rule);
-    font-size: 14px;
-  }
-}
-
 /* ------------------------------------------------------------- nav/bar --- */
 
 .topbar {
@@ -251,19 +208,16 @@ section { scroll-margin-top: 84px; }
 /* the night board, made visible: the `b` key still works, this is its handle.
    Same mono idiom as the nav, half-filled circle for the state it flips to. */
 .board-toggle {
-  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-3);
-  background: none; border: 0; cursor: pointer; padding: 12px 8px;
-  min-height: 40px; display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 15px; color: var(--ink-3);
+  background: none; border: 0; cursor: pointer; padding: 12px 10px;
+  min-height: 40px; min-width: 40px; display: inline-flex;
+  align-items: center; justify-content: center;
   line-height: 1; margin-left: -4px;
   transition: color 140ms var(--ease);
 }
 .board-toggle:hover { color: var(--ballpoint); }
 .board-toggle:active { transform: scale(0.97); }
 .board-toggle[aria-pressed="true"] { color: var(--ink); }
-@media (max-width: 620px) {
-  /* on a narrow bar the word goes, the glyph stays */
-  .board-toggle span { display: none; }
-}
 
 /* ---------------------------------------------------------- titleblock --- */
 
@@ -595,14 +549,6 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 .goal.is-run .goal-cursor { display: none; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(4px); } }
 
-/* The same proof drawn as a tree, under the panel. A tactic script reads as one
-   straight line even when the argument branches; this shows where it really
-   forks. Hidden until JS is confirmed, because an empty canvas is worse than no
-   canvas at all. */
-.goal-tree { display: none; height: 96px; margin-top: 10px; }
-.goal[data-enhanced] + .goal-tree { display: block; }
-.goal-tree canvas { width: 100%; height: 100%; display: block; }
-
 /* morphism widget */
 .morph-bar {
   display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
@@ -788,6 +734,15 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 }
 .wordart b { color: var(--ballpoint); font-weight: 500; }
 .wordart i { color: var(--ink-4); font-style: normal; }
+
+/* The word answers the pen. Letters near the cursor come up out of the page,
+   the way ink lifts under a magnifier: nearest go ballpoint and heavier, the
+   ring around them warms to full ink. Colour and weight only, never position,
+   so a 216-letter block never reflows under the pointer. */
+.wordart.wa-live span { transition: color 180ms var(--ease), opacity 180ms var(--ease); }
+.wordart.wa-live .wa-mid { color: var(--ink-2); }
+.wordart.wa-live .wa-near { color: var(--ballpoint); }
+.wordart.wa-live b.wa-near { color: var(--laurel); }
 
 /* the tailpiece: a chapter-end ornament. A figure set small and centred at the
    very foot of a page, no caption and no prose, the way a typeset book closes a
@@ -986,6 +941,98 @@ a.btn .fill { color: var(--ink-3); }
 .cv-contact { font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-2); margin-top: var(--s2); }
 .cv-contact a { border-bottom-color: rgba(35,88,167,.24); }
 
+/* ----------------------------------------------------------- deskstack --- */
+
+/* The work as it actually sits: two manuscript sheets and the library card they
+   both stand on, fanned on the desk. Each is a real link into its section, so
+   the graphic is the navigation rather than an illustration of it. */
+.deskstack {
+  display: flex; align-items: flex-start; gap: 0;
+  padding: var(--s3) 0 var(--s5);
+}
+.sheet {
+  flex: 1 1 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 7px;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  padding: var(--s3) var(--s3) var(--s4);
+  text-decoration: none; color: inherit;
+  transition: transform 200ms var(--ease), border-color 200ms var(--ease);
+  will-change: transform;
+}
+/* fanned: each sheet turned a little and overlapped onto the last, the way a
+   stack of paper actually lies. Kept to transforms so nothing reflows. */
+.sheet:nth-child(1) { transform: rotate(-1.4deg); z-index: 1; }
+.sheet:nth-child(2) { transform: rotate(0.5deg) translateY(6px); margin-left: -12px; z-index: 2; }
+.sheet:nth-child(3) { transform: rotate(1.8deg) translateY(2px); margin-left: -12px; z-index: 3; }
+.sheet:hover, .sheet:focus-visible {
+  transform: rotate(0deg) translateY(-8px);
+  border-color: var(--rule-strong);
+  z-index: 4;
+}
+.sheet-kind {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.sheet-title {
+  font-size: 19px; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.sheet-note { font-size: 14.5px; color: var(--ink-2); line-height: 1.5; }
+.sheet-status {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.04em;
+  margin-top: auto; padding-top: var(--s2); color: var(--ink-3);
+}
+.sheet-status.done { color: var(--qed); }
+/* the library is a card, not a sheet: inset stock and a ruled-off count */
+.sheet.card { background: var(--paper-inset); }
+.sheet-rule { border-top: 1px solid var(--rule); margin-top: 4px; }
+.sheet-count {
+  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.sheet-count b { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 720px) {
+  /* no room to fan: the stack becomes a squared-up pile */
+  .deskstack { flex-direction: column; gap: -1px; padding-bottom: var(--s4); }
+  .sheet, .sheet:nth-child(1), .sheet:nth-child(2), .sheet:nth-child(3) {
+    transform: none; margin-left: 0; margin-top: -1px;
+  }
+  .sheet:hover, .sheet:focus-visible { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet:hover, .sheet:focus-visible { transform: none; }
+}
+
+/* --------------------------------------------------------------- pager --- */
+
+/* Sections that are numbered should be walkable in order. Two ends, ruled off
+   above, in the nav's own mono: the section you just left and the one that
+   follows. The number leads, because the number is the structure. */
+.pager {
+  display: flex; justify-content: space-between; align-items: stretch;
+  gap: var(--s3); margin-top: var(--s6);
+  border-top: 1px solid var(--rule);
+}
+.pager a {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: var(--s3) 0; border: 0; min-height: 44px;
+  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-2);
+  max-width: 46%;
+}
+.pager a:hover { background: none; color: var(--ballpoint); }
+.pager .to-next { text-align: right; margin-left: auto; }
+.pager .dir {
+  font-size: var(--fs-label); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.pager .where { color: inherit; }
+.pager .where .n {
+  color: var(--ink-4); margin-right: 6px; font-variant-numeric: tabular-nums;
+}
+.pager a:hover .where .n { color: var(--ballpoint); }
+
 /* -------------------------------------------------------------- footer --- */
 
 /* The last page of the offprint: an epigraph on the left, the contents
@@ -1134,13 +1181,6 @@ a.btn .fill { color: var(--ink-3); }
   .figcap { break-before: avoid; }
   h1, h2, h3 { break-after: avoid; }
 
-  /* sidenotes become ordinary notes under the line that called them */
-  .prose .mn-note {
-    float: none; width: auto; max-width: none;
-    margin: 6pt 0 8pt 12pt; padding: 0 0 0 8pt;
-    border-top: 0; border-left: 1px solid rgba(0,0,0,0.28);
-    font-size: 9pt;
-  }
   /* the drawn underline never animates on paper */
   .uline { background-size: 100% 1.5px !important; }
   .cv-head { padding-top: 0; }

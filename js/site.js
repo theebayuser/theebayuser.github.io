@@ -221,6 +221,93 @@
     }, 9000);
   }
 
+  /* The word art, made to answer the pointer. Every glyph gets its own span and
+     its centre is cached once; a rAF-throttled move tints the letters inside two
+     radii. Pointer devices only, and colour/weight only, so nothing reflows and
+     a touch screen or a no-JS reader sees the same static block. */
+  function initWordart() {
+    var pre = document.querySelector(".wordart");
+    if (!pre) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    var NEAR = 34, MID = 76;   /* radii in px, measured from the glyph centre */
+    var cells = [];
+    var raf = null, pending = null;
+
+    /* wrap every glyph, keeping the <b>/<i> shading the markup already carries */
+    function wrap(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          child.nodeValue.split("").forEach(function (ch) {
+            if (ch === "\n") { frag.appendChild(document.createTextNode(ch)); return; }
+            var sp = document.createElement("span");
+            sp.textContent = ch;
+            frag.appendChild(sp);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          wrap(child);
+        }
+      });
+    }
+
+    function measure() {
+      cells = [];
+      var box = pre.getBoundingClientRect();
+      Array.prototype.forEach.call(pre.querySelectorAll("span"), function (sp) {
+        if (sp.childNodes.length !== 1 || sp.firstChild.nodeType !== 3) return;
+        var r = sp.getBoundingClientRect();
+        if (!r.width) return;
+        cells.push({
+          el: sp,
+          x: r.left - box.left + r.width / 2,
+          y: r.top - box.top + r.height / 2,
+          state: 0
+        });
+      });
+    }
+
+    function apply(mx, my) {
+      for (var i = 0; i < cells.length; i++) {
+        var c = cells[i];
+        var dx = c.x - mx, dy = c.y - my;
+        var d2 = dx * dx + dy * dy;
+        var want = d2 < NEAR * NEAR ? 2 : (d2 < MID * MID ? 1 : 0);
+        if (want === c.state) continue;
+        c.state = want;
+        c.el.className = want === 2 ? "wa-near" : (want === 1 ? "wa-mid" : "");
+      }
+    }
+
+    function onMove(e) {
+      var box = pre.getBoundingClientRect();
+      pending = [e.clientX - box.left, e.clientY - box.top];
+      if (raf) return;
+      raf = window.requestAnimationFrame(function () {
+        raf = null;
+        if (pending) apply(pending[0], pending[1]);
+      });
+    }
+
+    var armed = false;
+    function arm() {
+      if (armed) return;
+      armed = true;
+      wrap(pre);
+      pre.classList.add("wa-live");
+      measure();
+      pre.addEventListener("pointermove", onMove);
+      window.addEventListener("resize", measure);
+    }
+
+    pre.addEventListener("pointerenter", function (e) { arm(); onMove(e); });
+    pre.addEventListener("pointerleave", function () {
+      pending = null;
+      apply(-9999, -9999);
+    });
+  }
+
   function initTitleBlock() {
     var tb = document.querySelector("[data-titleblock]");
     if (!tb || reduced) return;
@@ -348,7 +435,7 @@
     }
   }
 
-  /* --- fig. 0: a deltoid, from two epicycles ----------------------------- */
+  /* --- the curve glyph's helper (a deltoid, from two epicycles) ---------- */
 
   function deltoidPoint(t, cx, cy, scale) {
     var R1 = 0.30, R2 = 0.15;
@@ -358,38 +445,119 @@
     };
   }
 
-  function deltoid(ctx, w, h, progress, pal) {
-    var cx = w / 2, cy = h / 2, scale = Math.min(w, h);
-    var TAU = Math.PI * 2;
-    var upTo = progress * TAU;
+  /* --- a double pendulum ------------------------------------------------- */
 
+  /* Two arms swinging under gravity. The equations are short, the motion is
+     not: change the start by a hair and the path is different forever, which
+     is the whole reason to animate it rather than post the finished curve.
+     Integrated once with RK4 and cached, then replayed by the plotter. */
+
+  var pendulumPath = null;
+
+  function pendulumStates() {
+    if (pendulumPath) return pendulumPath;
+
+    var G = 9.81, L1 = 1, L2 = 1, M1 = 1, M2 = 1;
+
+    /* y = [th1, w1, th2, w2] */
+    function deriv(y) {
+      var th1 = y[0], w1 = y[1], th2 = y[2], w2 = y[3];
+      var d = th1 - th2;
+      var den = 2 * M1 + M2 - M2 * Math.cos(2 * d);
+
+      var a1 = (-G * (2 * M1 + M2) * Math.sin(th1)
+                - M2 * G * Math.sin(th1 - 2 * th2)
+                - 2 * Math.sin(d) * M2 * (w2 * w2 * L2 + w1 * w1 * L1 * Math.cos(d)))
+               / (L1 * den);
+
+      var a2 = (2 * Math.sin(d) * (w1 * w1 * L1 * (M1 + M2)
+                + G * (M1 + M2) * Math.cos(th1)
+                + w2 * w2 * L2 * M2 * Math.cos(d)))
+               / (L2 * den);
+
+      return [w1, a1, w2, a2];
+    }
+
+    function step(y, dt) {
+      function add(a, b, k) {
+        return [a[0] + b[0] * k, a[1] + b[1] * k, a[2] + b[2] * k, a[3] + b[3] * k];
+      }
+      var k1 = deriv(y);
+      var k2 = deriv(add(y, k1, dt / 2));
+      var k3 = deriv(add(y, k2, dt / 2));
+      var k4 = deriv(add(y, k3, dt));
+      return [
+        y[0] + dt / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]),
+        y[1] + dt / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]),
+        y[2] + dt / 6 * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2]),
+        y[3] + dt / 6 * (k1[3] + 2 * k2[3] + 2 * k3[3] + k4[3])
+      ];
+    }
+
+    /* a start with enough energy to go over the top, so the trace fills the
+       disc rather than rocking in a corner of it */
+    var y = [2.35, 0, 2.20, 0];
+    var dt = 0.004, N = 3400;
+    var out = new Float32Array(N * 4);   /* x1, y1, x2, y2 per frame */
+    for (var i = 0; i < N; i++) {
+      var x1 = L1 * Math.sin(y[0]), yy1 = L1 * Math.cos(y[0]);
+      out[i * 4]     = x1;
+      out[i * 4 + 1] = yy1;
+      out[i * 4 + 2] = x1 + L2 * Math.sin(y[2]);
+      out[i * 4 + 3] = yy1 + L2 * Math.cos(y[2]);
+      y = step(y, dt);
+    }
+    pendulumPath = out;
+    return out;
+  }
+
+  function pendulum(ctx, w, h, progress, pal) {
+    var pts = pendulumStates();
+    var N = pts.length / 4;
+    var reach = 2.05;                       /* L1 + L2, plus a hair of margin */
+    var s = Math.min(w, h) / (2 * reach) * 0.92;
+    var cx = w / 2, cy = h / 2;   /* the reachable disc is centred on the pivot */
+
+    function px(i) { return cx + pts[i * 4 + 2] * s; }
+    function py(i) { return cy + pts[i * 4 + 3] * s; }
+
+    /* the whole path, faint, so frame zero is never an empty box */
     ctx.strokeStyle = pal.guide;
     ctx.lineWidth = 1;
+    ctx.lineJoin = "round";
     ctx.beginPath();
-    ctx.arc(cx, cy, scale * 0.45, 0, TAU);
+    for (var g = 0; g < N; g += 2) {
+      if (g === 0) ctx.moveTo(px(g), py(g)); else ctx.lineTo(px(g), py(g));
+    }
     ctx.stroke();
+
+    var upTo = Math.max(1, Math.floor(progress * (N - 1)));
 
     ctx.strokeStyle = pal.ballpoint;
-    ctx.lineWidth = 1.75;
-    ctx.lineJoin = "round";
+    ctx.lineWidth = 1.2;
     ctx.lineCap = "round";
+    ctx.globalAlpha = 0.8;
     ctx.beginPath();
-    var steps = 480;
-    for (var s = 0; s <= steps; s++) {
-      var t = (s / steps) * TAU;
-      if (t > upTo) break;
-      var pt = deltoidPoint(t, cx, cy, scale);
-      if (s === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-    }
+    ctx.moveTo(px(0), py(0));
+    for (var i = 1; i <= upTo; i++) ctx.lineTo(px(i), py(i));
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    /* the mechanism itself, at the head of the trace */
+    var jx = cx + pts[upTo * 4] * s, jy = cy + pts[upTo * 4 + 1] * s;
+    var tx = px(upTo), ty = py(upTo);
+
+    ctx.strokeStyle = pal.ink;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy); ctx.lineTo(jx, jy); ctx.lineTo(tx, ty);
     ctx.stroke();
 
-    if (progress < 1) {
-      var tip = deltoidPoint(upTo, cx, cy, scale);
-      ctx.fillStyle = pal.laurel;
-      ctx.beginPath();
-      ctx.arc(tip.x, tip.y, 3.5, 0, TAU);
-      ctx.fill();
-    }
+    ctx.fillStyle = pal.ink;
+    ctx.beginPath(); ctx.arc(cx, cy, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(jx, jy, 3.4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = pal.laurel;
+    ctx.beginPath(); ctx.arc(tx, ty, 4.2, 0, Math.PI * 2); ctx.fill();
   }
 
   /* --- fig. 1: the Lorenz attractor -------------------------------------- */
@@ -671,52 +839,52 @@
 
   var EDU_NODES = [
     { x: 0.06, y: 0.22, t: "Dougherty Valley",
-      kind: "Dougherty Valley High School", when: "2023 – 2027",
-      body: "San Ramon, California. Expected graduation June 2027, GPA 4.5 / 4.0.",
+      kind: "Dougherty Valley High School", when: "2023 \u2013 2027",
+      body: "My high school in San Ramon, California. I graduate in June 2027 with a 4.5 GPA.",
       more: "#schools", moreText: "schools" },
-    { x: 0.06, y: 0.76, t: "AMC · AIME",
-      kind: "AMC 10/12, then AIME", when: "2023 – 2026",
-      body: "Where the mathematics stopped being homework. Three AIME qualifications and Distinguished Honor Roll on the AMC.",
+    { x: 0.06, y: 0.76, t: "AMC \u00b7 AIME",
+      kind: "AMC 10/12 and AIME", when: "2023 \u2013 2026",
+      body: "The AMC is the entry point for competition math in the US, and the AIME is the round after it. I have qualified for the AIME three times and made Distinguished Honor Roll on the AMC.",
       more: "#results", moreText: "results" },
-    { x: 0.28, y: 0.10, t: "AP CS A · CS P",
-      kind: "AP Computer Science A and Principles", when: "2024 – 2026",
-      body: "The first place I had to write something that either compiled or did not. Good practice for a proof assistant.",
+    { x: 0.28, y: 0.10, t: "AP CS A \u00b7 CS P",
+      kind: "AP Computer Science A and Principles", when: "2024 \u2013 2026",
+      body: "My first real programming classes. Writing code that either compiles or does not turned out to be good preparation for a proof assistant.",
       more: "#coursework", moreText: "coursework" },
     { x: 0.28, y: 0.44, t: "college, concurrent",
-      kind: "Cerro Coso and San Diego City College", when: "2025 – 2027",
-      body: "Concurrent enrollment, because the mathematics I wanted was not offered at school. Taken alongside a full high-school schedule.",
+      kind: "Cerro Coso and San Diego City College", when: "2025 \u2013 2027",
+      body: "Concurrent enrollment means taking college classes for college credit while still in high school. I do it because the math I want is not offered at my school.",
       more: "#schools", moreText: "schools" },
     { x: 0.28, y: 0.76, t: "olympiad, self-taught",
-      kind: "Olympiad mathematics, on my own", when: "2025 – 2026",
-      body: "Combinatorics, elementary number theory, algebra, geometry. No course for any of it, which meant learning how to be stuck productively.",
+      kind: "Olympiad mathematics, self-taught", when: "2025 \u2013 2026",
+      body: "Combinatorics, number theory, algebra, and geometry. There is no class for any of it, so all of it came from books, handouts, and old contests.",
       more: "#coursework", moreText: "self-taught" },
     { x: 0.53, y: 0.72, t: "discrete structures",
       kind: "Discrete structures", when: "college",
-      body: "Induction, counting, graphs, and the first formal proofs I was asked to write down rather than wave at.",
+      body: "Induction, counting, graphs, and formal proof writing. This is the class where I first had to write proofs properly instead of explaining them out loud.",
       more: "#coursework", moreText: "coursework" },
-    { x: 0.53, y: 0.20, t: "calculus 1–3",
+    { x: 0.53, y: 0.20, t: "calculus 1\u20133",
       kind: "Calculus 1 through 3", when: "college",
-      body: "Single variable through multivariable. Useful, and also the clearest lesson that computation and proof are different skills.",
+      body: "Single variable through multivariable calculus. Useful everywhere, and a good reminder that computing something and proving it are different skills.",
       more: "#coursework", moreText: "coursework" },
     { x: 0.53, y: 0.44, t: "linear algebra, ODEs",
       kind: "Linear algebra and differential equations", when: "college",
-      body: "Structure over calculation: bases, maps, and what stays fixed when everything else moves.",
+      body: "Linear algebra is about structure: bases, maps, and what stays fixed when everything else changes. Differential equations put that structure to work.",
       more: "#coursework", moreText: "coursework" },
     { x: 0.53, y: 0.84, t: "USAMO 2026",
       kind: "USA Mathematical Olympiad", when: "2026",
-      body: "Qualified in 2026. Six problems, nine hours, and no partial credit for a good feeling about it.",
+      body: "The USAMO is the national olympiad, invitation only through the AMC and AIME. Six proof-based problems over nine hours across two days. I qualified in 2026.",
       more: "#results", moreText: "results" },
     { x: 0.80, y: 0.34, t: "words + avoidance",
-      kind: "Combinatorics on words", when: "2025 – present",
-      body: "Where the two chains meet, and where the research actually happens. Nobody assigned this one.",
+      kind: "Combinatorics on words", when: "2025 \u2013 present",
+      body: "The study of infinite sequences of symbols and which patterns they can avoid forever. This is where both chains meet, and it is the research I actually do. Nobody assigned it.",
       more: "research.html", moreText: "the research" },
-    { x: 0.80, y: 0.70, t: "Lean 4 · Mathlib",
-      kind: "Lean 4 and Mathlib", when: "2025 – present",
-      body: "No course, no mentor, and nobody at school who had heard of it. I read the manual, broke things, and read the errors until they stopped being noise.",
+    { x: 0.80, y: 0.70, t: "Lean 4 \u00b7 Mathlib",
+      kind: "Lean 4 and Mathlib", when: "2025 \u2013 present",
+      body: "Lean is a proof assistant and Mathlib is its crowdsourced library of formalized mathematics. I taught myself both from the manual and a lot of error messages, since nobody at my school had heard of either.",
       more: "lean.html", moreText: "the formalization" },
     { x: 0.66, y: 0.60, t: "combinatorics, proof writing",
       kind: "Combinatorics and proof writing", when: "college",
-      body: "A small branch off the linear-algebra term: organized casework, generating functions, and writing an argument to be checked rather than believed. The habits research actually runs on.",
+      body: "A branch off the linear algebra term: organized casework, generating functions, and writing arguments meant to be checked rather than believed. These are the habits research runs on.",
       more: "#coursework", moreText: "coursework" }
   ];
 
@@ -1126,99 +1294,15 @@
      proof so a no-JS reader still sees a finished theorem. */
   var GOAL_STEPS = [
     { hyp: ["w : Word Bool", "hw : w = thueMorse"],
-      goal: "⊢ OverlapFree w",
-      tactic: "rw [hw]", node: 0 },
+      goal: "\u22a2 OverlapFree w",
+      tactic: "rw [hw]" },
     { hyp: ["w : Word Bool", "hw : w = thueMorse"],
-      goal: "⊢ OverlapFree thueMorse",
-      tactic: "by_contra hov", node: 1 },
-    { hyp: ["hov : ¬ OverlapFree thueMorse"],
-      goal: "⊢ False",
-      tactic: "obtain ⟨i, hmin⟩ := shortest_overlap hov", node: 2 },
-    { hyp: ["i : ℕ", "hmin : ShortestOverlapAt thueMorse i"],
-      goal: "⊢ False",
-      tactic: "rcases Nat.even_or_odd i with he | ho", node: 3 },
-    { hyp: ["hmin : ShortestOverlapAt thueMorse i", "he : Even i"],
-      goal: "⊢ False    (case 1 of 2)",
-      tactic: "exact descend_even hmin he", node: 4 },
-    { hyp: ["hmin : ShortestOverlapAt thueMorse i", "ho : Odd i"],
-      goal: "⊢ False    (case 2 of 2)",
-      tactic: "exact descend_odd hmin ho", node: 5 }
+      goal: "\u22a2 OverlapFree thueMorse",
+      tactic: "intro u hu hov" },
+    { hyp: ["u : Word Bool", "hu : 0 < u.length", "hov : Overlaps u thueMorse"],
+      goal: "\u22a2 False",
+      tactic: "exact parity_clash hu hov" }
   ];
-
-  /* The same proof as a tree. The script is a straight line until the parity
-     split, which is the one place the argument actually branches, so that is
-     the one place the picture branches too. `closedAt` is the step index by
-     which a node's whole subtree is discharged. */
-  var PROOF_TREE = {
-    nodes: [
-      { x: 0.07, y: 0.50, activeAt: 0, closedAt: 6 },
-      { x: 0.26, y: 0.50, activeAt: 1, closedAt: 6 },
-      { x: 0.45, y: 0.50, activeAt: 2, closedAt: 6 },
-      { x: 0.63, y: 0.50, activeAt: 3, closedAt: 6 },
-      { x: 0.86, y: 0.22, activeAt: 4, closedAt: 5, label: "i even" },
-      { x: 0.86, y: 0.78, activeAt: 5, closedAt: 6, label: "i odd" }
-    ],
-    edges: [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5]]
-  };
-
-  function drawProofTree(canvas, step) {
-    if (canvas.clientWidth < 40) return;
-    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
-    var pad = 16;
-    function pt(n) {
-      return { x: pad + n.x * (w - pad * 2), y: pad + n.y * (h - pad * 2) };
-    }
-
-    ctx.clearRect(0, 0, w, h);
-
-    /* edges first, so the nodes sit on top of them */
-    ctx.lineWidth = 1;
-    PROOF_TREE.edges.forEach(function (e) {
-      var a = pt(PROOF_TREE.nodes[e[0]]), b = pt(PROOF_TREE.nodes[e[1]]);
-      var reached = step >= PROOF_TREE.nodes[e[1]].activeAt;
-      ctx.strokeStyle = reached ? pal.ink3 : pal.guide;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      /* a branch bows out so the two cases read as two paths, not one line */
-      if (a.y !== b.y) ctx.quadraticCurveTo((a.x + b.x) / 2, b.y, b.x, b.y);
-      else ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    });
-
-    PROOF_TREE.nodes.forEach(function (n) {
-      var p = pt(n);
-      var closed = step >= n.closedAt;
-      var active = !closed && step === n.activeAt;
-      var reached = step >= n.activeAt;
-
-      /* knock the paper out behind each node so edges never show through */
-      ctx.fillStyle = pal.paper;
-      ctx.beginPath(); ctx.arc(p.x, p.y, 6.5, 0, Math.PI * 2); ctx.fill();
-
-      if (closed) {
-        ctx.fillStyle = pal.qed;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
-      } else if (active) {
-        ctx.fillStyle = pal.ballpoint;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = pal.ballpoint;
-        ctx.globalAlpha = 0.35;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.stroke();
-        ctx.globalAlpha = 1;
-      } else {
-        ctx.strokeStyle = reached ? pal.ink3 : pal.ink4;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2); ctx.stroke();
-      }
-
-      if (n.label) {
-        ctx.fillStyle = closed ? pal.qed : (reached ? pal.ink3 : pal.ink4);
-        ctx.font = '10px ' + '"IBM Plex Mono", monospace';
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        ctx.fillText(n.label, p.x + 11, p.y);
-      }
-    });
-  }
 
   function initGoal(panel) {
     var bar = panel.querySelector(".goal-bar");
@@ -1241,14 +1325,8 @@
     bar.appendChild(reset);
 
     var step = 0;
-    var tree = panel.parentNode.querySelector(".goal-tree canvas");
-    if (tree) {
-      onRepaint(function () { drawProofTree(tree, step); });
-      window.addEventListener("resize", function () { drawProofTree(tree, step); });
-    }
 
     function render() {
-      if (tree) drawProofTree(tree, step);
       if (step < GOAL_STEPS.length) {
         var s = GOAL_STEPS[step];
         var hyp = document.createElement("span");
@@ -1670,10 +1748,11 @@
     initReveals();
     initInkRows();
     initUlines();
+    initWordart();
     Array.prototype.forEach.call(document.querySelectorAll("[data-show]"), initShow);
 
-    var fig0 = document.getElementById("figure-deltoid");
-    if (fig0) plotter(fig0, { draw: deltoid, seconds: 5.6, hold: 1.6 });
+    var fig0 = document.getElementById("figure-pendulum");
+    if (fig0) plotter(fig0, { draw: pendulum, seconds: 15, hold: 1.4 });
 
     var fig1 = document.getElementById("figure-lorenz");
     if (fig1) plotter(fig1, { draw: lorenz, seconds: 11, hold: 2.4 });
