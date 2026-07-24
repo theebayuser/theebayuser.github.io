@@ -1373,7 +1373,14 @@
     var out = root.querySelector("[data-morphism-out]");
     if (!out) return;
     var MAX = 8;
-    var gens = [];
+
+    /* The static HTML ships six generations as plain text, so a no-JS reader
+       sees the word growing. JS replaces that with the derivation view: same
+       content, but the substitution is visible instead of implied. */
+    var panel = document.createElement("div");
+    panel.className = "morph";
+    out.parentNode.insertBefore(panel, out);
+    out.remove();
 
     var bar = document.createElement("div");
     bar.className = "morph-bar";
@@ -1394,33 +1401,85 @@
     bar.appendChild(apply);
     bar.appendChild(back);
     bar.appendChild(meta);
-    out.parentNode.insertBefore(bar, out.nextSibling);
+    panel.parentNode.insertBefore(bar, panel.nextSibling);
 
-    function render() {
-      out.textContent = gens.join("\n");
+    var gens = ["0"];
+
+    /* one glyph, inked by which letter it is */
+    function glyph(ch) {
+      var el = document.createElement(ch === "1" ? "b" : "i");
+      el.textContent = ch;
+      return el;
+    }
+
+    /* A row. `paired` groups the letters two at a time and rules each pair off
+       underneath, so you can see which parent letter each pair came from. */
+    function row(word, n, paired) {
+      var g = document.createElement("div");
+      g.className = "morph-gen";
+
+      var lab = document.createElement("span");
+      lab.className = "morph-lab";
+      lab.textContent = "n = " + n + " · " + word.length +
+        (word.length === 1 ? " letter" : " letters");
+
+      var w = document.createElement("span");
+      w.className = "morph-word";
+
+      if (paired) {
+        for (var k = 0; k < word.length; k += 2) {
+          var pair = document.createElement("span");
+          pair.className = "morph-pair";
+          pair.appendChild(glyph(word.charAt(k)));
+          if (k + 1 < word.length) pair.appendChild(glyph(word.charAt(k + 1)));
+          pair.style.animationDelay = Math.min(k * 12, 600) + "ms";
+          w.appendChild(pair);
+        }
+      } else {
+        for (var i2 = 0; i2 < word.length; i2++) w.appendChild(glyph(word.charAt(i2)));
+      }
+
+      g.appendChild(lab);
+      g.appendChild(w);
+      return g;
+    }
+
+    function render(grew) {
+      panel.textContent = "";
+      gens.forEach(function (word, n) {
+        var isLast = n === gens.length - 1;
+        var g = row(word, n, grew && isLast && n > 0);
+        if (isLast) g.className += " is-new";
+        panel.appendChild(g);
+      });
       var n = gens.length - 1;
-      var len = gens[n].length;
       meta.textContent = n >= MAX
-        ? "generation " + n + " · length " + len + " · the fixed point continues forever"
-        : "generation " + n + " · length " + len;
+        ? "generation " + n + " · the fixed point continues forever"
+        : "each letter becomes two";
       apply.disabled = n >= MAX;
     }
 
     function step() {
       var last = gens[gens.length - 1];
       var next = "";
-      for (var i = 0; i < last.length; i++) {
-        next += last.charAt(i) === "0" ? "01" : "10";
+      for (var i3 = 0; i3 < last.length; i3++) {
+        next += last.charAt(i3) === "0" ? "01" : "10";
       }
       gens.push(next);
-      render();
+      render(true);
     }
 
     apply.addEventListener("click", function () { if (gens.length - 1 < MAX) step(); });
-    back.addEventListener("click", function () { gens = ["0"]; render(); });
+    back.addEventListener("click", function () { gens = ["0"]; render(false); });
 
-    gens = ["0"];
-    render();
+    /* Open on the same six generations the static HTML ships, so turning JS on
+       never shows less than turning it off. Reset still goes back to one letter. */
+    while (gens.length < 6) {
+      var seed = gens[gens.length - 1], grown = "";
+      for (var q = 0; q < seed.length; q++) grown += seed.charAt(q) === "0" ? "01" : "10";
+      gens.push(grown);
+    }
+    render(false);
   }
 
   /* --- counting up -------------------------------------------------------- */
@@ -1453,12 +1512,30 @@
   function initLedger() {
     var root = document.querySelector("[data-ledger]");
     var nowEls = document.querySelectorAll("[data-now]");
-    if (!root && !nowEls.length) return;
+    var reachEls = document.querySelectorAll("[data-reach-total]");
+    if (!root && !nowEls.length && !reachEls.length) return;
 
     loadLedger().then(function (data) {
       if (nowEls.length && data.now) {
         Array.prototype.forEach.call(nowEls, function (el) { el.textContent = data.now; });
       }
+
+      /* The headline figure and the ledger read from the same file, so the claim
+         at the top of the page and the account at the foot cannot disagree. */
+      if (reachEls.length && data.channels) {
+        var reachSum = 0;
+        data.channels.forEach(function (ch) {
+          if (typeof ch.followers === "number" && ch.followers > 0) reachSum += ch.followers;
+        });
+        if (reachSum > 0) {
+          var reachText = reachSum.toLocaleString();
+          Array.prototype.forEach.call(reachEls, function (el) {
+            el.setAttribute("data-count", String(reachSum));
+            onceInView(el, function () { countUp(el, reachSum, reachText); }, 0.4);
+          });
+        }
+      }
+
       if (!root || !data.channels) return;
 
       var stamp = root.querySelector("[data-ledger-stamp]");
@@ -1563,13 +1640,66 @@
         if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); }
       });
 
+      /* Hover-scrub: with a fine pointer, dragging across the frame seeks the
+         reel, so a film becomes something you can read at your own pace rather
+         than only watch. A hairline under the frame shows where you are.
+         Touch keeps tap-to-toggle, since there is no hover to key it off. */
+      var plate = v.closest(".plate");
+      if (plate && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        var scrub = document.createElement("div");
+        scrub.className = "plate-scrub";
+        var fill = document.createElement("i");
+        scrub.appendChild(fill);
+        v.parentNode.insertBefore(scrub, v.nextSibling);
+
+        var seeking = false, lastSeek = 0;
+
+        /* Throttled on the clock rather than on rAF: this is direct manipulation,
+           and rAF is throttled in a background tab, which would leave the reel
+           frozen under a moving cursor. Seeking is cheap; 40ms is smooth. */
+        v.addEventListener("pointermove", function (e) {
+          if (e.pointerType !== "mouse") return;
+          var r = v.getBoundingClientRect();
+          if (!r.width) return;
+
+          if (!seeking) {
+            seeking = true;
+            plate.classList.add("is-scrubbing");
+            v.pause();
+          }
+          /* the hairline rides the foot of the frame */
+          scrub.style.top = (v.offsetTop + v.offsetHeight - 2) + "px";
+
+          var want = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+          fill.style.width = (want * 100).toFixed(1) + "%";
+
+          var now = e.timeStamp || Date.now();
+          if (now - lastSeek < 40) return;
+          lastSeek = now;
+          if (v.duration && isFinite(v.duration)) {
+            v.currentTime = Math.max(0, Math.min(v.duration - 0.05, want * v.duration));
+          }
+        });
+
+        v.addEventListener("pointerleave", function () {
+          if (!seeking) return;
+          seeking = false;
+          plate.classList.remove("is-scrubbing");
+          if (!reduced) { v.muted = true; v.play().catch(function () {}); }
+        });
+      }
+
       if (reduced) return;   /* no autoplay under reduced motion */
 
       if ("IntersectionObserver" in window) {
         new IntersectionObserver(function (entries) {
           entries.forEach(function (e) {
-            if (e.isIntersecting) { v.muted = true; v.play().catch(function () {}); }
-            else { v.pause(); }
+            /* a reel being scrubbed must not be restarted by the observer */
+            if (e.isIntersecting) {
+              if (!e.target.closest(".plate.is-scrubbing")) {
+                v.muted = true; v.play().catch(function () {});
+              }
+            } else { v.pause(); }
           });
         }, { threshold: 0.35 }).observe(v);
       } else {

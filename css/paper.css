@@ -12,7 +12,7 @@
   /* Ink — four text levels */
   --ink:   #211E17;
   --ink-2: #57513F;
-  --ink-3: #857D66;
+  --ink-3: #766F5B;   /* 4.52:1 on paper; it carries every caption and kicker */
   --ink-4: #B0A88F;
 
   /* Hairlines */
@@ -477,6 +477,12 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   display: flex; align-items: center; justify-content: center;
   min-height: 190px;
 }
+/* the compile ends somewhere real: the handout it just typeset is downloadable */
+.tv-get {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.04em;
+  text-align: center; margin-top: var(--s3);
+  padding-top: var(--s2); border-top: 1px solid var(--rule-soft);
+}
 .texview-src {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.06em;
   color: var(--ink-3); padding: 10px var(--s3); border-top: 1px solid var(--rule);
@@ -549,7 +555,40 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 .goal.is-run .goal-cursor { display: none; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(4px); } }
 
-/* morphism widget */
+/* The morphism, shown as a derivation rather than a list of longer strings.
+   Each generation is a labelled row; each letter is its own glyph so the two
+   letters carry different ink and the self-similar texture reads as pattern.
+   The newest row is full ink and its letters arrive in parent-pairs, which is
+   the substitution itself made visible: one letter becomes two, in place. */
+.morph {
+  background: var(--paper-inset); border: 1px solid var(--rule);
+  padding: var(--s3); overflow-x: auto; -webkit-font-smoothing: auto;
+}
+.morph-gen {
+  display: grid; grid-template-columns: 132px minmax(0, 1fr);
+  gap: var(--s2); align-items: baseline;
+  padding: 5px 0;
+}
+.morph-gen + .morph-gen { border-top: 1px solid var(--rule-soft); }
+.morph-lab {
+  font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.morph-word {
+  font-family: var(--mono); font-size: 13.5px; line-height: 1.7;
+  word-break: break-all; color: var(--ink-4);
+}
+/* older generations recede; the eye should land on the one just made */
+.morph-gen.is-new .morph-word { color: var(--ink); }
+.morph-word i { font-style: normal; color: var(--ink-3); }          /* 0 */
+.morph-word b { font-weight: 500; color: var(--ballpoint); }        /* 1 */
+.morph-gen.is-new .morph-word i { color: var(--ink-2); }
+/* the pair a single parent letter became, ticked off underneath */
+.morph-pair { display: inline-block; box-shadow: inset 0 -1px 0 var(--rule); }
+.morph-pair + .morph-pair { margin-left: 1px; }
+.morph-gen.is-new .morph-pair { animation: morph-in 260ms var(--ease) both; }
+@keyframes morph-in { from { opacity: 0; transform: translateY(-3px); } }
+
 .morph-bar {
   display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
   margin-top: var(--s2);
@@ -559,6 +598,9 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   font-variant-numeric: tabular-nums; margin-left: auto;
 }
 [data-morphism] .code { white-space: pre-wrap; word-break: break-all; }
+@media (prefers-reduced-motion: reduce) {
+  .morph-gen.is-new .morph-pair { animation: none; }
+}
 
 /* reading progress: the Thue–Morse word, filling in as you read */
 .progress {
@@ -575,6 +617,22 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: var(--s5); align-items: center;
 }
+/* Two things that are peers, set as peers. A column would imply an order that
+   two definitions of equal standing do not have. */
+.pair {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0 var(--s5); align-items: start;
+}
+/* A figure or widget that has earned the whole measure rather than a column:
+   the morphism runs to 256 letters, and half a page makes it a wall. */
+.wide-fig { margin-top: var(--s5); }
+/* A figure that closes a section: centred, held to a readable size, not
+   fighting a column of cards for attention. */
+.mid-fig {
+  margin: var(--s5) auto 0; max-width: 420px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.mid-fig .figcap { text-align: center; }
 /* Figures sit directly on the paper: no frame, no fill. The drawings are
    ink, and ink does not come in a box. */
 .canvas-wrap { position: relative; width: 100%; aspect-ratio: 4 / 3; }
@@ -850,13 +908,15 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 
 /* -------------------------------------------------------------- plates --- */
 
-/* the films are portrait reels, so the plates stand as a shelf of them */
-.plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s4); }
-.plate { border: 1px solid var(--rule); background: var(--paper-raised); }
+/* The films are portrait reels, hung on the paper. No box: this site's depth is
+   hairlines, and a bordered raised card was the one component breaking that.
+   The frame carries a 1px inset outline, the caption sits under it like a figure
+   caption, and hovering scrubs the reel with the pointer. */
+.plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--s5) var(--s4); }
+.plate { position: relative; }
 .plate-frame {
   aspect-ratio: 9 / 16; background: var(--paper-inset);
   display: flex; align-items: center; justify-content: center;
-  border-bottom: 1px solid var(--rule);
   color: var(--ink-4); font-family: var(--mono); font-size: var(--fs-meta);
   text-align: center; padding: var(--s2);
 }
@@ -865,14 +925,25 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 video.plate-frame {
   width: 100%; height: auto; aspect-ratio: 9 / 16;
   object-fit: cover; background: var(--film); padding: 0;
+  outline: 1px solid rgba(0, 0, 0, 0.1); outline-offset: -1px;
 }
-.plate-cap { padding: 14px var(--s2) var(--s2); }
+html.board video.plate-frame { outline-color: rgba(255, 255, 255, 0.1); }
+/* the scrub hairline: only while a pointer is dragging across the frame */
+.plate-scrub {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: var(--rule); opacity: 0;
+  transition: opacity 140ms var(--ease);
+  pointer-events: none;
+}
+.plate.is-scrubbing .plate-scrub { opacity: 1; }
+.plate-scrub i { display: block; height: 100%; width: 0; background: var(--ballpoint); }
+.plate-cap { padding: 12px 0 0; }
 .plate-cap .pn {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--ink-3);
 }
-.plate-cap .pt { font-size: 16px; margin-top: 4px; }
-.plate-cap .pd { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
+.plate-cap .pt { font-size: 16px; margin-top: 3px; }
+.plate-cap .pd { font-size: var(--fs-meta); color: var(--ink-2); margin-top: 5px; line-height: 1.55; }
 
 /* ----------------------------------------------------------- slideshow --- */
 
@@ -1005,6 +1076,88 @@ a.btn .fill { color: var(--ink-3); }
   .sheet:hover, .sheet:focus-visible { transform: none; }
 }
 
+/* --------------------------------------------------------------- onair --- */
+
+/* The animation work, on the front page. A portrait reel next to what it is,
+   so a visitor sees the films before section three rather than after. */
+.onair {
+  display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  gap: var(--s5); align-items: center;
+}
+.onair-n {
+  font-size: 30px; font-weight: 600; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums; line-height: 1.1;
+  margin-top: var(--s3);
+}
+.onair-k {
+  display: block; font-family: var(--mono); font-size: var(--fs-label);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  font-weight: 400; margin-top: 6px;
+}
+@media (max-width: 700px) {
+  .onair { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+  .onair-reel { max-width: 240px; }
+}
+
+/* --------------------------------------------------------------- reach --- */
+
+/* The one number worth leading with, set as a figure rather than a row in a
+   ledger. The ledger at the foot of the page is still the itemised account;
+   this is the claim it settles. Rules above and below, like the epigraph. */
+.reach {
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  padding: var(--s4) 0; margin-bottom: var(--s5); text-align: center;
+}
+.reach-n {
+  font-size: clamp(44px, 7vw, 68px); font-weight: 600; line-height: 1;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin: 0;
+}
+.reach-k { font-size: 17px; color: var(--ink-2); margin: var(--s2) 0 0; }
+.reach-where {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3); margin: 10px 0 0;
+}
+
+/* ------------------------------------------------------------- catalog --- */
+
+/* A library has a catalog, not a stack of cards. Ruled rows, the name in mono
+   because it is an identifier, the description in the body face, the status
+   pinned right in its own colour. Denser than theorem cards and, deliberately,
+   structurally unlike anything on the research page. */
+.catalog { border-top: 1px solid var(--rule); }
+.cat-head, .cat-row, .cat-foot {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.9fr) minmax(0, 2.2fr) minmax(120px, 0.8fr);
+  gap: var(--s2) var(--s3);
+  padding: var(--s3) 0;
+  border-bottom: 1px solid var(--rule-soft);
+  align-items: baseline;
+}
+.cat-head {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  padding: var(--s1) 0; border-bottom: 1px solid var(--rule);
+}
+.cat-what {
+  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink);
+  line-height: 1.5;
+}
+.cat-what i { font-style: normal; color: var(--ink-3); display: block; }
+.cat-body { font-size: 15.5px; color: var(--ink-2); line-height: 1.55; }
+.cat-status {
+  font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3);
+  white-space: nowrap;
+}
+.cat-status.done { color: var(--qed); }
+.cat-status.wip  { color: var(--ink-3); }
+.cat-foot { border-bottom: 1px solid var(--rule); }
+.cat-foot .cat-what { color: var(--ink); }
+
+@media (max-width: 700px) {
+  .cat-head { display: none; }
+  .cat-row, .cat-foot { grid-template-columns: 1fr; gap: 6px; }
+}
+
 /* --------------------------------------------------------------- pager --- */
 
 /* Sections that are numbered should be walkable in order. Two ends, ruled off
@@ -1091,7 +1244,11 @@ a.btn .fill { color: var(--ink-3); }
   .page, .topbar-inner { padding: 0 var(--s3); }
   .titleblock { padding: var(--s6) 0 var(--s5); }
   .section { padding: var(--s6) 0; }
-  .figure-row { grid-template-columns: 1fr; gap: var(--s4); }
+  /* A one-column track still takes its width from the widest child, and a
+     pre-formatted code block is as wide as its longest line. Without this the
+     Lean snippet drags the whole page sideways on a phone. */
+  .figure-row { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+  .figure-row > * { min-width: 0; }
   .topbar-inner { flex-wrap: wrap; gap: var(--s1); padding-top: 6px; padding-bottom: 6px; }
   .nav { margin-left: 0; width: 100%; }
   .nav a { padding: 10px 8px; }

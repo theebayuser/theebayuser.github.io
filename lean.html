@@ -93,55 +93,57 @@ hw : w = thueMorse</span>
         <h2>Contents of the library</h2>
       </div>
 
-      <div class="figure-row">
-        <div data-reveal-group>
-          <div class="env">
-            <div class="env-head">
-              <span class="env-kind">Module</span><span class="env-name">(the spine).</span>
-              <span class="env-status done">✓ no gaps</span>
-            </div>
-            <p class="env-body">Definitions for finite and infinite words, concatenation, factors,
-            morphisms and their iteration, powers, squares, overlaps, and the avoidance predicates,
-            plus the API lemmas that make any of it usable in a real proof.</p>
-          </div>
-
-          <div class="env">
-            <div class="env-head">
-              <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912, binary).</span>
-              <span class="env-status done">✓ machine-checked</span>
-            </div>
-            <p class="env-body">The Thue–Morse word is overlap-free. Formalized from the fixed-point
-            definition through to the full theorem, with no assumptions left open.</p>
-          </div>
-
-          <div class="env">
-            <div class="env-head">
-              <span class="env-kind">Theorem</span><span class="env-name">(Thue, 1912, ternary).</span>
-              <span class="env-status done">✓ machine-checked</span>
-            </div>
-            <p class="env-body">There exists an infinite square-free word over three letters. The
-            construction and the proof that it works, both checked.</p>
-          </div>
-
-          <div class="env" style="border-bottom: 1px solid var(--rule);">
-            <div class="env-head">
-              <span class="env-kind">In progress</span><span class="env-name">(research results).</span>
-              <span class="env-status wip">⋯ ~72% verified</span>
-            </div>
-            <p class="env-body">The classification from Manuscript I is wired end to end in Lean: the
-            structural argument, the upper bound, and the finite base cases compile together. Four named
-            obligations remain open and are stated as such in the source, not papered over.</p>
-          </div>
+      <div class="catalog" data-reveal-group>
+        <div class="cat-head">
+          <span>What</span><span>Contents</span><span>Status</span>
         </div>
 
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 1;">
-            <canvas id="figure-tmgrid" role="img"
-              aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
-          </div>
-          <p class="figcap">fig. 8 · the library's namesake: cell (i, j) inked when t(i) ≠ t(j)</p>
+        <div class="cat-row">
+          <span class="cat-what">Module <i>Word</i></span>
+          <span class="cat-body">Finite and infinite words, concatenation, factors, morphisms and
+          their iteration, powers, squares, overlaps, and the avoidance predicates, plus the API
+          lemmas that make any of it usable in a real proof.</span>
+          <span class="cat-status done">&#10003; no gaps</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-what">Thue 1912 <i>binary</i></span>
+          <span class="cat-body">The Thue&#8211;Morse word is overlap-free. Formalized from the
+          fixed-point definition through to the full theorem, with no assumptions left open.</span>
+          <span class="cat-status done">&#10003; machine-checked</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-what">Thue 1912 <i>ternary</i></span>
+          <span class="cat-body">There exists an infinite square-free word over three letters. The
+          construction and the proof that it works, both checked.</span>
+          <span class="cat-status done">&#10003; machine-checked</span>
+        </div>
+
+        <div class="cat-row">
+          <span class="cat-what">Manuscript I <i>in progress</i></span>
+          <span class="cat-body">The classification wired end to end: the structural argument, the
+          upper bound, and the finite base cases compile together. Four named obligations remain
+          open and are stated as such in the source, not papered over.</span>
+          <span class="cat-status wip">&#8943; ~72% verified</span>
+        </div>
+
+        <div class="cat-foot">
+          <span class="cat-what">In total</span>
+          <span class="cat-body">7,665 lines of Lean, 394 theorems and lemmas, counted from the
+          working repository in July 2026.</span>
+          <span class="cat-status">2 classical results closed</span>
         </div>
       </div>
+
+      <div class="mid-fig" data-reveal>
+        <div class="canvas-wrap" style="aspect-ratio: 1;">
+          <canvas id="figure-tmgrid" role="img"
+            aria-label="A 32 by 32 grid, inked where two copies of the Thue-Morse word disagree, forming a self-similar pattern."></canvas>
+        </div>
+        <p class="figcap">fig. 8 &#183; the library's namesake: cell (i, j) inked when t(i) &#8800; t(j)</p>
+      </div>
+
     </section>
 
     <section class="section" style="padding-top: 0;" id="talos">

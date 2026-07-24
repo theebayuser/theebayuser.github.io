@@ -1,55 +1,183 @@
 # Handoff
 
-Static site, live at https://theebayuser.github.io. No build step: edit HTML/CSS/JS
-directly, push to `main`, GitHub Pages redeploys in about a minute.
+Everything you need to pick this site up cold.
 
-## What's done
+## 1. What this is
 
-- 8 pages: `index`, `research`, `lean`, `manim`, `education`, `projects`, `404`, plus
-  `cv.pdf` (a static resume, not an HTML page).
-- Design system documented in `.interface-design/system.md` — read it before touching
-  colors, spacing, or components. Read `README.md` for the file map and click-through
-  list. Both are current as of the last commit.
-- Every page ends in a **tailpiece**: a small figure with one quiet mono caption, drawn on
-  canvas through `palette()` in `--ballpoint` so it repaints on the hidden night-board toggle
-  (press `b`). Taste rule, hard-won: dense/emergent art (random walks, attractors, networks,
-  text tables), never a thin single closed curve — see system.md item 14 for the rejected
-  round. Captions are true claims (verify the count/construction before writing one).
-- **Figures are numbered globally** (`fig. 1`…`18`, nav order from the homepage through the
-  404). Insert one and you renumber the run — grep `fig\.` across the pages afterward.
-- The **social card** is `assets/og.png`, drawn with the same ink-walk code, linked from
-  every page. Regenerate it (not a stock image) if the name or look changes.
-- Real content is in: schools, coursework, competition results, three uploaded films,
-  two run projects (Tri-Valley Tutoring, USAMO Guide, both linked to their live sites),
-  upstream Lean contributions (Talos, Mathlib PRs, a merged formal-conjectures theorem).
-- Live follower counts for `@math.visualizations` live in `data/socials.json`, hand-kept
-  (the platforms don't expose them to a static page) — update the file to refresh them.
-- Keyboard nav: `1`–`5` jump sections, `6` opens the CV, `0` goes home, `b` flips the night
-  board. The board also has a visible `◐` button in every topbar (glyph only, named by its
-  `aria-label`); both go through one `setBoard` in site.js, so don't add a second code path.
-- **Thue–Morse strips are rationed to one per page** (the single real hinge). A round that
-  put one between every section was pulled back; sibling cards get whitespace instead.
-- **The site prints as a preprint.** Test any change with an actual print preview, not just
-  the screen: `beforeprint` completes the interactive widgets and drops the night board so
-  canvases repaint in ink. Break that and figures print blank.
-- **Every page carries at least one `.uline`** phrase. The CSS default is the finished
-  stroke; JS pulls it to zero and draws it in, so no-JS still shows the emphasis.
-- Section pages end in a `.pager` (previous/next). Insert a page and the two neighbours
-  need updating too.
+Daniel Liao's personal site, live at <https://theebayuser.github.io>. Seven HTML pages, one
+stylesheet, one script, no build step and no dependencies. Editing a file and pushing to
+`main` is the entire deploy: GitHub Pages republishes in about a minute.
 
-## Known open items
+The design has a name and a thesis: **"a living preprint."** The site is typeset like a
+mathematics paper on warm stock, and that conceit is load-bearing, not decorative. It decides
+the palette, the hairlines, the numbered sections, the theorem environments, and the rule that
+every figure states something true. When a change would look fine anywhere else but wrong in a
+preprint, it is wrong here.
 
-- **`cv.pdf`** still has an "Experience → Lean FRO, Contributor" line that reads a shade
-  stronger than the site's own "contributor, nothing more" phrasing on `lean.html`. Not
-  fixed because it's his PDF, not generated — flagged, not touched.
-- Photos: `assets/photos/` is empty. The slideshow markup on `personal.html` (if it comes
-  back) or wherever photos are wanted still needs real images.
-- `data/socials.json` counts are only as fresh as the last manual edit — no live source.
+## 2. Run it
 
-## Where to look for more context
+```bash
+python3 -m http.server 4173 --directory .
+```
 
-- `.interface-design/system.md` — the design system, updated every round.
-- `README.md` — file map, "things you can click," deploy instructions.
-- Cross-session memory (outside this repo) has a fuller history of round-by-round
-  decisions and user feedback under the `portfolio-site` memory entry, if picking this
-  up from a fresh session without that context loaded.
+Then open <http://localhost:4173>. There is nothing to install.
+
+Read in this order before changing anything:
+
+1. `.interface-design/system.md` — the design system, 39 numbered decisions with the reasoning
+   for each. **This is the authority.** Most questions are answered there.
+2. `README.md` — the file map, "things you can click," how to update content.
+3. This file — the rules and contracts that break quietly if you ignore them.
+
+## 3. The map
+
+| Path | What it is |
+|---|---|
+| `index.html` | Title block, abstract, the Ulam-spiral contents, the manuscript deskstack, the films block, contact |
+| `research.html` | § 01. Ternary word art, two definitions, the morphism widget, two manuscripts, the turtle figure |
+| `lean.html` | § 02. The goal stepper, the library measured, the catalog, upstream contributions |
+| `manim.html` | § 03. Two live figures, the reach headline, three film plates, the follower ledger |
+| `education.html` | § 04. The prerequisite graph as navigation, the record grid |
+| `projects.html` | § 05. Tri-Valley Tutoring with the LaTeX viewer, USAMO Guide with the showcase reel |
+| `404.html` | Not-found, proved by contradiction |
+| `css/paper.css` | The entire design system. Every colour, size, and rule lives here |
+| `js/site.js` | Every figure, widget, and key binding. One IIFE, no modules |
+| `data/socials.json` | Hand-kept follower counts and the "currently" line |
+| `assets/og.png` | The link-preview card (1200×630), drawn with the site's own ink-walk |
+| `assets/video/` | Four `.mp4` files: three films and the USAMO Guide showcase |
+| `cv.pdf` | A static PDF. To update it, replace the file |
+
+`assets/photos/` exists and is empty.
+
+## 4. Rules that are not negotiable
+
+These are the ones that keep the site coherent. Breaking any of them is visible immediately.
+
+- **One paper palette.** No dark sections, no second accent. `--ballpoint` blue is the only
+  accent; `--qed` green and `--laurel` gold are rationed to machine-checked status and awards.
+  The night board (`html.board`) is a whole-site remap, not a dark band.
+- **Hairlines only, radius 0, no shadows.** Three rule weights that mean different things.
+  If something reads as a *card*, it is wrong — that is exactly what the film plates were, and
+  they were fixed.
+- **No em dashes in site copy.** Commas, colons, parentheses, or a new sentence. En dashes
+  survive for names (Thue–Morse) and ranges (2025–26).
+- **Figures must be true.** Every caption is a claim on a site whose argument is that this
+  person checks things. Verify the mathematics *before* writing the caption. A Koch-snowflake
+  caption was cut once because simulating it showed the claim was false, and a per-module
+  "lines of Lean" column was cut because the numbers would have been invented.
+- **Decorative drawings are not figures.** If a proposed illustration has no checkable content,
+  it does not belong. Every drawing here is a real object: a spiral of primes, an integrated
+  attractor, a square-free word, the roots of every integer cubic.
+- **Figures are numbered globally.** One `fig. N` run, currently 1–18, in nav order from the
+  homepage through the 404. Insert one and you renumber the rest: `grep -o 'fig\. [0-9]*' *.html`.
+  Film plates keep their own Plate I–III series.
+- **Every widget is progressive enhancement over complete HTML.** The static markup must be
+  usable and honest on its own; JS may only improve it. See §5.
+- **Every page carries at least one `.uline`** — a drawn ballpoint underline on a phrase that
+  matters.
+- **Thue–Morse strips are rationed to one per page.** A round that put one between every
+  section was pulled back; sibling cards get whitespace.
+- **Spacing comes from `--s1`…`--s8`, colours from tokens.** No arbitrary px, no literal hex in
+  HTML.
+- **When two pages start to feel the same, compare their spines, not their surfaces.** Research
+  and formalization had both drifted into three stacked `figure-row`s. The fix was different
+  section *sequences*, not different styling.
+
+## 5. Contracts that break silently
+
+Each of these has already caused a bug. They fail quietly, which is why they are written down.
+
+**Reveals must fail open.** JS adds the hiding class; without JS nothing is ever hidden.
+Reveals do not engage when `document.visibilityState === "hidden"`, because observers and
+transitions are throttled in background tabs and would strand text at opacity 0. After
+revealing, the animation classes are *removed* so elements rest at their natural styles, and a
+global 8s timer clears any leftover state.
+
+**Canvases cannot read CSS variables.** No figure may hardcode a hex. `palette()` reads the
+tokens once and hands them out; flipping the board clears that cache and calls every registered
+repaint. Register static figures with `onRepaint(fn)`; plotters register themselves. Break this
+and the night board leaves black ink on a black board.
+
+**Four canvas bugs worth not reintroducing:**
+
+1. `stop()` must `cancelAnimationFrame` **and** null the handle, or `start()` sees a stale
+   handle and the figure deadlocks.
+2. `paint(0)` must run once at init, or a frame is blank.
+3. A figure whose progress-0 state draws nothing (the Lorenz, the pendulum) needs a faint
+   full-path guide underneath, or its frame sits empty until it animates.
+4. **A page can boot invisible.** In a background tab every measurement is zero, so anything
+   positioned from the DOM (the spiral numerals, the graph chips) lands against nothing and
+   stays there. Two defences, both required: any layout function bails when its canvas measures
+   under 40px, and `visibilitychange` calls `repaintAll()` the first time the page is looked at.
+
+**Do not depend on `requestAnimationFrame` for direct manipulation.** rAF is throttled in
+background tabs. The film hover-scrub is throttled on the clock (40ms) for exactly this reason;
+an earlier rAF version froze the reel under a moving cursor.
+
+**Print completes the widgets.** `beforeprint` renders the texview, closes the proof, and drops
+the night board so canvases repaint in ink. Test print changes with a real print preview —
+break this and figures print blank or invisible.
+
+**Hand-kept data fails to dashes.** A failed `socials.json` fetch leaves the dashes and every
+link still works. A count of zero means "not written down yet," not "nobody follows this."
+Count-up ships the real numbers in the HTML and restores them on a 1.5s timer if rAF never
+fires.
+
+**The reading-progress bar updates synchronously** in a passive scroll listener, never through
+rAF, because throttled rAF would freeze it. `scrollHeight` is cached on resize.
+
+**Enabling JS must never show less than disabling it.** The morphism widget opens on the same
+six generations the static HTML ships. This was a real regression once: the rebuilt widget
+started at one letter while the no-JS markup showed six.
+
+## 6. Hand-kept data
+
+Nothing on this site calls a live API. Three things are maintained by hand:
+
+- **`data/socials.json`** — follower counts per platform, the `updated` date, and `now` (the
+  "currently" line in every footer). None of TikTok, Instagram, or Facebook exposes counts to a
+  static page without server-side tokens. The animations page fills the ledger, the total, and
+  the headline reach figure from this one file, so the claim and the evidence cannot disagree.
+- **The USAMO Guide statistics** on `projects.html` (42,000+ lines, 993 problems, 158 sections)
+  were counted from a clone of `github.com/usamoguide/usamo-guide` in July 2026. Recount them
+  if they are ever questioned.
+- **The Lean library figures** (7,665 lines, 394 theorems) come from the working repository,
+  July 2026, and appear in three places: the stats row and catalog foot on `lean.html`, and the
+  library card in the homepage deskstack. Update all three together.
+
+## 7. Open items
+
+- **`cv.pdf`** has an "Experience → Lean FRO, Contributor" line that reads a shade stronger than
+  the site's own contributor phrasing. Untouched because it is his PDF, not generated.
+- **`assets/photos/` is empty.** The site is entirely drawn figures and type; one real
+  photograph (the math club tournament, a tutoring session) would land hard precisely because it
+  would be the only one.
+- **Nothing is dated.** There is no revision history and no "last updated," on a site that has
+  been revised fourteen times. An arXiv-style v1/v2/v3 list would turn constant revision into
+  evidence rather than something invisible.
+- **The abstract promises AI** ("I work to connect frontier mathematics with AI") and no page
+  delivers on it. Either add the evidence or soften the claim.
+- **No downloadable artifacts except the CV.** The tutoring handouts are now linked
+  (trivalleytutoring.org/resources) but nothing is hosted here.
+
+## 8. How to do a round
+
+The loop this project actually runs on:
+
+1. **Read `system.md` first.** The decisions are made and written down; re-deciding them
+   produces drift.
+2. **Build.** Match the existing components before adding new ones. If a component repeats,
+   it belongs in `paper.css` with a comment explaining *why*, not just what.
+3. **Verify in a browser.** Not by reading the diff. Desktop and mobile widths, both palettes
+   (press `b`), and actually click the widget you changed. The figures and widgets are the part
+   most likely to break silently.
+4. **Check the whole-page contract**: no horizontal overflow at 375px, no console errors, every
+   figure still numbered in sequence, captions still true.
+5. **Update the docs in the same commit** — `system.md` for new decisions, `README.md` for
+   anything a visitor-facing feature changes, this file for new contracts.
+6. **Commit and push.** Every round deploys; there is no staging environment.
+
+A note on process, since it has mattered: this site is edited by both Daniel and Claude, and
+the voice is Daniel's. Copy written for him should be plain, direct, definitional (say what a
+thing *is* before what it means to him), and friendly. When rewriting his words, change the
+voice, never the facts.

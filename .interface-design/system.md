@@ -219,6 +219,46 @@ Each appears on more than one page — that is what makes it a signature rather 
     (34px to ballpoint/laurel, 76px to full ink). **Colour and weight only, never position**,
     or a 216-letter block reflows under the cursor. Pointer devices only (`hover: hover and
     pointer: fine`), so touch and no-JS get the same static block.
+33. **Structural rhythm beats decoration** — research and formalization had drifted into the
+    same shape: three stacked `figure-row`s, cards left, figure right. Two identical spines
+    read as one template however good the components are. They were pulled apart by giving
+    each page a different sequence, not different styling: research now runs
+    `figure-row → .pair → .wide-fig → .mid-fig`, formalization runs
+    `grid-2 → stats → .catalog → figure-row`. **When two pages feel the same, compare their
+    spines before touching their surfaces.**
+34. **`.pair`** — two things of equal standing, side by side. A column implies sequence; the
+    two definitions on research are peers and now read as peers. `.wide-fig` gives a widget
+    the full measure (the morphism reaches 256 letters and a half-column made it a wall);
+    `.mid-fig` centres a closing figure at ~420px instead of pitting it against a card stack.
+35. **`.morph`** — the morphism shown as a derivation, not a list of longer strings. Each
+    generation is a labelled row (`n = 4 · 16 letters` in a mono gutter), each letter is its
+    own glyph so `0` and `1` carry different ink and the self-similar texture reads as
+    pattern, and the newest row groups its letters in **parent-pairs ruled off underneath**,
+    which is the substitution itself made visible. Older rows recede to `--ink-4`. It opens on
+    the same six generations the static HTML ships, so enabling JS never shows *less* than
+    disabling it.
+36. **`.catalog`** — a library has a catalog, not a stack of cards: ruled rows, the identifier
+    in mono, the description in the body face, status pinned right in its own colour. It
+    exists to be structurally unlike the theorem cards on research. **No invented numbers**: a
+    per-module "lines" column was cut mid-build because the counts would have been fabricated,
+    and this site's whole argument is that its claims are checkable.
+37. **Films are not cards** (`.plate`) — the plates were the one component with a border and a
+    raised background on a site whose depth strategy is hairlines only. The box is gone: the
+    reel sits on paper with a 1px inset outline, caption beneath like any figure. **Hover-scrub**
+    (`initFilms`): a fine pointer dragging across a frame seeks the reel and a ballpoint
+    hairline tracks the position; leaving resumes the muted loop. Throttled on the clock, not
+    rAF, because rAF is throttled in a background tab and the reel would freeze under a moving
+    cursor. Touch keeps tap-to-toggle.
+38. **`.reach` and `.onair`** — 52,244 followers was the last thing on § 03, below the fold.
+    The number is now a figure at the top of that page (rules above and below, like the
+    epigraph) and a compact line beside a real film on the homepage. Both read from
+    `data/socials.json` through `initLedger`, so the headline and the itemised ledger at the
+    foot cannot disagree. The ledger stays: the headline is the claim, the ledger is the
+    evidence.
+39. **Widgets end somewhere real** — the texview's compile used to terminate in nothing. It now
+    ends in a link to the actual handout library at trivalleytutoring.org/resources, shipped in
+    the static HTML so no-JS readers get it too. A fake interaction that leads to a real
+    destination is worth keeping; one that leads nowhere is decoration.
 32. **View transitions** (`@view-transition { navigation: auto }`) — moving between pages
     fades rather than cuts, so the site reads as one document. The topbar carries its own
     `view-transition-name` and a 1ms group animation so the bar holds still while the page
@@ -241,6 +281,12 @@ dimming again on the way back. Synchronous on the scroll listener, never rAF (th
 background tabs); `scrollHeight` cached on resize.
 
 ## Figures must be true
+
+**And decorative drawings are not figures.** A drawn desk behind the manuscript stack was
+proposed and rejected: the deskstack already *is* the drawing, and a desk asserts nothing a
+reader could check. Every drawing on this site is a real object — a spiral of primes, an
+integrated attractor, a square-free word, the roots of every integer cubic. If a proposed
+illustration has no checkable content, it does not belong here.
 
 Every caption is a claim, on a site whose whole argument is that this person checks
 things. Verify the mathematics before writing the caption, not after.
