@@ -125,16 +125,42 @@ Each appears on more than one page — that is what makes it a signature rather 
 13. **Link marks** — contact buttons carry a 15px inline SVG in `currentColor`, inheriting
     `--ink-3` and turning ballpoint on hover. Real brand marks; never emoji.
 14. **The tailpiece** (`.tailpiece`) — a chapter-end ornament: one figure set ~320px,
-    centred, muted (opacity .85), at the very foot of a page, no caption and no prose. A
-    typeset book closes a section with a cul-de-lampe; meaning by placement, not words.
-    **The taste, learned the hard way: closing art must be DENSE and EMERGENT** (a walk
-    that thickens into cloud, a strange attractor stippled into smoke, a clustered
-    network, a text triangle) **never a thin single closed curve** — the round of golden
-    spiral / Recamán / spirograph / Lissajous was rejected outright for reading as
-    clip-art. The set now: ink-walk (index), strange attractor (animations), ink-network
-    (projects), Mandelbrot (research), Sierpinski mod 2 (formalization), Pascal mod 3
-    (education). Canvas pieces draw through `palette()` (night-board safe), off a seeded
-    `mulberry32` (identical every repaint), and bail when `clientWidth < 40`.
+    centred, muted (opacity .85), at the very foot of a page, with one quiet mono caption
+    beneath it (`.tailpiece .figcap`, centred). **The taste, learned the hard way: closing
+    art must be DENSE and EMERGENT** (a walk that thickens into cloud, a strange attractor
+    stippled into smoke, a clustered network, a text triangle) **never a thin single closed
+    curve** — the round of golden spiral / Recamán / spirograph / Lissajous was rejected
+    outright for reading as clip-art. The set now: ink-walk (index), strange attractor
+    (animations), ink-network (projects), Mandelbrot (research), Sierpinski mod 2
+    (formalization), cubic-roots cloud (education). Canvas pieces draw through `palette()`
+    (night-board safe), off a seeded `mulberry32` (identical every repaint), and bail when
+    `clientWidth < 40`. The caption is a true claim like every other figure caption: verify
+    the count or construction before writing it (walk = 90k steps, attractor = 42k points,
+    roots = every integer cubic with coefficients in −5..5).
+18. **The cubic-roots figure** (`cubicRoots`, education tailpiece) — the complex roots of
+    every `ax³ + bx² + cx + d` with `a ∈ 1..5`, `b,c,d ∈ −5..5` (positive `a` covers the
+    sign symmetry), each normalized to monic and solved by a 30-pass Durand–Kerner
+    iteration, then stippled at low alpha so overlapping roots build density. This is our
+    own ink recreation of a copyrighted "Bohemian roots" artwork the user linked, not the
+    raster itself — recreating the mathematics keeps it night-board safe and license-clean.
+19. **Film reels are seamless** (`[data-film]`, `initFilms`) — every `<video>` autoplays
+    muted, loops, and carries no control bar; an IntersectionObserver plays it in view and
+    pauses it off-screen, a click toggles play/pause, and under `prefers-reduced-motion`
+    nothing autoplays (poster frame holds, click starts it). The muted/loop/autoplay
+    attributes ship in the HTML so it still works with no JS. Export vertical: the manim
+    film plates are 9:16 (`.plate-frame`), the projects showcase reel is 4:5 (`.reel`), both
+    over `--film`.
+20. **The showcase** (`.showcase`, projects) — a portrait reel with its numbers read down
+    the side of it: the 4:5 video on one flank, a single ruled column of `.stat` rows
+    (`.stats-col`) on the other, both standing vertically so a phone-shaped video and its
+    stats share one line. Wraps to stacked on mobile.
+21. **The texview** (`.texview`, projects) — a mock formula sheet standing in for a project
+    visual, the way a LaTeX preview looks but set in STIX rather than screenshotted: a mono
+    header bar with a page count, numbered subsection heads copied verbatim from the source
+    PDF's numbering (`1.1.1 Sophie Germain Identity`), formulas typeset in pure HTML/CSS
+    (italic `<i>` variables, `<sup>`/`<sub>`, a `.bigsum` for stacked summation limits,
+    `⌊ ⌋` floor glyphs), and a mono source line. No math engine, no external anything. Every
+    formula is checked correct before shipping, same rule as the figures.
 15. **The goal stepper** — the Lean panel walks a real proof one tactic per click
     (`GOAL_STEPS` in site.js): each press rewrites `.goal-body` to the next state and puts
     the next tactic on the bar, ending on `No goals. ∎`; reset returns to step 0. The
@@ -174,10 +200,14 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 - `.env` (theorem card) — 24px vertical pad · hairline top · body capped at 68ch · 16px body
 - `.stat` — 30px/600 value with tabular numerals · 11.5px uppercase mono key ·
   grid gapped by 1px over a `--rule` background, so the dividers *are* the gap
-- `.plate-frame` — 16:9, inset fill, mono placeholder label
+- `.plate-frame` — 9:16 film reel, `object-fit: cover` over `--film`, no controls
+- `.reel` (showcase) — 4:5 portrait video, hairline border over `--film`
+- `.stats-col` — `.stat` rows stacked into one hairline-ruled column, beside a reel
+- `.texview` — mock formula sheet: mono header/source bars, STIX formulas, `.bigsum`
 - `.show-frame` — 3:2, images `object-fit: cover` with a 1px inset
   `rgba(0,0,0,0.1)` outline
 - `.canvas-wrap` — 4:3, 1px `--board-rule`, canvas DPR-scaled in JS
+- `.record` — education's four-column record, now a 2-up grid (`minmax(300px, 1fr)`)
 
 ## Motion
 

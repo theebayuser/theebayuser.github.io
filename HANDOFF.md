@@ -10,10 +10,11 @@ directly, push to `main`, GitHub Pages redeploys in about a minute.
 - Design system documented in `.interface-design/system.md` — read it before touching
   colors, spacing, or components. Read `README.md` for the file map and click-through
   list. Both are current as of the last commit.
-- Every page ends in a **tailpiece**: a small figure with no caption, drawn on canvas
-  through `palette()` so it repaints on the hidden night-board toggle (press `b`). Taste
-  rule, hard-won: dense/emergent art (random walks, attractors, networks, text tables),
-  never a thin single closed curve — see system.md item 14 for the rejected round.
+- Every page ends in a **tailpiece**: a small figure with one quiet mono caption, drawn on
+  canvas through `palette()` so it repaints on the hidden night-board toggle (press `b`).
+  Taste rule, hard-won: dense/emergent art (random walks, attractors, networks, text
+  tables), never a thin single closed curve — see system.md item 14 for the rejected round.
+  Captions are true claims (verify the count/construction before writing one).
 - Real content is in: schools, coursework, competition results, three uploaded films,
   two run projects (Tri-Valley Tutoring, USAMO Guide, both linked to their live sites),
   upstream Lean contributions (Talos, Mathlib PRs, a merged formal-conjectures theorem).

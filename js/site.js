@@ -986,6 +986,71 @@
     });
   }
 
+  /* education: the roots of every cubic with small integer coefficients, plotted
+     in the complex plane. Normalize each ax^3 + bx^2 + cx + d to monic and find
+     its three roots by Durand–Kerner iteration, then stipple them. Overlapping
+     roots accumulate ink, so the dense self-similar structure near the unit
+     circle brightens on its own. The same idea as the artwork it replaces, drawn
+     in the page's own ink rather than embedded as a copyrighted raster. */
+  function cubicRoots(canvas) {
+    if (canvas.clientWidth < 40) return;
+    var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
+    var N = 5, R = 2.6;                 /* coefficients in -N..N, view radius R */
+    var cx = w / 2, cy = h / 2, s = Math.min(w, h) / (2 * R);
+
+    /* one Durand–Kerner pass over a monic cubic x^3 + Bx^2 + Cx + D. Returns the
+       three roots as [re, im] pairs. */
+    var zr = [0, 0, 0], zi = [0, 0, 0];
+    function solve(B, C, D) {
+      /* seed the three roots off the unit circle so they separate cleanly */
+      zr[0] = 0.4;  zi[0] = 0.9;
+      zr[1] = -0.9; zi[1] = 0.4;
+      zr[2] = -0.4; zi[2] = -0.9;
+      for (var it = 0; it < 30; it++) {
+        for (var i = 0; i < 3; i++) {
+          var xr = zr[i], xi = zi[i];
+          /* p(x) = x^3 + Bx^2 + Cx + D, by Horner */
+          var pr = xr + B, pi = xi;                         /* x + B */
+          var t = pr * xr - pi * xi; pi = pr * xi + pi * xr; pr = t + C;  /* *x + C */
+          t = pr * xr - pi * xi; pi = pr * xi + pi * xr; pr = t + D;      /* *x + D */
+          /* denominator: product of (x_i - x_j) for j != i */
+          var dr = 1, di = 0;
+          for (var j = 0; j < 3; j++) {
+            if (j === i) continue;
+            var ar = xr - zr[j], ai = xi - zi[j];
+            var nr = dr * ar - di * ai;
+            di = dr * ai + di * ar; dr = nr;
+          }
+          /* x_i -= p / denom */
+          var den = dr * dr + di * di;
+          if (den < 1e-18) continue;
+          var qr = (pr * dr + pi * di) / den;
+          var qi = (pi * dr - pr * di) / den;
+          zr[i] = xr - qr; zi[i] = xi - qi;
+        }
+      }
+    }
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = pal.ballpoint;
+    ctx.globalAlpha = 0.12;
+    for (var a = 1; a <= N; a++) {           /* a > 0 covers the sign symmetry */
+      for (var b = -N; b <= N; b++) {
+        for (var c = -N; c <= N; c++) {
+          for (var d = -N; d <= N; d++) {
+            solve(b / a, c / a, d / a);
+            for (var k = 0; k < 3; k++) {
+              var px = cx + zr[k] * s, py = cy - zi[k] * s;
+              if (px < 0 || px > w || py < 0 || py > h) continue;
+              ctx.fillRect(px, py, 1, 1);
+            }
+          }
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
   /* --- the goal panel, made runnable -------------------------------------- */
 
   /* The proof, one tactic per click. Each state is what the assistant would
@@ -1231,6 +1296,47 @@
     window.setTimeout(function () { measure(); draw(); }, 600);
   }
 
+  /* --- films: seamless muted loops, no player chrome ---------------------
+     Each [data-film] video autoplays muted and loops while it is on screen and
+     pauses when it scrolls away, so the shelf feels alive without a control bar.
+     A click toggles play/pause for anyone who wants to stop one. Under
+     prefers-reduced-motion nothing autoplays: the poster frame holds and a click
+     starts it. Progressive enhancement: the muted/loop/autoplay attributes in the
+     HTML already do the right thing with no JS at all. */
+  function initFilms() {
+    var films = document.querySelectorAll("[data-film]");
+    if (!films.length) return;
+
+    Array.prototype.forEach.call(films, function (v) {
+      v.removeAttribute("controls");
+      v.muted = true;
+      v.setAttribute("tabindex", "0");
+      v.style.cursor = "pointer";
+
+      function toggle() {
+        if (v.paused) { v.muted = true; v.play().catch(function () {}); }
+        else { v.pause(); }
+      }
+      v.addEventListener("click", toggle);
+      v.addEventListener("keydown", function (e) {
+        if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); }
+      });
+
+      if (reduced) return;   /* no autoplay under reduced motion */
+
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { v.muted = true; v.play().catch(function () {}); }
+            else { v.pause(); }
+          });
+        }, { threshold: 0.35 }).observe(v);
+      } else {
+        v.muted = true; v.play().catch(function () {});
+      }
+    });
+  }
+
   /* --- keys: sections by number, and the board after dark ----------------- */
 
   function typingContext() {
@@ -1296,7 +1402,7 @@
     if (turtle) plotter(turtle, { draw: tmTurtle, seconds: 6, hold: 2.4 });
 
     [["figure-walk", inkWalk], ["figure-attractor", attractor],
-     ["figure-network", inkNetwork]
+     ["figure-network", inkNetwork], ["figure-roots", cubicRoots]
     ].forEach(function (pair) {
       var el = document.getElementById(pair[0]);
       if (el) onRepaint(function () { pair[1](el); });
@@ -1327,6 +1433,7 @@
 
     initCounts();
     initLedger();
+    initFilms();
     initProgress();
     initKeys();
 

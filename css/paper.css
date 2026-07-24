@@ -357,6 +357,64 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   text-transform: uppercase; color: var(--ink-3); margin-top: 6px;
 }
 
+/* a showcase: a portrait reel with its numbers read down the side of it, both
+   standing vertically so a phone-shaped video and its stats share one line */
+.showcase { display: flex; gap: var(--s4); align-items: stretch; flex-wrap: wrap; }
+.showcase .reel {
+  flex: 0 0 clamp(240px, 34%, 300px);
+  aspect-ratio: 4 / 5; background: var(--film);
+  border: 1px solid var(--rule); overflow: hidden;
+}
+.showcase .reel video {
+  width: 100%; height: 100%; display: block;
+  object-fit: cover; background: var(--film); cursor: pointer;
+}
+/* the same numbers as .stats, but stacked into a single ruled column */
+.stats-col {
+  flex: 1 1 200px; display: flex; flex-direction: column;
+  border: 1px solid var(--rule);
+}
+.stats-col .stat {
+  flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
+  border-bottom: 1px solid var(--rule);
+}
+.stats-col .stat:last-child { border-bottom: 0; }
+
+/* the texview: a mock formula sheet, the way a LaTeX preview looks, set in STIX
+   rather than screenshotted. Header bar and page count in mono, numbered
+   subsection heads exactly as the source PDF numbers them, formulas typeset in
+   the body font. No math engine, no external anything. */
+.texview { border: 1px solid var(--rule); background: var(--paper-raised); }
+.texview-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s2);
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.06em;
+  color: var(--ink-3); padding: 8px var(--s3); border-bottom: 1px solid var(--rule);
+}
+.texview-bar .dot { color: var(--ink-4); }
+.texview-body { padding: var(--s3) var(--s4) var(--s4); }
+.texview .sub {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.04em;
+  color: var(--ink-3); margin: var(--s3) 0 var(--s1);
+}
+.texview .sub:first-child { margin-top: 0; }
+.texview .tex {
+  font-size: 19px; line-height: 1.5; color: var(--ink);
+  text-align: center; overflow-x: auto; padding: 4px 0;
+}
+.texview .tex i { font-style: italic; }
+.texview .tex .op { color: var(--ink-3); padding: 0 0.12em; }
+/* a summation with limits stacked over and under the sigma, sitting on the same
+   baseline as the rest of the line */
+.texview .bigsum {
+  display: inline-flex; flex-direction: column; align-items: center;
+  vertical-align: middle; font-size: 0.58em; line-height: 1; margin: 0 0.25em;
+}
+.texview .bigsum .sig { font-size: 2em; line-height: 0.85; }
+.texview-src {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.06em;
+  color: var(--ink-3); padding: 10px var(--s3); border-top: 1px solid var(--rule);
+}
+
 /* ----------------------------------------------------------- code/goal --- */
 
 .code {
@@ -610,6 +668,8 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 .tailpiece .canvas-wrap { width: 320px; max-width: 100%; aspect-ratio: 1; }
 .tailpiece .sierpinski { font-size: 9px; letter-spacing: 0.14em; }
 .tailpiece .tri3 { max-width: 100%; }
+/* the tailpiece is captioned like any other figure: one quiet mono line, centred */
+.tailpiece .figcap { margin-top: var(--s2); text-align: center; }
 
 /* a small live glyph on each selected-work card */
 .env-glyph { flex: 0 0 auto; width: 72px; height: 26px; opacity: 0.9; }
@@ -749,8 +809,8 @@ a.btn .fill { color: var(--ink-3); }
 /* the record: everything below the education graph, packed into a quiet grid.
    Each column is a labelled stack of tightened entries, no big section heads. */
 .record {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: var(--s5) var(--s4); align-items: start;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--s5) var(--s5); align-items: start;
 }
 .record-col > .kicker { margin-bottom: var(--s1); }
 .record-col .entry { padding: var(--s2) 0; }

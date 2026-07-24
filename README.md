@@ -15,10 +15,10 @@ Then open <http://localhost:4173>.
 |---|---|
 | `index.html` | Title block, abstract, the spiral contents, publications, contact, an ink-walk tailpiece |
 | `research.html` | Combinatorics on words: vocabulary + morphism, projects + turtle, a Mandelbrot tailpiece |
-| `lean.html` | Formalization: the goal stepper, the difference table beside the library, upstream contributions (with the Elliott–Halberstam snippet), a Sierpinski tailpiece |
-| `manim.html` | Self-drawing figures, the three films, the channel ledger, a strange-attractor tailpiece |
-| `education.html` | The prerequisite graph as navigation; the record (four columns); a Pascal-mod-3 tailpiece |
-| `projects.html` | Tri-Valley Tutoring and USAMO Guide (clipping + ladder), an ink-network tailpiece |
+| `lean.html` | Formalization: the goal stepper, the difference table beside the library, upstream contributions with the Elliott–Halberstam snippet beside the three cards, a Sierpinski tailpiece |
+| `manim.html` | Self-drawing figures (Lorenz then deltoid), the three films, the channel ledger, a strange-attractor tailpiece |
+| `education.html` | The prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
+| `projects.html` | Tri-Valley Tutoring (mock LaTeX viewer) and USAMO Guide (video showcase + vertical stats), an ink-network tailpiece |
 | `cv.pdf` | The CV, a static PDF. To update it, replace this file |
 | `404.html` | Not-found page, proved by contradiction |
 | `css/paper.css` | The entire design system: every colour, size, and rule |
@@ -91,7 +91,7 @@ The three films are already in place on `manim.html`. To add another, drop the `
 `assets/video/` and copy an existing `figure.plate` block:
 
 ```html
-<video class="plate-frame" controls preload="metadata" playsinline>
+<video class="plate-frame" data-film muted loop playsinline preload="metadata">
   <source src="assets/video/YourFilm.mp4" type="video/mp4">
 </video>
 ```
@@ -99,6 +99,13 @@ The three films are already in place on `manim.html`. To add another, drop the `
 The frames are portrait (9:16) and crop to fill, so a **vertical reel fits exactly** and a
 landscape file shows only its centre strip. Use the vertical export. Write the caption from
 what the film actually shows.
+
+Any `[data-film]` video is a **seamless loop**: `initFilms` (in `site.js`) strips the
+control bar, autoplays it muted while it is on screen, pauses it off-screen, and toggles
+play/pause on click; under `prefers-reduced-motion` it never autoplays. Strip the audio
+track on export (`ffmpeg -i in.mov -an … out.mp4`) since it plays muted anyway. The projects
+showcase reel (`.reel`, 4:5) uses the same `data-film` behaviour in a portrait frame beside
+a vertical `.stats-col`.
 
 ### Research detail
 

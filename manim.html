@@ -46,10 +46,10 @@
       <div class="figure-row">
         <div data-reveal>
           <div class="canvas-wrap">
-            <canvas id="figure-deltoid" role="img"
-              aria-label="A deltoid curve traced by two rotating epicycles, drawn continuously in ink."></canvas>
+            <canvas id="figure-lorenz" role="img"
+              aria-label="The Lorenz attractor, its two lobes traced slowly as a single unbroken ink line."></canvas>
           </div>
-          <p class="figcap">fig. 0 · a deltoid, drawn live by this page</p>
+          <p class="figcap">fig. 0 · the Lorenz attractor, integrated in the browser</p>
         </div>
         <div class="prose stack" data-reveal>
           <p class="kicker">How they get made</p>
@@ -57,8 +57,9 @@
           <p>It starts on paper. If I cannot draw the key frame by hand, no animation will save it. Then
           the scene goes into Python, usually far too long on the first pass, and the real work is
           deciding what to throw away.</p>
-          <p>The deltoid on the left is a small example, drawn live by this page rather than embedded: a
-          point riding one arm that rides another turning twice as fast the other way.</p>
+          <p>The Lorenz attractor on the left is a small example, drawn live by this page rather than
+          embedded: three coupled equations integrated one small step at a time, tracing a single
+          unbroken line that never quite closes.</p>
         </div>
       </div>
     </section>
@@ -70,9 +71,10 @@
         <div class="prose stack" data-reveal>
           <p class="kicker">The one rule</p>
           <h2 style="font-size: var(--fs-h2);">Animate what moves, hold the rest</h2>
-          <p>Motion is emphasis, so spending it on decoration wastes it. The Lorenz attractor beside
-          this is the rule in practice: the shape is famous enough to be a poster, but the poster loses
-          the one thing worth animating, the order the pen visits things in.</p>
+          <p>Motion is emphasis, so spending it on decoration wastes it. The deltoid beside this is the
+          rule in practice: as a finished curve it is just a poster, but the one thing worth animating is
+          how it gets drawn, a point riding one arm that rides another turning twice as fast the other
+          way.</p>
           <div class="entry" style="border-top: 1px solid var(--rule);">
             <div class="entry-head"><span class="r">Manim Community</span><span class="d">the films</span></div>
           </div>
@@ -85,10 +87,10 @@
         </div>
         <div data-reveal>
           <div class="canvas-wrap">
-            <canvas id="figure-lorenz" role="img"
-              aria-label="The Lorenz attractor, its two lobes traced slowly as a single unbroken ink line."></canvas>
+            <canvas id="figure-deltoid" role="img"
+              aria-label="A deltoid curve traced by two rotating epicycles, drawn continuously in ink."></canvas>
           </div>
-          <p class="figcap">fig. 1 · the Lorenz attractor, integrated in the browser</p>
+          <p class="figcap">fig. 1 · a deltoid, drawn live by this page</p>
         </div>
       </div>
     </section>
@@ -102,7 +104,7 @@
 
       <div class="plates">
         <figure class="plate" style="margin: 0;">
-          <video class="plate-frame" controls preload="metadata" playsinline
+          <video class="plate-frame" data-film muted loop playsinline preload="metadata"
             aria-label="A Maxwell-Boltzmann speed distribution simulation.">
             <source src="assets/video/BoltzmannDistribution.mp4" type="video/mp4">
           </video>
@@ -115,7 +117,7 @@
         </figure>
 
         <figure class="plate" style="margin: 0;">
-          <video class="plate-frame" controls preload="metadata" playsinline
+          <video class="plate-frame" data-film muted loop playsinline preload="metadata"
             aria-label="Euler's formula drawn as a helix in three dimensions.">
             <source src="assets/video/EulersFormulaReels.mp4" type="video/mp4">
           </video>
@@ -128,7 +130,7 @@
         </figure>
 
         <figure class="plate" style="margin: 0;">
-          <video class="plate-frame" controls preload="metadata" playsinline
+          <video class="plate-frame" data-film muted loop playsinline preload="metadata"
             aria-label="A Galton board dropping balls through pegs into bins that build a curve.">
             <source src="assets/video/GaltonBoard.mp4" type="video/mp4">
           </video>
@@ -183,6 +185,7 @@
         <canvas id="figure-attractor" role="img"
           aria-label="A Clifford strange attractor, forty thousand points stippled into a smoke-like density."></canvas>
       </div>
+      <p class="figcap">a Clifford attractor, forty thousand points</p>
     </div>
 
   </div>

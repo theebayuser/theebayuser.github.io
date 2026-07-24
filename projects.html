@@ -65,14 +65,27 @@
           <div class="stat"><p class="v" data-count="2000">2,000+</p><p class="k">hours delivered</p></div>
           <div class="stat"><p class="v" data-count="100">100+</p><p class="k">students reached</p></div>
         </div>
-        <div class="clipping" style="margin-top: var(--s3);">
-          <p class="clip-lead">For Students, By Students.</p>
-          <p class="clip-body">High-quality, individualized academic support for K-12, delivered by a
-          network of student tutors at a fraction of the normal cost.</p>
-          <div class="chips">
-            <span class="chip">math</span><span class="chip">science</span><span class="chip">english</span><span class="chip">music</span><span class="chip">social studies</span><span class="chip">languages</span>
+        <div class="texview" style="margin-top: var(--s3);">
+          <div class="texview-bar">
+            <span>olympiad-formulae.pdf</span>
+            <span class="dot">compiled &#183; p. 1 / 42</span>
           </div>
-          <p class="clip-src">from trivalleytutoring.org</p>
+          <div class="texview-body">
+            <p class="sub">1.1.1 &nbsp; Sophie Germain Identity</p>
+            <p class="tex"><i>x</i><sup>4</sup> <span class="op">+</span> 4<i>y</i><sup>4</sup>
+              <span class="op">=</span> (<i>x</i><sup>2</sup> <span class="op">+</span> 2<i>xy</i>
+              <span class="op">+</span> 2<i>y</i><sup>2</sup>)(<i>x</i><sup>2</sup>
+              <span class="op">&#8722;</span> 2<i>xy</i> <span class="op">+</span> 2<i>y</i><sup>2</sup>)</p>
+            <p class="sub">2.3.2 &nbsp; Ptolemy's Theorem</p>
+            <p class="tex"><i>AC</i> <span class="op">&#183;</span> <i>BD</i>
+              <span class="op">=</span> <i>AB</i> <span class="op">&#183;</span> <i>CD</i>
+              <span class="op">+</span> <i>AD</i> <span class="op">&#183;</span> <i>BC</i></p>
+            <p class="sub">3.1.6 &nbsp; Legendre's Formula</p>
+            <p class="tex"><i>&#957;<sub>p</sub></i>(<i>n</i>!) <span class="op">=</span>
+              <span class="bigsum"><span>&#8734;</span><span class="sig">&#8721;</span><span><i>i</i>=1</span></span>
+              &#8970;<i>n</i>/<i>p</i><sup><i>i</i></sup>&#8971;</p>
+          </div>
+          <div class="texview-src">rendered from Olympiad Theorems and Formulas, my own compilation</div>
         </div>
         <p class="env-foot" style="margin-top: var(--s3);">
           <span>district-wide</span><span>·</span>
@@ -92,24 +105,18 @@
         <p class="env-body">A free, open-source platform for olympiad preparation, built around the one
         path most resources leave scattered: AMC to AIME to USAMO. Curated study material, recurring
         contests, and a contributor community, with a staff of about twenty keeping it moving.</p>
-        <div class="stats" style="margin-top: var(--s3);">
-          <div class="stat"><p class="v" data-count="20">20</p><p class="k">on staff</p></div>
-          <div class="stat"><p class="v" data-count="25000">25,000</p><p class="k">unique users</p></div>
-          <div class="stat"><p class="v" data-count="200000">200,000</p><p class="k">monthly visits</p></div>
-        </div>
-        <div class="clipping" style="margin-top: var(--s3);">
-          <p class="clip-src" style="margin-top: 0;">the path, from usamoguide.com</p>
-          <div class="ladder" style="margin-top: var(--s2);">
-            <span class="rung">Foundations · AMC 8</span>
-            <span class="arrow">&#8594;</span>
-            <span class="rung">Intermediate · AMC 10&#8211;12</span>
-            <span class="arrow">&#8594;</span>
-            <span class="rung">Advanced · AIME</span>
-            <span class="arrow">&#8594;</span>
-            <span class="rung">Olympiad · USA(J)MO</span>
+        <div class="showcase" style="margin-top: var(--s3);">
+          <div class="reel">
+            <video data-film muted loop playsinline preload="metadata"
+              aria-label="A screen tour of the USAMO Guide platform: study material, contests, and the AMC to USAMO path.">
+              <source src="assets/video/UsamoGuideShowcase.mp4" type="video/mp4">
+            </video>
           </div>
-          <p class="clip-body" style="margin-top: var(--s2);">Written by USA(J)MO medalists, free and
-          fully open source.</p>
+          <div class="stats-col">
+            <div class="stat"><p class="v" data-count="20">20</p><p class="k">on staff</p></div>
+            <div class="stat"><p class="v" data-count="25000">25,000</p><p class="k">unique users</p></div>
+            <div class="stat"><p class="v" data-count="200000">200,000</p><p class="k">monthly visits</p></div>
+          </div>
         </div>
         <p class="env-foot" style="margin-top: var(--s3);">
           <span>open source</span><span>·</span>
@@ -132,6 +139,7 @@
         <canvas id="figure-network" role="img"
           aria-label="A clustered network drawn in ink: four groups of nodes joined by fine edges, with a few bridges between clusters."></canvas>
       </div>
+      <p class="figcap">an ink network, four clusters and a few bridges</p>
     </div>
 
   </div>
