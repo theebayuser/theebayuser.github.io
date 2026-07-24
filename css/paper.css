@@ -176,6 +176,49 @@ img, video, canvas, svg { max-width: 100%; display: block; }
 
 section { scroll-margin-top: 84px; }
 
+/* --------------------------------------------------------- marginalia --- */
+/* A sidenote in the outer margin, the way a printed monograph carries the
+   aside the sentence did not have room for. The mark stays inline with the
+   phrase; the note floats out beside it on a wide screen and folds back inline
+   underneath when the margin is gone. Never a hover tooltip: on paper and on a
+   phone the note has to be readable without a pointer. */
+.mn-mark {
+  font-family: var(--mono); font-size: 0.72em; color: var(--ballpoint);
+  vertical-align: super; line-height: 0; padding-left: 1px;
+}
+/* Default, and the whole story on a narrow screen: the note sits inline just
+   under the line that raised it, ruled off to the left like a block quote. */
+.mn-note {
+  display: block; font-size: 14px; line-height: 1.5; font-style: italic;
+  color: var(--ink-3); margin: var(--s1) 0 var(--s2) var(--s2);
+  padding-left: var(--s2); border-left: 1px solid var(--rule);
+  max-width: 46ch;
+}
+.mn-note .mn-mark { vertical-align: baseline; padding-right: 5px; }
+
+/* Once the viewport clears the 940px page, the measure (68ch, ~600px) leaves
+   roughly 270px of margin inside it. Float the note out there with a negative
+   right margin, the way a monograph sets a sidenote: it lands beside the line
+   that called it and the text keeps its measure. */
+@media (min-width: 1024px) {
+  /* only a full-width prose column has the margin to spare; the abstract is a
+     narrow centred block, so its notes stay inline */
+  .prose .mn-note {
+    float: right; clear: right; width: 200px;
+    margin: 0.25em -232px 0.9em 0;
+    padding: 6px 0 0; border-left: 0; border-top: 1px solid var(--rule);
+    font-size: 13px; text-align: left;
+  }
+  /* A prose column inside a figure row has no margin to spare, so those notes
+     stay inline rather than colliding with the figure beside them. */
+  .figure-row .prose .mn-note {
+    float: none; width: auto; max-width: 46ch;
+    margin: var(--s1) 0 var(--s2) var(--s2);
+    padding: 0 0 0 var(--s2); border-top: 0; border-left: 1px solid var(--rule);
+    font-size: 14px;
+  }
+}
+
 /* ------------------------------------------------------------- nav/bar --- */
 
 .topbar {
@@ -552,6 +595,14 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 .goal.is-run .goal-cursor { display: none; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(4px); } }
 
+/* The same proof drawn as a tree, under the panel. A tactic script reads as one
+   straight line even when the argument branches; this shows where it really
+   forks. Hidden until JS is confirmed, because an empty canvas is worse than no
+   canvas at all. */
+.goal-tree { display: none; height: 96px; margin-top: 10px; }
+.goal[data-enhanced] + .goal-tree { display: block; }
+.goal-tree canvas { width: 100%; height: 100%; display: block; }
+
 /* morphism widget */
 .morph-bar {
   display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
@@ -799,6 +850,24 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
               border-color 240ms var(--ease) !important;
 }
 
+/* A phrase underlined in ballpoint, the way you would mark a sentence in a
+   book you owned. The default is the finished stroke: without JS, or under
+   reduced motion, the emphasis is simply there. JS pulls it back to zero and
+   draws it left to right as the line comes into view. */
+.uline {
+  font-style: inherit;
+  background-image: linear-gradient(var(--ballpoint), var(--ballpoint));
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 1px);
+  background-size: 100% 1.5px;
+  padding-bottom: 1px;
+}
+.uline.uline-pre { background-size: 0% 1.5px; }
+.uline.uline-pre.uline-in {
+  background-size: 100% 1.5px;
+  transition: background-size 620ms var(--ease);
+}
+
 /* text figures ink in a row at a time, the way a plotter lays down type */
 .ink-rows > span { display: block; }
 .ink-rows.ink-pre > span {
@@ -1018,13 +1087,79 @@ a.btn .fill { color: var(--ink-3); }
 
 /* --------------------------------------------------------------- print --- */
 
+/* The site claims to be a preprint, so it should survive being printed as one:
+   real margins, no chrome, no controls, and nothing that depends on a pointer.
+   The night board is forced back to paper, because a dark page on a printer is
+   a page of wasted toner. */
 @media print {
-  :root { --paper: #fff; --paper-raised: #fff; --paper-inset: #fff; }
-  body { font-size: 10.5pt; line-height: 1.45; color: #000; }
-  .topbar, .foot, .tm, .tm-cap, .no-print, .btn { display: none !important; }
+  @page { margin: 2cm; }
+
+  :root, html.board {
+    --paper: #fff; --paper-raised: #fff; --paper-inset: #fff;
+    --ink: #000; --ink-2: #333; --ink-3: #555; --ink-4: #777;
+    --rule-soft: rgba(0,0,0,0.12); --rule: rgba(0,0,0,0.28);
+    --rule-strong: rgba(0,0,0,0.55);
+    --ballpoint: #000; --ballpoint-wash: transparent;
+    --qed: #000; --laurel: #000; --hover: transparent;
+    --fig-guide: rgba(0,0,0,0.2);
+  }
+  html.board .topbar { background: none; }
+
+  body { font-size: 10.5pt; line-height: 1.45; color: #000; background: #fff; }
   .page { max-width: none; padding: 0; }
-  a { color: #000; border-bottom: 0; }
   .section { padding: 12pt 0; }
-  .entry { break-inside: avoid; }
+
+  /* chrome and controls: none of it means anything on paper */
+  .topbar, .foot, .tm, .tm-cap, .no-print, .btn, .skip-link,
+  .progress, .board-toggle, .tv-run, .btn-tactic, .goal-reset,
+  .morph-bar, .show-bar, .node-pop { display: none !important; }
+
+  /* a video is a still at best: print the plate's words instead */
+  video, .plate-frame { display: none !important; }
+  .plate { border: 0; }
+  .plate-cap { padding: 0; }
+
+  a { color: #000; border-bottom: 0; }
+  /* a printed link is useless without its address */
+  .prose a[href^="http"]::after, .env-foot a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--mono); font-size: 8.5pt; color: #555;
+    word-break: break-all;
+  }
+
+  /* keep a figure with its caption and a claim with its card */
+  .entry, .env, .figure-row, .goal, .texview, .stats, .stats-grid2,
+  .stats-col, .tailpiece, .clipping, .record-col, .plate, .quote,
+  .canvas-wrap, .wordart, .sierpinski { break-inside: avoid; }
+  .figcap { break-before: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+
+  /* sidenotes become ordinary notes under the line that called them */
+  .prose .mn-note {
+    float: none; width: auto; max-width: none;
+    margin: 6pt 0 8pt 12pt; padding: 0 0 0 8pt;
+    border-top: 0; border-left: 1px solid rgba(0,0,0,0.28);
+    font-size: 9pt;
+  }
+  /* the drawn underline never animates on paper */
+  .uline { background-size: 100% 1.5px !important; }
   .cv-head { padding-top: 0; }
+}
+
+/* ---------------------------------------------------- view transitions --- */
+/* Moving between pages should read like turning a leaf of one document, not
+   loading a new site. Browsers without support simply navigate; there is no
+   script and nothing to fall back to. */
+@media not (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: auto; }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 220ms;
+    animation-timing-function: var(--ease);
+  }
+  /* the bar is the fixed part of the document: hold it still while the page
+     under it dissolves */
+  .topbar { view-transition-name: topbar; }
+  ::view-transition-group(topbar) { animation-duration: 1ms; }
 }

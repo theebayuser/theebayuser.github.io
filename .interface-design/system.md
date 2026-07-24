@@ -192,6 +192,39 @@ Each appears on more than one page — that is what makes it a signature rather 
     40px hit area, `aria-pressed` synced), the glyph alone under 620px. Button and key run
     through one `setBoard`, so state, storage, and `aria-pressed` cannot drift apart. The
     key map on the index contents note names both.
+27. **Marginalia** (`.mn` / `.mn-mark` / `.mn-note`) — the aside a sentence had no room for,
+    set in the outer margin the way a monograph does. A ballpoint dagger stays inline with
+    the phrase; past 1024px the note floats right out of the measure
+    (`width: 200px; margin-right: -232px`, hairline over the top, 13px italic ink-3) and
+    below that it folds back inline, ruled off on the left. **Never a hover tooltip** — on a
+    phone and on paper the note has to be readable without a pointer. Only a full-width
+    `.prose` column has the margin to spare: notes inside a `.figure-row` column or the
+    centred abstract stay inline, or they collide with what is beside them. One note per
+    page, on a term a reader could plausibly not know.
+28. **Drawn underlines** (`.uline`) — one or two load-bearing phrases per page, marked in
+    ballpoint the way you would mark a book you owned. The stroke is a `background-image`
+    gradient sized `0% → 100%` over 620ms as the phrase comes into view (`initUlines`).
+    **The CSS default is the finished stroke**: JS pulls it back to zero and draws it, so
+    no-JS and reduced-motion readers still get the emphasis. Print keeps it static.
+29. **The proof tree** (`.goal-tree`, lean) — the goal stepper's script drawn as a tree
+    beside it: hollow node open, ballpoint node current, `--qed` green discharged, and the
+    argument branches exactly once, on the parity of the overlap position, because that is
+    the one place the real argument branches. Derived from `GOAL_STEPS` (each step names its
+    `node`), never a second copy of the data. Hidden until `[data-enhanced]` confirms JS,
+    because an empty canvas is worse than no canvas.
+30. **Print is a real target** (`@media print`) — the site claims to be a preprint, so it
+    prints as one: 2cm page margins, no chrome or controls, films replaced by their plate
+    captions, external links printing their URL, `break-inside: avoid` on every card and
+    figure, sidenotes folded inline. Two contracts that are easy to get wrong: `beforeprint`
+    **completes the interactive widgets** (the texview renders, the proof closes) so paper
+    never shows a control waiting to be pressed; and it **drops the night board and
+    repaints**, because a canvas is a raster and chalk-coloured figures print as nothing on
+    white. `afterprint` puts the board back.
+31. **View transitions** (`@view-transition { navigation: auto }`) — moving between pages
+    fades rather than cuts, so the site reads as one document. The topbar carries its own
+    `view-transition-name` and a 1ms group animation so the bar holds still while the page
+    under it dissolves. CSS only, inside a `prefers-reduced-motion` guard; unsupporting
+    browsers simply navigate.
 15. **The goal stepper** — the Lean panel walks a real proof one tactic per click
     (`GOAL_STEPS` in site.js): each press rewrites `.goal-body` to the next state and puts
     the next tactic on the bar, ending on `No goals. ∎`; reset returns to step 0. The
