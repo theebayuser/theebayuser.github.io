@@ -494,6 +494,11 @@
     var chips = wrap.querySelectorAll(".ulam-node");
     if (!canvas || !chips.length) return;
 
+    /* the caption doubles as a readout: idle it names the figure, on hover it
+       reads back the section, its phrase, and which prime the numeral sits on */
+    var readout = document.querySelector("[data-spiral-readout]");
+    var idle = readout ? readout.textContent : "";
+
     function place() {
       var side = Math.min(canvas.clientWidth, canvas.clientHeight);
       if (side < 40) return;                 /* not laid out yet; try again when it is */
@@ -506,18 +511,31 @@
         chip.style.left = a.x + "px";
         chip.style.top = a.y + "px";
         chip.title = "prime " + a.n;
+        chip.setAttribute("data-prime", a.n);
       });
     }
 
     onRepaint(place);
     window.addEventListener("resize", place);
 
-    /* hover on either side lights the other */
+    /* hover on either side lights the other and reads the pair back */
     Array.prototype.forEach.call(chips, function (chip) {
       var href = chip.getAttribute("href");
       var row = document.querySelector('.toc-line a[href="' + href + '"], .toc a[href="' + href + '"]');
-      function on() { chip.classList.add("is-hot"); if (row) row.classList.add("is-hot"); }
-      function off() { chip.classList.remove("is-hot"); if (row) row.classList.remove("is-hot"); }
+      function on() {
+        chip.classList.add("is-hot");
+        if (row) row.classList.add("is-hot");
+        if (readout) {
+          var prime = chip.getAttribute("data-prime");
+          var phrase = chip.getAttribute("data-phrase") || "";
+          readout.textContent = phrase + (prime ? " · prime " + prime : "");
+        }
+      }
+      function off() {
+        chip.classList.remove("is-hot");
+        if (row) row.classList.remove("is-hot");
+        if (readout) readout.textContent = idle;
+      }
       chip.addEventListener("mouseenter", on);
       chip.addEventListener("mouseleave", off);
       chip.addEventListener("focus", on);
@@ -939,8 +957,10 @@
         stamp.textContent = "counts kept by hand · last checked " + data.updated;
       }
 
+      var total = 0;
       data.channels.forEach(function (ch) {
         var cell = root.querySelector('[data-platform="' + ch.platform + '"] .lg-count');
+        if (typeof ch.followers === "number" && ch.followers > 0) total += ch.followers;
         if (!cell || typeof ch.followers !== "number") return;
         /* zero means "not written down yet", not "nobody follows this" */
         if (ch.followers <= 0) return;
@@ -948,6 +968,13 @@
         cell.setAttribute("data-empty", "false");
         onceInView(cell, function () { countUp(cell, ch.followers, text); }, 0.4);
       });
+
+      var sumCell = root.querySelector("[data-ledger-total]");
+      if (sumCell && total > 0) {
+        var sumText = total.toLocaleString();
+        sumCell.setAttribute("data-empty", "false");
+        onceInView(sumCell, function () { countUp(sumCell, total, sumText); }, 0.4);
+      }
     }, function () { /* dashes stay, links still work */ });
   }
 

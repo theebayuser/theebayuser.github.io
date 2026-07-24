@@ -52,6 +52,9 @@
           overlaps, avoidance) and using it to machine-check both the classical theorems of the field
           and my own research. Every definition below type-checks against Mathlib, and every claim marked
           machine-checked has no gaps left open behind it.</p>
+          <p>I keep at it for two reasons. It has already caught a real error: a uniform version of one of
+          my obligations was false, and I did not know until Lean produced counterexamples. And it is the
+          honest way to learn a field, because you cannot formalize a definition you only half understand.</p>
         </div>
 
         <div>
@@ -155,62 +158,85 @@ tm : w = thueMorse</span>
       </div>
     </section>
 
-    <section class="section">
-      <div class="grid-2">
-        <div class="prose stack">
-          <h2>Why bother</h2>
-          <p>Because a computer-assisted proof invites exactly one question, <em>do you trust the
-          program?</em>, and formalization is the only answer that does not require trusting me.</p>
-          <p>Because it found real errors. A uniform version of one of my obligations was false, and I
-          did not know it until Lean produced counterexamples. The corrected statement rests on a
-          threshold I had originally derived wrong.</p>
-          <p>And because it is a good way to learn a field. You cannot formalize a definition you only
-          half understand.</p>
-        </div>
-        <div>
-          <p class="kicker">Illustrative</p>
-          <div class="code"><span class="cm">-- shape of a definition in the library</span>
-<span class="kw">def</span> OverlapFree (w : Word α) : <span class="kw">Prop</span> :=
-  ∀ u : Word α, ∀ n, 0 &lt; u.length →
-    ¬ (u ^ n ++ u.take 1).IsFactorOf w
-
-<span class="cm">-- and the shape of a result</span>
-<span class="kw">theorem</span> tm_overlapFree :
-    OverlapFree thueMorse := <span class="kw">by</span>
-  <span class="cm">…</span></div>
-          <p class="meta" style="margin-top: 10px;">Simplified for reading: the real statements carry
-          more bookkeeping. Source available on request, and public when the papers post.</p>
-        </div>
-      </div>
-    </section>
-
     <section class="section" style="padding-top: 0;" id="talos">
       <div class="section-head" data-reveal>
-        <p class="kicker">Elsewhere in verification</p>
-        <h2>Proving things about programs</h2>
-        <p class="prose lede">The same discipline, pointed at software instead of words.</p>
+        <p class="kicker">Elsewhere in Lean</p>
+        <h2>Contributions upstream</h2>
+        <p class="prose lede">The same discipline, pointed at other people's libraries. Everything here
+        is public, and I am a contributor to each, nothing more.</p>
       </div>
 
-      <div class="env" style="border-bottom: 1px solid var(--rule);">
-        <div class="env-head">
-          <span class="env-kind">Contribution</span>
-          <span class="env-name">(Talos, open source).</span>
-          <span class="env-status wip">&#8943; ongoing</span>
+      <div data-reveal-group>
+        <div class="env">
+          <div class="env-head">
+            <span class="env-kind">Contribution</span>
+            <span class="env-name">(Talos, open source).</span>
+            <span class="env-status wip">&#8943; ongoing</span>
+          </div>
+          <p class="env-body"><a href="https://github.com/theebayuser/talos" target="_blank" rel="noopener">Talos</a>
+          is a WebAssembly interpreter written in Lean 4, where the definitions that
+          <em>run</em> a program are the same ones you <em>reason about</em>. There is no second
+          specification to drift out of sync with the implementation, which is the whole point.</p>
+          <p class="env-body" style="margin-top: var(--s2);">My patches live on the proof side: total
+          correctness for small programs, machine-checked equivalence between an unoptimized build and
+          an optimized build of the same function, and the memory-region disjointness algebra those
+          proofs stand on. Reviewing against a real codebase has taught me more about stating a theorem
+          usefully than any amount of solo work.</p>
+          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>open-source contributor</span></p>
         </div>
-        <p class="env-body"><a href="https://github.com/theebayuser/talos" target="_blank" rel="noopener">Talos</a>
-        is a WebAssembly interpreter written in Lean 4, where the definitions that
-        <em>run</em> a program are the same ones you <em>reason about</em>. There is no second
-        specification to drift out of sync with the implementation, which is the whole point.</p>
-        <p class="env-body" style="margin-top: var(--s2);">My patches live on the proof side: total
-        correctness for small programs, machine-checked equivalence between an unoptimized build and
-        an optimized build of the same function, and the memory-region disjointness algebra those
-        proofs stand on. It is the first place I have written verification someone else depends on,
-        and reviewing against a real codebase has taught me more about stating a theorem usefully
-        than any amount of solo work.</p>
-        <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>open-source contributor</span></p>
+
+        <div class="env">
+          <div class="env-head">
+            <span class="env-kind">Contribution</span>
+            <span class="env-name">(Mathlib).</span>
+            <span class="env-status wip">&#8943; in review</span>
+          </div>
+          <p class="env-body">Two pull requests to
+          <a href="https://github.com/leanprover-community/mathlib4/pulls/theebayuser" target="_blank" rel="noopener">Mathlib</a>,
+          extending the list API exactly where combinatorics on words kept needing it: an enumerator for
+          the contiguous factors of a list, and decidability of periodicity for repeated lists. Both are
+          open and under review, which is its own education in how a large library holds its standards.</p>
+          <p class="env-foot"><span>Lean 4 + Mathlib</span><span>&#183;</span><span>2 pull requests</span></p>
+        </div>
+
+        <div class="env" style="border-bottom: 1px solid var(--rule);">
+          <div class="env-head">
+            <span class="env-kind">Contribution</span>
+            <span class="env-name">(formal-conjectures).</span>
+            <span class="env-status done">✓ 2 merged</span>
+          </div>
+          <p class="env-body">Formal Lean statements of open problems for
+          <a href="https://github.com/google-deepmind/formal-conjectures" target="_blank" rel="noopener">formal-conjectures</a>,
+          Google DeepMind's open library of unproved mathematics. Two are merged (the
+          Elliott&#8211;Halberstam conjecture, and a Green open problem on the largest product-free sets in
+          finite groups) and two Erdős problems are in review. The work is stating a conjecture precisely
+          enough that a machine could one day check a proof of it.</p>
+          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>open-source contributor</span></p>
+        </div>
       </div>
     </section>
 
+  </div>
+
+  <div class="page">
+    <div class="tailpiece">
+      <pre class="sierpinski" aria-label="Pascal's triangle modulo 2 for sixteen rows, forming a Sierpinski triangle of ones and zeros.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 0 0 0 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 0 0 0 0 <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 0 0 0 0 <b>1</b> 0 <b>1</b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> 0 0 0 0 <b>1</b> <b>1</b> <b>1</b> <b>1</b>
+&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b>
+&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
+&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
+<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b></pre>
+    </div>
   </div>
 </main>
 
@@ -234,7 +260,7 @@ tm : w = thueMorse</span>
       </nav>
     </div>
     <div class="foot-rule">
-      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta">currently &#183; <span data-now>out and about</span></p>
       <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
     </div>
   </div>

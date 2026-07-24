@@ -159,99 +159,6 @@
           </p>
         </div>
 
-        <div class="env">
-          <div class="env-head">
-            <span class="env-kind">Library&nbsp;P0</span>
-            <span class="env-name">(foundations, in Lean).</span>
-            <span class="env-status done">✓ machine-checked</span>
-          </div>
-          <p class="env-body">Everything above needs definitions that a proof assistant will accept:
-          finite and infinite words, morphisms, powers, overlaps, avoidance. I built that spine first and
-          proved the classical theorems on top of it, so the research results have somewhere to land.
-          <a href="lean.html">More on the formalization →</a></p>
-          <p class="env-foot"><span>complete</span><span>·</span><span>no gaps left open</span></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="how">
-      <div class="grid-2">
-        <div class="prose stack">
-          <h2>How I work</h2>
-          <p>Conjecture from data first. I write the brute-force search before I write anything else,
-          look at what the small cases actually do, and only then guess the theorem. A guess that
-          survives contact with fifty thousand cases is worth proving.</p>
-          <p>Then rebuild by hand. Search tells you what is true; it does not tell you why. The structural
-          proof always comes second, and it usually changes what I thought the theorem was.</p>
-          <p>Then formalize, which is where the remaining lies get found. That part has its own
-          page: <a href="lean.html">&#167; 02, proofs a computer believes</a>.</p>
-        </div>
-        <div class="prose stack">
-          <h2>Where the writing is</h2>
-          <p>Two manuscripts are in preparation, listed on the <a href="index.html#publications">front
-          page</a>. Neither is posted yet, which is why nothing here states a theorem in full: I would
-          rather show you the shape of a result than a version of it I have to walk back.</p>
-          <p>Drafts go to anyone who asks. When the preprints post, the cards on the front page are
-          already shaped to hold the real statements.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" style="padding-top: 0;" id="marginalia">
-      <div class="section-head" data-reveal>
-        <p class="kicker">Marginalia</p>
-        <h2>What gets drawn when a proof stalls</h2>
-        <p class="prose lede">Both of these are the same joke my own research keeps telling: something
-        simple, iterated, refusing to become simple.</p>
-      </div>
-
-      <div class="figure-row">
-        <div data-reveal>
-          <pre class="code sierpinski" aria-label="Pascal's triangle modulo 2 for sixteen rows, forming a Sierpinski triangle of ones and zeros.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 0 0 0 0 <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 0 0 0 0 <b>1</b> <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> 0 <b>1</b> 0 0 0 0 0 <b>1</b> 0 <b>1</b>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b> <b>1</b> <b>1</b> <b>1</b> 0 0 0 0 <b>1</b> <b>1</b> <b>1</b> <b>1</b>
-&nbsp;&nbsp;&nbsp;<b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b> 0 0 0 <b>1</b>
-&nbsp;&nbsp;<b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b> 0 0 <b>1</b> <b>1</b>
-&nbsp;<b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b> 0 <b>1</b>
-<b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b> <b>1</b></pre>
-          <p class="figcap">fig. 2 · Pascal's triangle mod 2</p>
-        </div>
-        <div class="prose stack" data-reveal>
-          <p class="kicker">Figure 2</p>
-          <h2 style="font-size: var(--fs-h2);">Ones and zeros only</h2>
-          <p>Write out Pascal's triangle, then keep only whether each entry is odd. Sixteen rows in, a
-          Sierpinski triangle has appeared, built from nothing but ones and zeros.</p>
-          <p>There is a clean reason. A binomial coefficient is odd exactly when the bits of
-          <em>k</em> sit inside the bits of <em>n</em>, so the picture was about binary all along,
-          which is the same thing the Thue–Morse word says in every rule on this site.</p>
-        </div>
-      </div>
-
-      <div class="figure-row" style="margin-top: var(--s6);">
-        <div class="prose stack" data-reveal>
-          <p class="kicker">Figure 3</p>
-          <h2 style="font-size: var(--fs-h2);">One rule, run everywhere</h2>
-          <p>Square a number, add where you started, repeat. Keep the starting points that never run
-          away and you get this. One line of arithmetic, and a boundary nobody can write down.</p>
-          <p>I keep it here as a reminder of what my own field looks like from far enough away: a rule
-          short enough to fit on a napkin, and a structure that takes a career to describe.</p>
-        </div>
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 5 / 4;">
-            <canvas id="figure-mandelbrot" role="img"
-              aria-label="The Mandelbrot set, stippled in ink."></canvas>
-          </div>
-          <p class="figcap">fig. 3 · the Mandelbrot set, stippled by this page</p>
-        </div>
       </div>
     </section>
 
@@ -278,7 +185,7 @@
       </nav>
     </div>
     <div class="foot-rule">
-      <p class="meta">currently &#183; <span data-now>closing the last open obligations in the P2 formalization</span></p>
+      <p class="meta">currently &#183; <span data-now>out and about</span></p>
       <p class="meta keys-hint">keys &#183; 1&#8211;5 sections &#183; 6 CV &#183; 0 home</p>
     </div>
   </div>

@@ -51,7 +51,8 @@ If the file fails to load, the counts stay as dashes and every link still works.
   at a time, up to generation 8.
 - **Home**: the contents *are* Ulam's spiral. The six numerals are pinned to six actual
   primes (163, 173, 457, 887, 907, 1051) and are real links; hovering either a numeral or
-  its entry in the legend beneath lights up the other. The legend is the no-JS fallback.
+  its entry in the legend beneath lights up the other and reads the section, its phrase,
+  and its prime into the caption line. The legend is the no-JS fallback.
 - **Education**: the prerequisite graph is the page's navigation. Every node is a button;
   clicking one opens a card with the dates and a jump link to the section below. Wide, it
   reads left to right as two chains meeting. Under 560px the same graph becomes one
@@ -86,9 +87,10 @@ eight photos is the right number.
 
 ### Follower counts
 
-They are all `0` in `data/socials.json`, and a zero is treated as "not written down yet",
-so the ledger shows a dash rather than claiming nobody follows you. Put the real numbers
-in and set `updated`.
+They live in `data/socials.json`, kept by hand and stamped with `updated`. A zero is
+treated as "not written down yet", so that row shows a dash instead of claiming nobody
+follows you. The animations page fills each row and a running total from this file; the
+`now` field drives the "currently" line in every footer.
 
 ### Films
 
@@ -101,8 +103,9 @@ The three films are already in place on `manim.html`. To add another, drop the `
 </video>
 ```
 
-Vertical reels are fine: the frame letterboxes them against the film-black surface rather
-than cropping. Write the caption from what the film actually shows.
+The frames are portrait (9:16) and crop to fill, so a **vertical reel fits exactly** and a
+landscape file shows only its centre strip. Use the vertical export. Write the caption from
+what the film actually shows.
 
 ### Research detail
 

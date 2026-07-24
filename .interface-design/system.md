@@ -99,7 +99,9 @@ Each appears on more than one page — that is what makes it a signature rather 
    compact `.toc-line` legend sits beneath as the plain-text equivalent and the no-JS
    fallback; hovering either side lights the other through `.is-hot`. Separation between
    numerals scales with the figure (`pickAnchors(…, side)`); a fixed pixel threshold
-   strands them on a narrow viewport.
+   strands them on a narrow viewport. The caption doubles as a **readout**: idle it names
+   the figure, on hover it reads back the section, its phrase, and the prime the numeral
+   sits on (`data-spiral-readout`, `min-height` reserved so the swap never shifts layout).
 8. **The prerequisite graph as navigation** (education) — every node is a real `<button>`
    over a canvas of curved edges, and selecting one fills a `.node-pop` card with dates, a
    line, and a jump link into the section below. Wide, it reads as two chains meeting.
@@ -107,7 +109,8 @@ Each appears on more than one page — that is what makes it a signature rather 
    centred on the nodes and edges bowed out to the side. Chip x is clamped to the figure,
    or a label near an edge hangs off it.
 9. **The ledger** — hand-kept counts as an account book: mono platform label, handle,
-   figure right-aligned in tabular numerals. Never a dashboard tile. A count of zero means
+   figure right-aligned in tabular numerals, and a `.ledger-sum` balance line ruled off
+   at the foot with the running total. Never a dashboard tile. A count of zero means
    "not written down yet" and keeps the dash.
 10. **The epigraph** (`.quote`) — rules above and below, the line at 23px italic, the
     attribution in small tracked mono. At most once per page, where a chapter opens.
@@ -115,12 +118,18 @@ Each appears on more than one page — that is what makes it a signature rather 
     the left, the numbered contents in two hairline-ruled columns on the right, one meta
     rule beneath carrying `currently ·` and the key map. No colophon boilerplate about
     which typefaces were used; the page itself is the evidence.
-12. **Film plates** — a real `<video>` in the frame, `object-fit: contain` over `--film`,
-    the single dark token and the one place a dark surface is allowed. Manim renders on
-    black, so a vertical reel is letterboxed against its own ground, never cropped and
-    never matted onto paper.
+12. **Film plates** — a real `<video>` in a portrait 9:16 frame, `object-fit: cover` over
+    `--film`, the single dark token and the one place a dark surface is allowed. The films
+    are reels, so the frame is portrait and crops to fill; a vertical export lands exactly,
+    a landscape one shows its centre strip. The uncovered edge falls back to film-black.
 13. **Link marks** — contact buttons carry a 15px inline SVG in `currentColor`, inheriting
     `--ink-3` and turning ballpoint on hover. Real brand marks; never emoji.
+14. **The tailpiece** (`.tailpiece`) — a chapter-end ornament: one figure set small
+    (~200px), centred, muted, at the very foot of a page, with no caption and no prose. A
+    typeset book closes a section with a cul-de-lampe; the Mandelbrot does it on the index,
+    the Sierpinski on formalization. Meaning by placement, not words. This is where a
+    figure goes when it belongs on a page but does not want a paragraph, and it is how the
+    Sierpinski and Mandelbrot earn their place without exposition.
 
 ## Figures must be true
 

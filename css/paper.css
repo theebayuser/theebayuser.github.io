@@ -486,7 +486,12 @@ a.env:hover .env-kind { color: var(--ballpoint); }
    and the no-JS fallback. */
 .contents-hero { display: flex; flex-direction: column; align-items: center; }
 .contents-hero .canvas-wrap { max-width: 520px; }
-.contents-hero .figcap { text-align: center; }
+/* the caption is also the hover readout, so reserve its line and let the text
+   change without nudging the layout */
+.contents-hero .figcap {
+  text-align: center; min-height: 1.4em;
+  transition: color 140ms var(--ease);
+}
 
 .toc-line {
   list-style: none; margin: var(--s3) 0 0; padding: 0;
@@ -573,6 +578,16 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 .lg-count[data-empty="true"] { color: var(--ink-4); font-weight: 400; }
 .lg-unit { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); margin-left: 6px; }
 
+/* the sum line: the book's balance, ruled off from the entries above it */
+.ledger-sum {
+  display: flex; align-items: baseline; gap: var(--s2);
+  padding: var(--s2) 2px 0; margin-top: 6px;
+  border-top: 1px solid var(--rule);
+}
+.ledger-sum .lg-plat { color: var(--ink-2); }
+.ledger-sum .lg-count { font-size: 26px; }
+.ledger-sum .lg-count[data-empty="true"] { font-size: 21px; }
+
 /* marginalia: a doodle, set as type */
 .sierpinski {
   border: 0; background: none; padding: 0;
@@ -580,6 +595,16 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
   color: var(--ink-4); text-align: center; overflow-x: auto;
 }
 .sierpinski b { color: var(--ink); font-weight: 400; }
+
+/* the tailpiece: a chapter-end ornament. A figure set small and centred at the
+   very foot of a page, no caption and no prose, the way a typeset book closes a
+   section with a cul-de-lampe. It carries meaning by placement, not by words. */
+.tailpiece {
+  display: flex; flex-direction: column; align-items: center;
+  padding: var(--s6) 0 0; opacity: 0.75;
+}
+.tailpiece .canvas-wrap { width: 200px; aspect-ratio: 5 / 4; }
+.tailpiece .sierpinski { font-size: 9px; letter-spacing: 0.14em; }
 
 /* a small live glyph on each selected-work card */
 .env-glyph { flex: 0 0 auto; width: 72px; height: 26px; opacity: 0.9; }
@@ -594,11 +619,12 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 }
 .rv.rv-in { opacity: 1; transform: none; }
 
+/* each tick simply appears, one after the next, rather than growing into place */
 .tm.tm-pre i {
-  opacity: 0; transform: scaleY(0.25); transform-origin: bottom;
-  transition: opacity 240ms var(--ease), transform 240ms var(--ease);
+  opacity: 0;
+  transition: opacity 240ms var(--ease);
 }
-.tm.tm-pre.tm-draw i { opacity: 1; transform: none; }
+.tm.tm-pre.tm-draw i { opacity: 1; }
 
 .tb-anim > * {
   opacity: 0; transform: translateY(10px);
@@ -612,20 +638,21 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 
 /* -------------------------------------------------------------- plates --- */
 
-.plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s4); }
+/* the films are portrait reels, so the plates stand as a shelf of them */
+.plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s4); }
 .plate { border: 1px solid var(--rule); background: var(--paper-raised); }
 .plate-frame {
-  aspect-ratio: 16 / 9; background: var(--paper-inset);
+  aspect-ratio: 9 / 16; background: var(--paper-inset);
   display: flex; align-items: center; justify-content: center;
   border-bottom: 1px solid var(--rule);
   color: var(--ink-4); font-family: var(--mono); font-size: var(--fs-meta);
   text-align: center; padding: var(--s2);
 }
-/* A real film in the frame. Manim renders on black, so the frame keeps the
-   film's own ground and letterboxes a vertical reel rather than cropping it. */
+/* A real reel in the frame, cropped to fill its portrait ground. Manim renders
+   on black, so any uncovered edge falls back to the film's own dark surface. */
 video.plate-frame {
-  width: 100%; height: auto; aspect-ratio: 16 / 9;
-  object-fit: contain; background: var(--film); padding: 0;
+  width: 100%; height: auto; aspect-ratio: 9 / 16;
+  object-fit: cover; background: var(--film); padding: 0;
 }
 .plate-cap { padding: 14px var(--s2) var(--s2); }
 .plate-cap .pn {
@@ -768,6 +795,8 @@ a.btn .fill { color: var(--ink-3); }
   .lg-handle { flex-basis: 100%; order: 3; }
   .show-bar { flex-wrap: wrap; }
   .show-cap { flex-basis: 100%; }
+  /* one reel, centred, at a size a phone can actually play */
+  .plates { grid-template-columns: minmax(0, 300px); justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
