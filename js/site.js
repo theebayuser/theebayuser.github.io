@@ -158,6 +158,42 @@
     }, 8000);
   }
 
+  /* Text figures (the wordart block, the Pascal triangles) ink in a row at a
+     time on first view, the way a plotter lays down type. Same fail-open
+     contract as the reveals: JS wraps the rows and hides them, the classes come
+     off afterwards, and without JS nothing is ever hidden. */
+  function initInkRows() {
+    var blocks = document.querySelectorAll(".wordart, .sierpinski");
+    if (!blocks.length || reduced || document.visibilityState === "hidden") return;
+
+    Array.prototype.forEach.call(blocks, function (pre) {
+      var rows = pre.innerHTML.split("\n");
+      if (rows.length < 2) return;
+      /* join with nothing, not "\n": each row is its own block now, and inside a
+         <pre> the separating newlines would be rendered too and double the height */
+      pre.innerHTML = rows.map(function (r) { return "<span>" + r + "</span>"; }).join("");
+      pre.classList.add("ink-rows", "ink-pre");
+      Array.prototype.forEach.call(pre.children, function (row, i) {
+        row.style.transitionDelay = (i * 40) + "ms";
+      });
+
+      function done() {
+        pre.classList.remove("ink-pre", "ink-draw");
+        Array.prototype.forEach.call(pre.children, function (row) {
+          row.style.transitionDelay = "";
+        });
+      }
+
+      onceInView(pre, function () {
+        pre.classList.add("ink-draw");
+        window.setTimeout(done, 400 + pre.children.length * 40);
+      }, 0.1);
+
+      /* last resort, same as the reveals: never leave type invisible */
+      window.setTimeout(done, 8000);
+    });
+  }
+
   function initTitleBlock() {
     var tb = document.querySelector("[data-titleblock]");
     if (!tb || reduced) return;
@@ -1357,33 +1393,43 @@
     var rendered = out.innerHTML;
     var busy = false;
 
+    /* Hold the render in JS and empty the pane: an editor shows nothing until you
+       press the button. The HTML shipped the finished solution, so a no-JS reader
+       keeps it; only once we know JS runs do we take it away. */
+    out.classList.add("tv-idle");
+    out.innerHTML = '<span class="tv-wait">no output yet · press compile</span>';
+
+    function show() {
+      out.classList.remove("tv-compiling", "tv-idle");
+      out.innerHTML = rendered;
+      run.innerHTML = "&#9654;&nbsp;recompile";
+      if (reduced) { busy = false; run.removeAttribute("disabled"); return; }
+      /* reflow so the animation restarts, then reveal */
+      void out.offsetWidth;
+      out.classList.add("tv-fresh");
+      window.setTimeout(function () {
+        out.classList.remove("tv-fresh");
+        busy = false;
+        run.removeAttribute("disabled");
+      }, 500);
+    }
+
     run.addEventListener("click", function () {
       if (busy) return;
       busy = true;
       run.setAttribute("disabled", "");
 
       if (reduced) {
-        /* no beat under reduced motion: just confirm the recompile */
-        window.setTimeout(function () { busy = false; run.removeAttribute("disabled"); }, 120);
+        /* no beat under reduced motion: the output simply appears */
+        show();
         return;
       }
 
       out.classList.remove("tv-fresh");
+      out.classList.remove("tv-idle");
       out.classList.add("tv-compiling");
       out.innerHTML = '<span class="tv-wait">compiling…</span>';
-
-      window.setTimeout(function () {
-        out.classList.remove("tv-compiling");
-        out.innerHTML = rendered;
-        /* reflow so the animation restarts, then reveal */
-        void out.offsetWidth;
-        out.classList.add("tv-fresh");
-        window.setTimeout(function () {
-          out.classList.remove("tv-fresh");
-          busy = false;
-          run.removeAttribute("disabled");
-        }, 500);
-      }, 380);
+      window.setTimeout(show, 380);
     });
   }
 
@@ -1395,9 +1441,36 @@
       el.isContentEditable || el.hasAttribute("data-show")));
   }
 
+  var fadeTimer = null;
+
+  /* Flipping the board swaps every token at once, which snaps hard. Turn on
+     colour transitions for the length of the swap only, so the page dissolves
+     between the two palettes rather than cutting, then take them off again so
+     nothing else on the page inherits a transition it did not ask for. */
+  function crossfadeBoard() {
+    if (reduced) return;
+    var root = document.documentElement;
+    root.classList.add("board-fading");
+    if (fadeTimer) window.clearTimeout(fadeTimer);
+    fadeTimer = window.setTimeout(function () {
+      root.classList.remove("board-fading");
+      fadeTimer = null;
+    }, 300);
+  }
+
   function applyBoard(on) {
     document.documentElement.classList.toggle("board", on);
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-board-toggle]"),
+      function (b) { b.setAttribute("aria-pressed", on ? "true" : "false"); }
+    );
     repaintAll();
+  }
+
+  function setBoard(on) {
+    crossfadeBoard();
+    applyBoard(on);
+    try { window.localStorage.setItem("board", on ? "1" : "0"); } catch (err) {}
   }
 
   function initKeys() {
@@ -1411,14 +1484,22 @@
       if (window.localStorage.getItem("board") === "1") applyBoard(true);
     } catch (e) { /* private mode */ }
 
+    /* the visible handle for the same switch the `b` key throws */
+    Array.prototype.forEach.call(
+      document.querySelectorAll("[data-board-toggle]"),
+      function (btn) {
+        btn.addEventListener("click", function () {
+          setBoard(!document.documentElement.classList.contains("board"));
+        });
+      }
+    );
+
     document.addEventListener("keydown", function (e) {
       if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
       if (typingContext()) return;
 
       if (e.key === "b" || e.key === "B") {
-        var on = !document.documentElement.classList.contains("board");
-        applyBoard(on);
-        try { window.localStorage.setItem("board", on ? "1" : "0"); } catch (err) {}
+        setBoard(!document.documentElement.classList.contains("board"));
         return;
       }
 
@@ -1434,6 +1515,7 @@
     fillStrips();
     initTitleBlock();
     initReveals();
+    initInkRows();
     Array.prototype.forEach.call(document.querySelectorAll("[data-show]"), initShow);
 
     var fig0 = document.getElementById("figure-deltoid");

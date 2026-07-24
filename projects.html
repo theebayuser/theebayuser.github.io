@@ -33,6 +33,8 @@
       <a href="projects.html" aria-current="page"><span class="num">05</span>Projects</a>
       <a href="cv.pdf" target="_blank" rel="noopener">CV</a>
     </nav>
+    <button class="board-toggle" type="button" data-board-toggle
+      aria-pressed="false" aria-label="Toggle night board">&#9686;<span>board</span></button>
     <div class="progress" data-progress aria-hidden="true"></div>
   </div>
 </header>
@@ -54,10 +56,8 @@
       </div>
     </section>
 
-    <div class="tm" data-n="24"></div>
-
     <section class="section" style="padding-top: 0;" id="tutoring">
-      <div class="env">
+      <div class="env" style="border-top: 1px solid var(--rule);">
         <div class="env-head">
           <span class="env-kind">Tri-Valley Tutoring</span>
           <span class="env-name">(founder &amp; director).</span>
@@ -73,43 +73,45 @@
         </div>
         <div class="texview" data-texview style="margin-top: var(--s3);">
           <div class="texview-bar">
-            <span>olympiad-formulae.tex</span>
-            <button class="tv-run" type="button" data-tv-run>&#9654;&nbsp;recompile</button>
+            <span>exponential-equation.tex</span>
+            <button class="tv-run" type="button" data-tv-run>&#9654;&nbsp;compile</button>
           </div>
           <div class="texview-panes">
-            <pre class="texview-code" aria-label="The LaTeX source for the three formulas">\documentclass{amsart}
+            <pre class="texview-code" aria-label="The LaTeX source of the worked solution">\documentclass{amsart}
 \begin{document}
 
-\subsection*{Sophie Germain identity}
-\[ x^4 + 4y^4 =
-   (x^2 + 2xy + 2y^2)(x^2 - 2xy + 2y^2) \]
+\subsection*{Problem}
+Solve for $x$:
+\[ 9^x - 3^{\,x+1} = 54 \]
 
-\subsection*{Ptolemy's theorem}
-\[ AC \cdot BD = AB \cdot CD + AD \cdot BC \]
-
-\subsection*{Legendre's formula}
-\[ \nu_p(n!) =
-   \sum_{i=1}^{\infty}
-   \left\lfloor \frac{n}{p^i} \right\rfloor \]
+\subsection*{Solution}
+Let $t = 3^x$, so $9^x = t^2$
+and $3^{\,x+1} = 3t$:
+\[ t^2 - 3t - 54 = 0 \]
+\[ (t - 9)(t + 6) = 0 \]
+Since $3^x > 0$, reject $t = -6$.
+\[ 3^x = 9 \implies \boxed{x = 2} \]
 
 \end{document}</pre>
             <div class="texview-out" data-tv-out>
-              <p class="sub">Sophie Germain identity</p>
-              <p class="tex"><i>x</i><sup>4</sup> <span class="op">+</span> 4<i>y</i><sup>4</sup>
-                <span class="op">=</span> (<i>x</i><sup>2</sup> <span class="op">+</span> 2<i>xy</i>
-                <span class="op">+</span> 2<i>y</i><sup>2</sup>)(<i>x</i><sup>2</sup>
-                <span class="op">&#8722;</span> 2<i>xy</i> <span class="op">+</span> 2<i>y</i><sup>2</sup>)</p>
-              <p class="sub">Ptolemy's theorem</p>
-              <p class="tex"><i>AC</i> <span class="op">&#183;</span> <i>BD</i>
-                <span class="op">=</span> <i>AB</i> <span class="op">&#183;</span> <i>CD</i>
-                <span class="op">+</span> <i>AD</i> <span class="op">&#183;</span> <i>BC</i></p>
-              <p class="sub">Legendre's formula</p>
-              <p class="tex"><i>&#957;<sub>p</sub></i>(<i>n</i>!) <span class="op">=</span>
-                <span class="bigsum"><span>&#8734;</span><span class="sig">&#8721;</span><span><i>i</i>=1</span></span>
-                &#8970;<i>n</i>/<i>p</i><sup><i>i</i></sup>&#8971;</p>
+              <p class="sub">Problem</p>
+              <p class="tex">9<sup><i>x</i></sup> <span class="op">&#8722;</span>
+                3<sup><i>x</i>&#8202;+&#8202;1</sup> <span class="op">=</span> 54</p>
+              <p class="sub">Solution</p>
+              <p class="tex">let <i>t</i> <span class="op">=</span> 3<sup><i>x</i></sup>,
+                so <i>t</i><sup>2</sup> <span class="op">&#8722;</span> 3<i>t</i>
+                <span class="op">&#8722;</span> 54 <span class="op">=</span> 0</p>
+              <p class="tex">(<i>t</i> <span class="op">&#8722;</span> 9)(<i>t</i>
+                <span class="op">+</span> 6) <span class="op">=</span> 0</p>
+              <p class="tex" style="font-size: 16px; color: var(--ink-2);">3<sup><i>x</i></sup>
+                <span class="op">&gt;</span> 0, so <i>t</i> <span class="op">=</span>
+                <span class="op">&#8722;</span>6 is rejected</p>
+              <p class="tex">3<sup><i>x</i></sup> <span class="op">=</span> 9
+                <span class="op">&#10233;</span> <span class="boxed"><i>x</i>
+                <span class="op">=</span> 2</span></p>
             </div>
           </div>
-          <div class="texview-src">fig. 16 · a formula sheet from my own compilation, source left and typeset right</div>
+          <div class="texview-src">fig. 16 · a worked problem, source left and typeset right</div>
         </div>
         <p class="env-foot" style="margin-top: var(--s3);">
           <span>district-wide</span><span>·</span>
@@ -119,10 +121,8 @@
       </div>
     </section>
 
-    <div class="tm" data-n="24"></div>
-
     <section class="section" style="padding-top: 0;" id="usamo-guide">
-      <div class="env">
+      <div class="env" style="border-top: 1px solid var(--rule);">
         <div class="env-head">
           <span class="env-kind">USAMO Guide</span>
           <span class="env-name">(CMO &amp; content contributor).</span>
@@ -154,8 +154,6 @@
         </p>
       </div>
     </section>
-
-    <div class="tm" data-n="24"></div>
 
     <section class="section" style="padding-top: 0;" id="also">
       <div class="prose">

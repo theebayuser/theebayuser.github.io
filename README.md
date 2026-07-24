@@ -18,7 +18,7 @@ Then open <http://localhost:4173>.
 | `lean.html` | Formalization: the goal stepper, the difference table beside the library, upstream contributions with the Elliott–Halberstam snippet beside the three cards, a Sierpinski tailpiece |
 | `manim.html` | Self-drawing figures (Lorenz then deltoid), the three films, the channel ledger, a strange-attractor tailpiece |
 | `education.html` | The prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
-| `projects.html` | Tri-Valley Tutoring (Overleaf-style formula viewer) and USAMO Guide (video showcase + 2×3 stats), a cubic-roots tailpiece |
+| `projects.html` | Tri-Valley Tutoring (Overleaf-style worked problem, blank until compiled) and USAMO Guide (video showcase + 2×3 stats), a cubic-roots tailpiece |
 | `404.html` | A proof-by-contradiction not-found page, with a Clifford-attractor tailpiece |
 | `cv.pdf` | The CV, a static PDF. To update it, replace this file |
 | `404.html` | Not-found page, proved by contradiction |

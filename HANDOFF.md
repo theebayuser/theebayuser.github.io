@@ -24,7 +24,11 @@ directly, push to `main`, GitHub Pages redeploys in about a minute.
   upstream Lean contributions (Talos, Mathlib PRs, a merged formal-conjectures theorem).
 - Live follower counts for `@math.visualizations` live in `data/socials.json`, hand-kept
   (the platforms don't expose them to a static page) — update the file to refresh them.
-- Keyboard nav: `1`–`5` jump sections, `6` opens the CV, `0` goes home.
+- Keyboard nav: `1`–`5` jump sections, `6` opens the CV, `0` goes home, `b` flips the night
+  board. The board also has a visible `◐ board` button in every topbar; both go through one
+  `setBoard` in site.js, so don't add a second code path for it.
+- **Thue–Morse strips are rationed to one per page** (the single real hinge). A round that
+  put one between every section was pulled back; sibling cards get whitespace instead.
 
 ## Known open items
 
