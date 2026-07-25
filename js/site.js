@@ -203,13 +203,20 @@
     var marks = document.querySelectorAll(".uline");
     if (!marks.length || reduced || document.visibilityState === "hidden") return;
 
+    /* Marks already on the first screen all come into view at once, and three
+       strokes drawing together reads as decoration. Those get an ordered delay
+       so the eye follows them down the page; a mark scrolled to later draws at
+       once, because a stagger there would just feel like lag. */
+    var above = 0;
     Array.prototype.forEach.call(marks, function (el) {
       el.classList.add("uline-pre");
+      var top = el.getBoundingClientRect().top;
+      var wait = top < window.innerHeight ? 140 + (above++) * 220 : 140;
       onceInView(el, function () {
-        window.setTimeout(function () { el.classList.add("uline-in"); }, 140);
+        window.setTimeout(function () { el.classList.add("uline-in"); }, wait);
         window.setTimeout(function () {
           el.classList.remove("uline-pre", "uline-in");
-        }, 1100);
+        }, wait + 960);
       }, 0.9);
     });
 
@@ -707,15 +714,22 @@
 
   /* --- Ulam's spiral, with the contents filed among the primes ------------ */
 
-  function ulam(canvas) {
-    var m = fitCanvas(canvas);
-    var ctx = m.ctx, w = m.w, h = m.h;
-    var pal = palette();
-
-    var cells = 41;
-    var cell = Math.min(w, h) / cells;
-    var dot = Math.max(1.4, cell * 0.30);
-    var n = cells * cells;
+  /* The walk and the ink are separate, because the numerals are positioned from
+     the whole prime list while only part of it has been drawn yet: the figure
+     animates, the navigation on top of it must not move. */
+  /* The cell size comes from the *height* and the width takes as many cells as
+     it can hold, so a wide frame shows a band across the middle of the spiral
+     rather than a square island with margins. The walk itself is unchanged and
+     still runs k = 1, 2, 3, … outward; cells outside the band are simply not
+     kept, which is what makes the band a real window onto the spiral and not a
+     different figure. */
+  function ulamWalk(w, h) {
+    var cellsY = 41;
+    var cell = h / cellsY;
+    var cellsX = Math.max(cellsY, Math.ceil(w / cell));
+    var halfX = cellsX / 2, halfY = cellsY / 2;
+    /* walk the square that circumscribes the band, or its ends stay empty */
+    var n = cellsX * cellsX;
 
     var sieve = new Uint8Array(n + 1);
     sieve[0] = sieve[1] = 1;
@@ -727,15 +741,11 @@
     var cx = w / 2, cy = h / 2;
     var primes = [];
 
-    ctx.fillStyle = pal.ink;
     for (var k = 1; k <= n; k++) {
-      if (!sieve[k]) {
-        var px = cx + x * cell, py = cy + y * cell;
-        ctx.globalAlpha = 0.78;
-        ctx.beginPath();
-        ctx.arc(px, py, dot, 0, Math.PI * 2);
-        ctx.fill();
-        primes.push({ n: k, x: px, y: py, r: Math.hypot(x, y), a: Math.atan2(y, x) });
+      if (!sieve[k] && Math.abs(x) <= halfX && Math.abs(y) <= halfY) {
+        primes.push({
+          n: k, x: cx + x * cell, y: cy + y * cell, gx: x, gy: y
+        });
       }
       x += dx; y += dy; done++;
       if (done === len) {
@@ -744,26 +754,57 @@
         if (dy === 0) len++;
       }
     }
-    ctx.globalAlpha = 1;
 
-    return { primes: primes, maxR: cells / 2 };
+    return {
+      primes: primes, maxRX: halfX, maxRY: halfY,
+      dot: Math.max(1.4, cell * 0.30)
+    };
   }
 
-  /* Pick well-separated primes to hang the section numerals on: one per
-     angular sector, each at its own distance from the middle. */
-  function pickAnchors(primes, maxR, count, side) {
-    var wants = [0.20, 0.38, 0.55, 0.70, 0.83, 0.93];
+  /* Stipple the primes in spiral order, out to `progress` of the way round. */
+  function ulamDraw(ctx, walk, progress) {
+    var upTo = Math.floor(walk.primes.length * (progress === undefined ? 1 : progress));
+    ctx.fillStyle = palette().ink;
+    ctx.globalAlpha = 0.78;
+    for (var i = 0; i < upTo; i++) {
+      var pr = walk.primes[i];
+      ctx.beginPath();
+      ctx.arc(pr.x, pr.y, walk.dot, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function ulam(canvas, progress) {
+    var m = fitCanvas(canvas);
+    var walk = ulamWalk(m.w, m.h);
+    ulamDraw(m.ctx, walk, progress);
+    return walk;
+  }
+
+  /* Pick well-separated primes to hang the section numerals on: one per angular
+     sector, each at its own distance from the middle. The targets sit on an
+     **ellipse**, not a circle, because the frame is a wide band: aiming at plain
+     radii put every numeral past half-way outside the band, so all six collapsed
+     into the middle third and the ends of the figure sat empty. The radii are
+     interleaved rather than ascending, or the far ones all land on one flank. */
+  function pickAnchors(primes, maxRX, maxRY, count, side) {
+    var wants = [0.34, 0.88, 0.52, 0.96, 0.44, 0.80];
     /* keep the numerals apart in proportion to the figure, or a narrow
        viewport shrinks every gap below a fixed threshold and strands them */
     var apart = Math.max(24, Math.min(46, (side || 400) * 0.11));
     var picked = [];
     for (var i = 0; i < count; i++) {
-      var wantR = wants[i] * maxR;
-      var wantA = (-Math.PI / 2) + (i / count) * Math.PI * 2;
+      var t = wants[i % wants.length];
+      var ang = (-Math.PI / 2) + (i / count) * Math.PI * 2;
+      var tx = Math.cos(ang) * t * maxRX;
+      var ty = Math.sin(ang) * t * maxRY;
       var best = null, bestCost = Infinity;
       primes.forEach(function (pr) {
-        var da = Math.abs(Math.atan2(Math.sin(pr.a - wantA), Math.cos(pr.a - wantA)));
-        var cost = Math.abs(pr.r - wantR) / maxR * 2 + da;
+        /* error normalised per axis, so a 2.4:1 frame does not make horizontal
+           misses look cheap and vertical ones expensive */
+        var ex = (pr.gx - tx) / maxRX, ey = (pr.gy - ty) / maxRY;
+        var cost = Math.hypot(ex, ey);
         var clash = picked.some(function (q) { return Math.hypot(q.x - pr.x, q.y - pr.y) < apart; });
         if (!clash && cost < bestCost) { bestCost = cost; best = pr; }
       });
@@ -782,11 +823,22 @@
     var readout = document.querySelector("[data-spiral-readout]");
     var idle = readout ? readout.textContent : "";
 
-    function place() {
+    /* The walk inks itself in over ~2.6s on first view and then rests. It does
+       not loop like the other plotted figures: this one is the contents, and
+       numerals that kept disappearing would be navigation that comes and goes. */
+    var DRAW_MS = 2600;
+    var ctx = null, walk = null, view = { w: 0, h: 0 };
+    var lands = [];                 /* chip i lands when the walk passes lands[i] */
+    var p = 1;                      /* 1 until the animation actually takes over */
+
+    function layout() {
       var side = Math.min(canvas.clientWidth, canvas.clientHeight);
-      if (side < 40) return;                 /* not laid out yet; try again when it is */
-      var res = ulam(canvas);
-      var anchors = pickAnchors(res.primes, res.maxR, chips.length, side);
+      if (side < 40) return false;           /* not laid out yet; try again when it is */
+      var m = fitCanvas(canvas);
+      ctx = m.ctx; view = { w: m.w, h: m.h };
+      walk = ulamWalk(m.w, m.h);
+      var anchors = pickAnchors(walk.primes, walk.maxRX, walk.maxRY, chips.length, side);
+      lands = [];
       Array.prototype.forEach.call(chips, function (chip, i) {
         var a = anchors[i];
         if (!a) { chip.style.display = "none"; return; }
@@ -795,11 +847,80 @@
         chip.style.top = a.y + "px";
         chip.title = "prime " + a.n;
         chip.setAttribute("data-prime", a.n);
+        lands[i] = walk.primes.indexOf(a) / walk.primes.length;
+      });
+      return true;
+    }
+
+    function land() {
+      Array.prototype.forEach.call(chips, function (chip, i) {
+        if (p >= (lands[i] === undefined ? 0 : lands[i])) chip.classList.remove("spiral-pre");
       });
     }
 
-    onRepaint(place);
-    window.addEventListener("resize", place);
+    function paint() {
+      if (!walk) return;
+      ctx.clearRect(0, 0, view.w, view.h);
+      ulamDraw(ctx, walk, p);
+    }
+
+    /* a repaint (the night board, a resize) redraws whatever is drawn so far,
+       never jumps the figure to finished mid-walk */
+    function redraw() { if (layout()) { paint(); land(); } }
+
+    var started = false, done = false;
+
+    /* Finishing must also stop the loop. A failsafe that only sets p = 1 gets
+       overwritten by the next frame, which is how this first shipped: the
+       contents sat permanently half drawn with the numerals outside the ink. */
+    function finish() {
+      if (done) return;
+      done = true;
+      p = 1;
+      redraw();
+    }
+
+    function run() {
+      started = true;
+      var t0 = null;
+      function frame(now) {
+        if (done) return;
+        if (t0 === null) t0 = now;
+        p = Math.min(1, (now - t0) / DRAW_MS);
+        paint();
+        land();
+        if (p < 1) window.requestAnimationFrame(frame);
+        else done = true;
+      }
+      window.requestAnimationFrame(frame);
+    }
+
+    /* Fails open, like every other reveal here: the hiding class is added by JS,
+       so no-JS and reduced-motion readers get the finished contents, and a page
+       booted in a background tab never engages the walk at all. Decided before
+       the first paint, or the finished figure flashes and then restarts. */
+    var animate = !reduced && document.visibilityState !== "hidden";
+    if (animate) {
+      p = 0;
+      Array.prototype.forEach.call(chips, function (chip) {
+        chip.classList.add("spiral-pre");
+      });
+    }
+
+    onRepaint(redraw);
+    window.addEventListener("resize", redraw);
+
+    if (animate) {
+      onceInView(canvas, run, 0.25);
+      /* Two last resorts, and they are different cases. A walk that started and
+         stalled gets 8s, like every other reveal on the site. A walk that never
+         started, because the reader has not scrolled this far, gets much longer:
+         cutting it off at 8s would mean nobody who reads the abstract slowly
+         ever sees the contents draw. Either way the numerals are navigation and
+         must not stay hidden. */
+      window.setTimeout(function () { if (started) finish(); }, 8000);
+      window.setTimeout(finish, 20000);
+    }
 
     /* hover on either side lights the other and reads the pair back */
     Array.prototype.forEach.call(chips, function (chip) {
@@ -876,11 +997,11 @@
       more: "#results", moreText: "results" },
     { x: 0.80, y: 0.34, t: "words + avoidance",
       kind: "Combinatorics on words", when: "2025 \u2013 present",
-      body: "The study of infinite sequences of symbols and which patterns they can avoid forever. This is where both chains meet, and it is the research I actually do. Nobody assigned it.",
+      body: "The study of infinite sequences of symbols and which patterns they can avoid forever. This is where both chains meet, and it is the research I actually do.",
       more: "research.html", moreText: "the research" },
     { x: 0.80, y: 0.70, t: "Lean 4 \u00b7 Mathlib",
       kind: "Lean 4 and Mathlib", when: "2025 \u2013 present",
-      body: "Lean is a proof assistant and Mathlib is its crowdsourced library of formalized mathematics. I taught myself both from the manual and a lot of error messages, since nobody at my school had heard of either.",
+      body: "Lean is a proof assistant and Mathlib is its crowdsourced library of formalized mathematics. I taught myself both from the manual and a lot of error messages.",
       more: "lean.html", moreText: "the formalization" },
     { x: 0.66, y: 0.60, t: "combinatorics, proof writing",
       kind: "Combinatorics and proof writing", when: "college",
@@ -1455,7 +1576,7 @@
       var n = gens.length - 1;
       meta.textContent = n >= MAX
         ? "generation " + n + " · the fixed point continues forever"
-        : "each letter becomes two";
+        : "";
       apply.disabled = n >= MAX;
     }
 
@@ -1834,6 +1955,136 @@
     });
   }
 
+  /* --- a handle you copy --------------------------------------------------
+     Discord has no link format, so the handle is the thing itself. The static
+     markup is a <span> carrying it in plain text: nothing is hidden and there is
+     no dead control with JS off. JS promotes it to a real <button>, so the
+     keyboard and screen-reader behaviour come from the platform rather than from
+     a hand-rolled role="button". */
+
+  function initCopy() {
+    Array.prototype.forEach.call(
+      document.querySelectorAll("span[data-copy]"),
+      function (seed) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = seed.className;
+        btn.setAttribute("data-copy", seed.getAttribute("data-copy"));
+        var name = seed.getAttribute("aria-label") || seed.getAttribute("title");
+        if (name) { btn.setAttribute("aria-label", name); btn.title = name; }
+        btn.innerHTML = seed.innerHTML;
+        seed.parentNode.replaceChild(btn, seed);
+        wireCopy(btn);
+      }
+    );
+  }
+
+  function wireCopy(btn) {
+    var value = btn.getAttribute("data-copy");
+    var out = btn.querySelector("[data-copy-label]");
+    var idle = out ? out.textContent : "";
+    var timer = null;
+
+    /* every copy needs a state, including the icon-only one in the footer,
+       where there is no label to swap and the tint is the whole confirmation */
+    function said(ok) {
+      if (out) out.textContent = ok ? "copied" : value;
+      btn.classList.add(ok ? "is-copied" : "is-copy-failed");
+      window.clearTimeout(timer);
+      timer = window.setTimeout(function () {
+        if (out) out.textContent = idle;
+        btn.classList.remove("is-copied", "is-copy-failed");
+      }, 1400);
+    }
+
+    /* If the clipboard is refused, and it is refused more often than you would
+       think (no secure context, no permission, an embedded browser), select the
+       handle instead. The highlight is the instruction: the reader can copy it
+       by hand, which is all a Discord handle ever needed. */
+    function offerSelection() {
+      if (!out || !window.getSelection || !document.createRange) return;
+      try {
+        var range = document.createRange();
+        range.selectNodeContents(out);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch (err) { /* nothing better to offer */ }
+    }
+
+    /* execCommand is deprecated and still the only thing that works without a
+       secure context, which is exactly the case when someone opens this over
+       plain http or from a file:// copy */
+    function legacy() {
+      var ta = document.createElement("textarea");
+      ta.value = value;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+      document.body.removeChild(ta);
+      if (!ok) offerSelection();
+      said(ok);
+    }
+
+    btn.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(function () { said(true); }, legacy);
+      } else {
+        legacy();
+      }
+    });
+  }
+
+  /* --- the bar gets out of the way, on a phone ----------------------------
+     Six numbered sections and a CV do not fit one row at 375px, so the bar is
+     two rows there and about 170px tall, and it is sticky: without this it holds
+     a fifth of the screen for the entire scroll. Scrolling down tucks it away,
+     scrolling up brings it straight back.
+
+     Synchronous on a passive listener, never rAF, for the same reason the
+     reading-progress strip is: rAF is throttled in a background tab and the bar
+     would freeze in whatever state it was last in. And the class is only ever
+     *added* by JS, so nothing can leave the navigation hidden. */
+
+  function initBarHide() {
+    var bar = document.querySelector(".topbar");
+    if (!bar) return;
+    var narrow = window.matchMedia("(max-width: 760px)");
+    var last = window.scrollY || window.pageYOffset || 0;
+    var tucked = false;
+
+    function show() {
+      if (!tucked) return;
+      tucked = false;
+      bar.classList.remove("is-tucked");
+    }
+
+    function onScroll() {
+      var y = window.scrollY || window.pageYOffset || 0;
+      var dy = y - last;
+      if (Math.abs(dy) < 6) return;      /* ignore jitter and rubber-banding */
+      last = y;
+      if (!narrow.matches) { show(); return; }
+      /* the first screen keeps its bar: tucking it there only looks broken */
+      if (y < 140) { show(); return; }
+      if (dy > 0) {
+        if (!tucked) { tucked = true; bar.classList.add("is-tucked"); }
+      } else {
+        show();
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    /* a keyboard user tabbing into the nav has to be able to see it */
+    bar.addEventListener("focusin", show);
+    if (narrow.addEventListener) narrow.addEventListener("change", show);
+    else if (narrow.addListener) narrow.addListener(show);
+  }
+
   function initKeys() {
     var map = {
       "1": "research.html", "2": "lean.html", "3": "manim.html",
@@ -1841,8 +2092,18 @@
       "0": "index.html"
     };
 
+    /* A stored choice always wins. With nothing stored, an OS set to dark gets
+       the board on the first visit: the site has had a night palette for five
+       rounds and nobody arriving in dark mode ever saw it. The toggle overrides
+       and persists from then on, and with no JS everyone gets paper, which is
+       the palette the page ships in. */
     try {
-      if (window.localStorage.getItem("board") === "1") applyBoard(true);
+      var saved = window.localStorage.getItem("board");
+      if (saved === "1") applyBoard(true);
+      else if (saved === null &&
+               window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        applyBoard(true);
+      }
     } catch (e) { /* private mode */ }
 
     /* the visible handle for the same switch the `b` key throws */
@@ -1935,6 +2196,8 @@
     initTexview();
     initProgress();
     initPrint();
+    initCopy();
+    initBarHide();
     initKeys();
 
     /* A tab that boots in the background lays out at zero size, so anything

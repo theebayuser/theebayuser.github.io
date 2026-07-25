@@ -68,6 +68,9 @@ These are the ones that keep the site coherent. Breaking any of them is visible 
 - **Decorative drawings are not figures.** If a proposed illustration has no checkable content,
   it does not belong. Every drawing here is a real object: a spiral of primes, an integrated
   attractor, a square-free word, the roots of every integer cubic.
+- **Figure captions go below, with one named exception.** fig. 1 on the homepage sits *above*
+  its figure, because it is not a caption but a live readout that renames itself on hover.
+  Every other figure keeps its caption underneath. Do not generalise the exception.
 - **Figures are numbered globally.** One `fig. N` run, currently 1–19, in nav order from the
   homepage through the 404. Insert one and you renumber the rest, highest number first or the
   replacements collide: `grep -o 'fig\. [0-9]*' *.html`.
@@ -111,6 +114,19 @@ and the night board leaves black ink on a black board.
    stays there. Two defences, both required: any layout function bails when its canvas measures
    under 40px, and `visibilitychange` calls `repaintAll()` the first time the page is looked at.
 
+**Two flexbox traps, both of which shipped once.** A `.btn` in a wrapping row must carry
+`flex: 0 0 auto`, or at 375px it is crushed to its 40px min-width and swallows its own label:
+that is how the Discord handle disappeared on a phone. And the mobile nav is a full-width flex
+line, so anything after it in the markup lands on a line of its own; `.nav { order: 1 }` is what
+keeps the board toggle up on the brand row and saves the bar 48px.
+
+**A failsafe must stop the animation, not just set its end state.** The contents spiral's
+guard set progress to 1 and repainted; the next frame overwrote it and the figure shipped half
+drawn with the numerals outside the ink. Anything that force-finishes an rAF loop needs a flag
+the loop itself checks. And the two cases are not the same: *started and stalled* gets 8s,
+*never started because nobody scrolled there* gets 20s, or the animation is dead for anyone
+who reads at a normal pace.
+
 **A row that overrides `grid-template-columns` must be named in the collapse.** `.figure-row`
 drops to one column under 900px, which is also what print gets. `.figure-row.listing` and
 `.catalog-rail` set their own templates at higher specificity, so unless they are listed in
@@ -139,12 +155,22 @@ started at one letter while the no-JS markup showed six.
 
 ## 6. Hand-kept data
 
-Nothing on this site calls a live API. Three things are maintained by hand:
+Nothing on this site calls a live API. Five things are maintained by hand:
 
 - **`data/socials.json`** — follower counts per platform, the `updated` date, and `now` (the
   "currently" line in every footer). None of TikTok, Instagram, or Facebook exposes counts to a
   static page without server-side tokens. The animations page fills the ledger, the total, and
   the headline reach figure from this one file, so the claim and the evidence cannot disagree.
+- **The 15,000,000+ total views** on the homepage animation block. Views are not in
+  `socials.json` and no platform hands them to a static page either, so the number lives in the
+  HTML. It deliberately carries **no `data-reach-total`**: that attribute is what tells
+  `initLedger` to replace a figure with the follower sum, and it would silently turn 15M views
+  into 52k followers. It keeps `data-count`, so it still counts up.
+- **The `v17 · July 2026` revision line** under the title block. Bump it when you do a round;
+  it is the only thing on the site that says when any of this was true.
+- **The Discord handle `ebayuser`** lives in a `data-copy` attribute in eight places: the
+  homepage contact row and the footer of all seven pages. Change it and change all eight, or
+  half the site copies the wrong name: `grep -c 'data-copy' *.html`.
 - **The USAMO Guide statistics** on `projects.html` (42,000+ lines, 993 problems, 158 sections)
   were counted from a clone of `github.com/usamoguide/usamo-guide` in July 2026. Recount them
   if they are ever questioned.
@@ -159,13 +185,32 @@ Nothing on this site calls a live API. Three things are maintained by hand:
 - **`assets/photos/` is empty.** The site is entirely drawn figures and type; one real
   photograph (the math club tournament, a tutoring session) would land hard precisely because it
   would be the only one.
-- **Nothing is dated.** There is no revision history and no "last updated," on a site that has
-  been revised fourteen times. An arXiv-style v1/v2/v3 list would turn constant revision into
-  evidence rather than something invisible.
-- **The abstract promises AI** ("I work to connect frontier mathematics with AI") and no page
-  delivers on it. Either add the evidence or soften the claim.
+- **Only the current revision is dated.** The homepage carries `v17 · July 2026`, which is half
+  the fix. There is still no history: an arXiv-style v1/v2/v3 list with a line each would turn
+  seventeen rounds of revision into evidence instead of a single number.
+- **The abstract promises AI** ("I work to connect frontier mathematics with AI"), the keywords
+  now say AI too, and no page delivers on it. This is the loudest open item on the site: either
+  add the evidence or soften the claim.
 - **No downloadable artifacts except the CV.** The tutoring handouts are now linked
   (trivalleytutoring.org/resources) but nothing is hosted here.
+
+### A nicer URL
+
+`danielliao.github.io` is not available: a GitHub Pages user site is named after the account, and
+the `danielliao` account is taken by someone else. Two ways to a better address, both his to do
+because both are account actions:
+
+1. **A custom domain**, the clean option. Buy `danielliao.com` (or `.me`, `.dev`) at any
+   registrar, then: add a file called `CNAME` at the repo root containing just the bare domain;
+   at the registrar point four `A` records for the apex at `185.199.108.153`, `185.199.109.153`,
+   `185.199.110.153`, `185.199.111.153`, and a `CNAME` for `www` at `theebayuser.github.io`;
+   then in the repo's Settings → Pages set the custom domain and tick **Enforce HTTPS** once the
+   certificate is issued (usually minutes, sometimes an hour). Old `theebayuser.github.io` links
+   keep working, GitHub redirects them. The `og:url` and `og:image` tags in all seven pages are
+   absolute and would need the new host.
+2. **Rename the GitHub account** to something free like `daniel-liao`. Pages follows the rename
+   automatically and costs nothing, but every old `theebayuser` link, including the ones in the
+   footers of this site, changes.
 
 ## 8. How to do a round
 

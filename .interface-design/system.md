@@ -104,6 +104,28 @@ Each appears on more than one page — that is what makes it a signature rather 
    strands them on a narrow viewport. The caption doubles as a **readout**: idle it names
    the figure, on hover it reads back the section, its phrase, and the prime the numeral
    sits on (`data-spiral-readout`, `min-height` reserved so the swap never shifts layout).
+   **It draws itself** (round 16): the primes stipple outward in spiral order over 2.6s on
+   first view and each numeral lands as the walk reaches the prime it sits on
+   (`.ulam-node.spiral-pre`, opacity + `scale(0.9)`). It is the one plotted figure that does
+   **not** loop: navigation that came and went would be unusable. Three things this required.
+   The walk and the ink are **separate functions** (`ulamWalk` / `ulamDraw`), because the
+   numerals are placed from the whole prime list while only part of it is drawn, and a figure
+   whose navigation moved as it drew would be worse than a static one. The layout runs on
+   resize and repaint only, never per frame. And **finishing must stop the loop**: see the
+   note under the canvas bugs.
+   **It is a wide band** (round 17): it was a 380px square in a 940px page, which made the
+   most important drawing on the site the smallest thing on it. Now `12 / 5` at the full
+   measure, same height, about 2.4× the primes at the same density. `ulamWalk` takes the cell
+   size from the *height*, fits as many cells across as the width holds, walks the square that
+   circumscribes the band and keeps only what falls inside it, so the band is a real window
+   onto the spiral rather than a different figure. `pickAnchors` targets an **ellipse**, not a
+   circle: aiming at plain radii put every numeral past half-way outside the band and all six
+   collapsed into the middle third. Its radii are interleaved rather than ascending, or the far
+   ones all land on one flank. **Under 760px it goes back to the square**, like the education
+   graph flipping to `3 / 5`: a 375px band is 156px tall and the numerals would sit on top of
+   each other. **Its caption sits above it**, the only one on the site that does, ruled off
+   beneath and set left: it is not really a caption but a live readout that renames itself on
+   hover, and centred text that changes length on every hover jitters.
 8. **The prerequisite graph as navigation** (education) — every node is a real `<button>`
    over a canvas of curved edges, and selecting one fills a `.node-pop` card with dates, a
    line, and a jump link into the section below. Wide, it reads as two chains meeting.
@@ -125,7 +147,17 @@ Each appears on more than one page — that is what makes it a signature rather 
     are reels, so the frame is portrait and crops to fill; a vertical export lands exactly,
     a landscape one shows its centre strip. The uncovered edge falls back to film-black.
 13. **Link marks** — contact buttons carry a 15px inline SVG in `currentColor`, inheriting
-    `--ink-3` and turning ballpoint on hover. Real brand marks; never emoji.
+    `--ink-3` and turning ballpoint on hover. Real brand marks, taken from simple-icons (CC0)
+    rather than drawn from memory; never emoji.
+14b. **A handle you copy** (`[data-copy]`, `initCopy`, round 17) — Discord has no link format,
+    so the one contact method that is a *handle* rather than a URL copies instead of navigating.
+    It ships as a `<span>` carrying the handle in plain text, and JS promotes it to a real
+    `<button>`: no-JS readers can read and select it, there is no dead control, and the keyboard
+    and screen-reader behaviour come from the platform instead of a hand-rolled `role="button"`.
+    Three states, because a control with no feedback reads as broken: label swaps to `copied`,
+    the icon-only one in the footer tints ballpoint, and **if the clipboard is refused the
+    handle is selected instead** so it can be copied by hand. No `--qed` green: that is reserved
+    for things a machine checked, and a clipboard write is not one.
 14. **The tailpiece** (`.tailpiece`) — a chapter-end ornament: one figure set ~320px,
     centred, muted (opacity .85), at the very foot of a page, with one quiet mono caption
     beneath it (`.tailpiece .figcap`, centred). **The taste, learned the hard way: closing
@@ -196,9 +228,18 @@ Each appears on more than one page — that is what makes it a signature rather 
     synced and the name carried by `aria-label`. Button and key run through one `setBoard`,
     so state, storage, and `aria-pressed` cannot drift apart. The key map on the index
     contents note names both.
+    **The OS gets a vote on the first visit** (round 17): with nothing in localStorage, an OS
+    set to `prefers-color-scheme: dark` boots on the board. The site had a night palette for
+    five rounds and nobody arriving in dark mode ever saw it. A stored choice always wins, the
+    toggle persists from then on, and with no JS everyone gets paper, which is the palette the
+    HTML ships in. `theme-color` is paired to match, so the browser chrome does not stay cream
+    around a dark page.
 27. **Drawn underlines** (`.uline`) — **at least one load-bearing phrase on every page**, marked in
     ballpoint the way you would mark a book you owned. The stroke is a `background-image`
     gradient sized `0% → 100%` over 620ms as the phrase comes into view (`initUlines`).
+    Thickness is a custom property (`--stroke`, 1.5px) so the three states cannot drift apart,
+    and `.display .uline` takes it to 3px: the name is the one phrase on the site set at 48px,
+    and a hairline under it reads as a rendering mistake rather than emphasis.
     **The CSS default is the finished stroke**: JS pulls it back to zero and draws it, so
     no-JS and reduced-motion readers still get the emphasis. Print keeps it static.
 28. **Print is a real target** (`@media print`) — the site claims to be a preprint, so it
@@ -270,9 +311,14 @@ Each appears on more than one page — that is what makes it a signature rather 
     cursor. Touch keeps tap-to-toggle.
 38. **`.reach` and `.onair`** — 52,244 followers was the last thing on § 03, below the fold.
     The number is now a figure at the top of that page (rules above and below, like the
-    epigraph) and a compact line on the homepage. Both read from `data/socials.json` through
-    `initLedger`, so the headline and the itemised ledger at the foot cannot disagree. The
-    ledger stays: the headline is the claim, the ledger is the evidence. The figure beside the
+    epigraph) and a compact line on the homepage. § 03's reads from `data/socials.json`
+    through `initLedger`, so the headline and the itemised ledger at the foot cannot disagree.
+    The ledger stays: the headline is the claim, the ledger is the evidence. **The homepage
+    line is a different claim** as of round 16: 15,000,000+ total views, not followers. Views
+    are not in `socials.json` and no platform will hand them to a static page, so the figure
+    is hand-kept in the HTML and the element carries **no `data-reach-total`** — that
+    attribute is what invites `initLedger` to overwrite it with the follower sum. It keeps
+    `data-count` so it still counts up. The figure beside the
     homepage line **was** a film, and it was the Galton board, byte for byte the same file
     § 03 already shows as Plate III. The front page's one motion slot should not be a reprint,
     so it is now the Lorenz drawn live (`#figure-lorenz-home`, square, column widened from the
@@ -342,6 +388,18 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 - `.wordart` — a ternary word set as a solid block, three letters at three ink shades
 - `.show-frame` — 3:2, images `object-fit: cover` with a 1px inset
   `rgba(0,0,0,0.1)` outline
+- `.titleblock` — `--s6 0 --s5` (was `--s8 0 --s6`; trimmed in round 16 so the first screen
+  reaches the Thue–Morse strip at 1280×800) · `.revision` 6px top, `--ink-4`, +0.06em tracked
+- `.contents-hero .canvas-wrap` — `12 / 5` at the full measure, back to `1` and 380px under
+  760px. Caption above, ruled off, left-aligned
+- **The mobile top bar** — 214px and four lines at 375px, which is a quarter of the screen held
+  permanently by a sticky element. Now ~143px: nav at `8px 6px / 12.5px` packs to two rows of
+  three with the numbers intact and 40px hit areas kept, and `.nav { order: 1 }` puts the board
+  toggle on the brand row instead of a fourth line of its own. Then `initBarHide` tucks the
+  whole bar on scroll-down past 140px and returns it on scroll-up, on a passive synchronous
+  listener with a 6px deadband. Never rAF: same reason as the progress strip
+- `.btn` — `flex: 0 0 auto`, so a wrapping row wraps instead of crushing a button into its
+  40px min-width and swallowing its own label
 - `.canvas-wrap` — 4:3, 1px `--board-rule`, canvas DPR-scaled in JS
 - `.catalog-rail` — `1fr / minmax(230px, 0.46fr)`, `align-items: start`, gap `--s5`; collapses
   at 860px
@@ -358,8 +416,19 @@ one-shot, never replayed.
 - **Scroll reveals** on section heads and theorem cards only: 380ms, 12px rise, 50ms
   stagger between siblings of a `[data-reveal-group]`. Nothing else on the page moves.
 - **Thue–Morse rules draw in** tick by tick on first view, 14ms apart.
-- **Index title block** staggers kicker → name → byline → affiliation at 80ms steps, once
-  on load. This is the only entrance animation on the site.
+- **Index title block** staggers kicker → name → byline → affiliation → revision → abstract
+  at 80ms steps, once on load. Six children now, and the delay list has to cover all of them:
+  a child past the last `nth-child` rule gets 0ms and arrives *first*, so the stagger reads
+  backwards.
+- **The first screen is where the entrance animations live** (round 16). There were none but
+  the title stagger for fifteen rounds, and the landing page was the one page that opened on
+  nothing but type. Two were added, both one-shot, both fail-open: the **name's ballpoint
+  stroke** draws right after the stagger lands, and the **contents spiral inks itself in**
+  (below). Nothing else on the site animates on load, and that is still the rule.
+- **Marks on the first screen are staggered, deeper ones are not** (`initUlines`): three
+  strokes drawing at once reads as decoration, so a mark above the fold at init waits
+  `140 + i·220ms` in document order. A mark scrolled to later draws at 140ms flat, because a
+  stagger there is indistinguishable from lag.
 - **Plotted figures** are the sole continuous motion: they pause off-screen and render one
   static complete drawing under `prefers-reduced-motion`.
 - **Text figures ink in** (`initInkRows`): the wordart block and the two Pascal triangles
@@ -412,6 +481,15 @@ chips) lands against nothing and stays there, because no resize event ever follo
 defences, both required: any layout function bails when its canvas measures under 40px
 rather than committing a garbage position, and `visibilitychange` calls `repaintAll()` the
 first time the page is actually looked at.
+
+**A fifth, from the spiral: a failsafe that does not stop the loop does nothing.** The
+spiral's guard set `p = 1` and repainted, and the next animation frame promptly overwrote `p`
+with its own value, so the contents shipped half drawn with the numerals sitting outside the
+ink. A `done` flag that the frame loop checks is the fix. The same round taught the other
+half of it: **the two failsafe cases are different.** A walk that started and stalled gets
+8s, like every other reveal here. A walk that has not started because the reader is still on
+the abstract gets 20s, because cutting it off at 8 means nobody reading at a normal pace ever
+sees the figure draw. Both end in the same place, with the navigation visible.
 
 ## Consistency rules
 

@@ -221,7 +221,9 @@ section { scroll-margin-top: 84px; }
 
 /* ---------------------------------------------------------- titleblock --- */
 
-.titleblock { padding: var(--s8) 0 var(--s6); text-align: center; }
+/* Trimmed from s8/s6 in round 16: the first screen was all type, and the spiral
+   that is both this site's signature and its contents sat under the fold. */
+.titleblock { padding: var(--s6) 0 var(--s5); text-align: center; }
 .titleblock .kicker { margin-bottom: var(--s3); }
 .display {
   font-size: var(--fs-display);
@@ -234,9 +236,12 @@ section { scroll-margin-top: 84px; }
   margin: var(--s2) 0 0;
 }
 .affil { margin: var(--s2) 0 0; }
+/* An arXiv habit: the version and the date of this revision, set as apparatus
+   rather than content. Kept by hand, one step down the ink ramp from the affil. */
+.revision { margin: 6px 0 0; color: var(--ink-4); letter-spacing: 0.06em; }
 
 .abstract {
-  max-width: 640px; margin: var(--s5) auto 0;
+  max-width: 640px; margin: var(--s4) auto 0;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   padding: var(--s3) 0;
@@ -651,7 +656,14 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   font: 500 11px var(--mono); font-variant-numeric: tabular-nums;
   color: var(--ink-3); background: var(--paper);
   box-shadow: 0 0 0 1px var(--rule);
-  transition: color 140ms var(--ease), box-shadow 140ms var(--ease);
+  transition: color 140ms var(--ease), box-shadow 140ms var(--ease),
+    opacity 260ms var(--ease), transform 260ms var(--ease);
+}
+/* Each numeral lands as the prime walk reaches the prime it sits on. JS adds
+   this class, so with no JS the contents are simply there, and it is removed
+   again once the numeral has landed so hover rests at its natural transform. */
+.ulam-node.spiral-pre {
+  opacity: 0; transform: translate(-50%, -50%) scale(0.9);
 }
 .ulam-node::after {
   content: ""; position: absolute; left: 50%; top: 50%;
@@ -666,12 +678,21 @@ a.env:hover .env-kind { color: var(--ballpoint); }
    are real focusable links; the legend beneath is the plain-text equivalent
    and the no-JS fallback. */
 .contents-hero { display: flex; flex-direction: column; align-items: center; }
-.contents-hero .canvas-wrap { max-width: 380px; }
-/* the caption is also the hover readout, so reserve its line and let the text
-   change without nudging the layout */
+/* The signature figure was a 380px square in the middle of a 940px page, which
+   made the most important drawing on the site the smallest one. It now takes the
+   whole measure as a band across the centre of the spiral, at the same height it
+   had: 2.4:1, the ratio the education graph already uses, so the site's two wide
+   navigation figures at least agree with each other. */
+.contents-hero .canvas-wrap { width: 100%; max-width: none; aspect-ratio: 12 / 5; }
+/* This caption sits ABOVE its figure, which no other figure here does. It is not
+   really a caption: it is a live readout that renames itself on hover, so it
+   works as a label line over the figure rather than a note under it. Ruled off
+   beneath and set left, because centred text that changes length on every hover
+   jitters. The min-height reserves the swap so the layout never shifts. */
 .contents-hero .figcap {
-  text-align: center; min-height: 1.4em;
-  transition: color 140ms var(--ease);
+  align-self: stretch; margin: 0 0 var(--s2);
+  padding-bottom: 8px; border-bottom: 1px solid var(--rule-soft);
+  min-height: 1.4em; transition: color 140ms var(--ease);
 }
 
 .toc-line {
@@ -865,18 +886,22 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
    reduced motion, the emphasis is simply there. JS pulls it back to zero and
    draws it left to right as the line comes into view. */
 .uline {
+  --stroke: 1.5px;
   font-style: inherit;
   background-image: linear-gradient(var(--ballpoint), var(--ballpoint));
   background-repeat: no-repeat;
   background-position: 0 calc(100% - 1px);
-  background-size: 100% 1.5px;
+  background-size: 100% var(--stroke);
   padding-bottom: 1px;
 }
-.uline.uline-pre { background-size: 0% 1.5px; }
+.uline.uline-pre { background-size: 0% var(--stroke); }
 .uline.uline-pre.uline-in {
-  background-size: 100% 1.5px;
+  background-size: 100% var(--stroke);
   transition: background-size 620ms var(--ease);
 }
+/* the same mark at display size: the name is the one phrase on the site set in
+   48px, and a 1.5px stroke under it reads as a hairline mistake, not emphasis */
+.display .uline { --stroke: 3px; padding-bottom: 4px; }
 
 /* text figures ink in a row at a time, the way a plotter lays down type */
 .ink-rows > span { display: block; }
@@ -901,6 +926,9 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 .tb-anim > *:nth-child(3) { transition-delay: 160ms; }
 .tb-anim > *:nth-child(4) { transition-delay: 240ms; }
 .tb-anim > *:nth-child(5) { transition-delay: 320ms; }
+/* the revision line made this six children; without a sixth step the abstract
+   would arrive first, at 0ms, and the stagger would read backwards */
+.tb-anim > *:nth-child(6) { transition-delay: 400ms; }
 .tb-anim.tb-in > * { opacity: 1; transform: none; }
 
 /* -------------------------------------------------------------- plates --- */
@@ -972,6 +1000,10 @@ html.board video.plate-frame { outline-color: rgba(255, 255, 255, 0.1); }
   font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink);
   background: var(--paper-raised); border: 1px solid var(--rule-strong);
   padding: 0 14px; min-height: 40px; min-width: 40px; cursor: pointer;
+  /* in a wrapping row a button must wrap, never shrink: squeezed to its
+     min-width it swallows its own label, which is how the Discord handle
+     vanished on a phone the first time */
+  flex: 0 0 auto;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   transition: background-color 140ms var(--ease), transform 100ms var(--ease);
 }
@@ -979,6 +1011,12 @@ html.board video.plate-frame { outline-color: rgba(255, 255, 255, 0.1); }
 .btn:active { transform: scale(0.97); }
 a.btn { color: var(--ink); text-decoration: none; }
 a.btn .fill { color: var(--ink-3); }
+/* Discord is the one contact method with no link, so this button copies the
+   handle rather than going anywhere. The label is the handle itself and swaps to
+   "copied" for a moment; no colour change, because --qed green is reserved for
+   things a machine checked and a clipboard write is not one of them. */
+.btn-copy { font-variant-numeric: tabular-nums; }
+.btn-copy.is-copied svg { color: var(--ballpoint); }
 /* Marks, not decoration: one stroke weight, inheriting the label's colour. */
 .btn svg { width: 15px; height: 15px; flex: 0 0 auto; color: var(--ink-3); }
 .btn:hover svg { color: var(--ballpoint); }
@@ -1233,22 +1271,29 @@ a.btn .fill { color: var(--ink-3); }
   align-items: center; margin-top: var(--s5);
   padding-top: var(--s2); border-top: 1px solid var(--rule-soft);
 }
-/* the reach-me row: icon-only links, generous hit area, quiet until hover */
+/* the reach-me row: icon-only links, generous hit area, quiet until hover.
+   One of them is not a link: Discord has no URL, so the handle is copied
+   instead. It has to be named here or the promoted <button> loses every rule. */
 .foot-contact { display: flex; gap: 2px; margin-left: auto; }
-.foot-contact a {
+.foot-contact a, .foot-contact .foot-copy {
   display: inline-flex; align-items: center; justify-content: center;
   width: 40px; height: 40px; border: 0; color: var(--ink-3);
+  background: none; padding: 0; font: inherit; cursor: pointer;
   transition: color 140ms var(--ease), background-color 140ms var(--ease);
 }
-.foot-contact a:hover { color: var(--ballpoint); background: var(--hover); }
+.foot-contact a:hover, .foot-contact .foot-copy:hover {
+  color: var(--ballpoint); background: var(--hover);
+}
 .foot-contact svg { width: 17px; height: 17px; }
+/* the only confirmation an icon-only control can give */
+.foot-contact .foot-copy.is-copied { color: var(--ballpoint); background: var(--hover); }
+.foot-contact .foot-copy:active { transform: scale(0.97); }
 
 /* -------------------------------------------------------------- mobile --- */
 
 @media (max-width: 760px) {
   :root { --fs-body: 16.5px; --fs-h1: 28px; --fs-h2: 23px; --fs-h3: 19px; }
   .page, .topbar-inner { padding: 0 var(--s3); }
-  .titleblock { padding: var(--s6) 0 var(--s5); }
   .section { padding: var(--s6) 0; }
   /* A one-column track still takes its width from the widest child, and a
      pre-formatted code block is as wide as its longest line. Without this the
@@ -1259,9 +1304,24 @@ a.btn .fill { color: var(--ink-3); }
     grid-template-columns: minmax(0, 1fr); gap: var(--s4);
   }
   .figure-row > * { min-width: 0; }
+  /* The bar was four rows and 214px of a 375px screen, and it is sticky, so it
+     held that quarter permanently. Two moves. The nav packs into two rows by
+     tightening horizontally only: the 40px hit areas stay, because a phone is
+     exactly where they matter. And the whole bar tucks away while you read down
+     the page (initBarHide), which is the part that actually gives the content
+     back. */
   .topbar-inner { flex-wrap: wrap; gap: var(--s1); padding-top: 6px; padding-bottom: 6px; }
-  .nav { margin-left: 0; width: 100%; }
-  .nav a { padding: 10px 8px; }
+  /* The nav is a full-width line, so it goes last and the board toggle rides the
+     brand row with it. Left as it comes in the markup, the toggle is pushed onto
+     a fourth line of its own and the bar costs another 48px. Visual order only:
+     tabbing still follows the markup, brand then sections then toggle. */
+  .nav { margin-left: 0; width: 100%; order: 1; }
+  .board-toggle { margin-left: auto; }
+  .nav a { padding: 8px 6px; font-size: 12.5px; }
+  .nav a .num { margin-right: 3px; }
+  .topbar { transition: transform 240ms var(--ease); }
+  /* JS adds this, so the bar is never hidden without JS to bring it back */
+  .topbar.is-tucked { transform: translateY(-100%); }
   .grid-2, .grid-3 { gap: var(--s4); }
   .env-status { margin-left: 0; width: 100%; }
   .entry-head .d { margin-left: 0; width: 100%; }
@@ -1274,11 +1334,16 @@ a.btn .fill { color: var(--ink-3); }
   .quote p { font-size: 20px; }
   /* narrow, the graph turns into one column, so it needs height not width */
   .graph-wrap { aspect-ratio: 3 / 5; }
+  /* a 375px band would be 156px tall and the numerals would sit on top of each
+     other, so the spiral goes back to the square it was */
+  .contents-hero .canvas-wrap { aspect-ratio: 1; max-width: 380px; }
   .node-chip { font-size: 11px; padding: 4px 7px; background: var(--paper); }
   /* stacked, the legend becomes a plain list: full-width rules, not ragged */
   .toc-line { gap: 0; flex-direction: column; align-items: stretch; width: 100%; }
   .toc-line li { width: 100%; }
-  .toc-line a { border-bottom: 1px solid var(--rule-soft); padding: 10px 2px; }
+  /* the link is inline-flex by default, so its rule stopped at the end of the
+     label and the stack came out ragged, which is the opposite of the intent */
+  .toc-line a { display: flex; border-bottom: 1px solid var(--rule-soft); padding: 10px 2px; }
   /* platform and count on one line, handle beneath */
   .ledger-row { flex-wrap: wrap; gap: 4px var(--s2); }
   .lg-plat { min-width: 0; }

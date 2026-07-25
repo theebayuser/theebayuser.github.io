@@ -12,7 +12,8 @@
 <meta property="og:url" content="https://theebayuser.github.io/index.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://theebayuser.github.io/assets/og.png">
-<meta name="theme-color" content="#F7F3E9">
+<meta name="theme-color" content="#F7F3E9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101319" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7F3E9'/%3E%3Cg fill='%23211E17'%3E%3Crect x='4.5' y='.5' width='3' height='3'/%3E%3Crect x='8.5' y='.5' width='3' height='3'/%3E%3Crect x='.5' y='4.5' width='3' height='3'/%3E%3Crect x='12.5' y='4.5' width='3' height='3'/%3E%3Crect x='.5' y='8.5' width='3' height='3'/%3E%3Crect x='12.5' y='8.5' width='3' height='3'/%3E%3Crect x='4.5' y='12.5' width='3' height='3'/%3E%3Crect x='8.5' y='12.5' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,16 +45,17 @@
   <div class="page">
     <div class="titleblock" data-titleblock>
       <p class="kicker">Combinatorics · Lean 4 · Manim</p>
-      <h1 class="display">Daniel Liao</h1>
+      <h1 class="display"><em class="uline">Daniel Liao</em></h1>
       <p class="byline">proofs on paper, in Lean, and in motion</p>
       <p class="affil meta">Dougherty Valley High School · San Ramon, CA · class of 2027</p>
+      <p class="revision meta">v17 · July 2026</p>
 
       <div class="abstract">
         <p><span class="runin">Abstract.</span> I work to connect frontier mathematics with AI, and to
-        make mathematics <em class="uline">worth watching</em>. In practice that means research in combinatorics on words,
-        proofs rebuilt in Lean 4 until <em class="uline">a computer agrees with every step</em>, and animations for the
-        arguments that are easier to watch than to read.</p>
-        <p class="keywords meta">Keywords: math · edtech · formal verification · Mathlib · Manim</p>
+        make mathematics <em class="uline">worth learning</em>. In practice that means research in combinatorics on words,
+        proofs rebuilt in Lean 4 until <em class="uline">it's impossible for them to be wrong</em>, and new ways to
+        look at math through animation and visualization.</p>
+        <p class="keywords meta">Keywords: math · edtech · formal verification · combinatorics · AI</p>
       </div>
     </div>
   </div>
@@ -69,9 +71,10 @@
         <h2>Contents</h2>
       </div>
       <div class="contents-hero" data-reveal>
-        <div class="canvas-wrap" style="aspect-ratio: 1; width: 100%;" data-spiral>
+        <p class="figcap" data-spiral-readout>fig. 1 · Ulam spiral, the set of prime numbers</p>
+        <div class="canvas-wrap" data-spiral>
           <canvas id="figure-ulam" role="img"
-            aria-label="The prime numbers plotted on Ulam's square spiral, with the six section numerals pinned to six of the primes."></canvas>
+            aria-label="The prime numbers plotted on Ulam's square walk, shown as a wide band across the middle of the spiral, with the six section numerals pinned to six of the primes."></canvas>
           <a class="ulam-node" href="research.html" aria-label="01, Research" data-phrase="01 · Research, counting words">01</a>
           <a class="ulam-node" href="lean.html" aria-label="02, Formalization" data-phrase="02 · Formalization, proofs to a computer">02</a>
           <a class="ulam-node" href="manim.html" aria-label="03, Animations" data-phrase="03 · Animations, math you can watch">03</a>
@@ -79,7 +82,6 @@
           <a class="ulam-node" href="projects.html" aria-label="05, Projects" data-phrase="05 · Projects, things I run">05</a>
           <a class="ulam-node" href="cv.pdf" aria-label="06, Curriculum vitae" data-phrase="06 · Curriculum vitae">06</a>
         </div>
-        <p class="figcap" data-spiral-readout>fig. 1 · the contents, filed among the primes</p>
 
         <ul class="toc-line">
           <li><a href="research.html"><span class="n">01</span>Research</a></li>
@@ -100,9 +102,8 @@
       <div class="section-head" data-reveal>
         <p class="kicker">&#167; 01</p>
         <h2>On the desk</h2>
-        <p class="prose lede">Two manuscripts and the library they both stand on. Nothing is posted
-        yet, so the full statements live in <a href="research.html">&#167; 01</a> and
-        <a href="lean.html">&#167; 02</a>.</p>
+        <p class="prose lede">Two drafted manuscripts and the library they use are awaiting
+        publication.</p>
       </div>
 
       <div class="deskstack" data-reveal>
@@ -117,7 +118,7 @@
           <span class="sheet-kind">Manuscript II</span>
           <span class="sheet-title">A classification of admissible alphabets</span>
           <span class="sheet-note">Which finite alphabets admit a word that avoids and stays rich at
-          once. Audited twice.</span>
+          once.</span>
           <span class="sheet-status wip">&#8943; in preparation</span>
         </a>
         <a class="sheet card" href="lean.html">
@@ -146,13 +147,11 @@
         </div>
         <div class="onair-say prose">
           <p class="kicker">Also in motion</p>
-          <h2 style="font-size: var(--fs-h2);">The films go out to fifty thousand people</h2>
+          <h2 style="font-size: var(--fs-h2);">New ways of looking at math</h2>
           <p>Short animated proofs, built in Manim and posted as
-          <span style="font-family: var(--mono); font-size: 15px;">@math.visualizations</span>.
-          The attractor beside this is the same idea at small scale: three coupled equations
-          integrated one step at a time, drawn live by this page rather than embedded as a film.</p>
-          <p class="onair-n"><span data-reach-total data-count="52244">52,244</span>
-            <span class="onair-k">followers across three platforms</span></p>
+          <span style="font-family: var(--mono); font-size: 15px;">@math.visualizations</span>.</p>
+          <p class="onair-n"><span data-count="15000000">15,000,000+</span>
+            <span class="onair-k">total views across three platforms</span></p>
           <p><a href="manim.html">The films and the ledger &#8594; &#167; 03</a></p>
         </div>
       </div>
@@ -169,6 +168,7 @@
           <a class="btn" href="https://www.linkedin.com/in/daniel-liao-ca/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/></svg>LinkedIn</a>
           <a class="btn" href="https://www.instagram.com/theebayuser/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</a>
           <a class="btn" href="https://x.com/theebayuser" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg>X</a>
+          <span class="btn btn-copy" data-copy="ebayuser" title="Discord: ebayuser (click to copy)" aria-label="Discord username ebayuser, click to copy"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg><span data-copy-label aria-live="polite">ebayuser</span></span>
         </div>
       </div>
     </section>
@@ -211,6 +211,7 @@
         <a href="https://www.linkedin.com/in/daniel-liao-ca/" aria-label="LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/></svg></a>
         <a href="https://www.instagram.com/theebayuser/" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
         <a href="https://x.com/theebayuser" aria-label="X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a>
+        <span class="foot-copy" data-copy="ebayuser" title="Discord: ebayuser (click to copy)" aria-label="Discord username ebayuser, click to copy"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg></span>
       </div>
     </div>
   </div>

@@ -13,11 +13,11 @@ Then open <http://localhost:4173>.
 
 | Path | What it is |
 |---|---|
-| `index.html` | Title block, abstract, the spiral contents, the manuscript deskstack, the animation block (a live Lorenz beside the reach line), contact, an ink-walk tailpiece |
+| `index.html` | Title block (the name inks itself in), abstract, the spiral contents as a wide band that draws itself, the manuscript deskstack, the animation block (a live Lorenz beside the view count), contact including a Discord handle you copy, an ink-walk tailpiece |
 | `research.html` | Combinatorics on words: intro + ternary word-art, two definitions side by side, the morphism derivation full width, manuscripts with the turtle figure beside them, a Mandelbrot tailpiece |
 | `lean.html` | Formalization: the goal stepper, the library measured, the catalog with its namesake figure in the rail, upstream contributions with the Elliott–Halberstam listing, a Sierpinski tailpiece |
-| `manim.html` | Self-drawing figures (Lorenz, then a double pendulum), the reach headline, the three films (hover to scrub), the channel ledger, a strange-attractor tailpiece |
-| `education.html` | The prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
+| `manim.html` | What and how I animate, self-drawing figures (Lorenz, then a double pendulum), the reach headline, the three films (hover to scrub), the channel ledger, a strange-attractor tailpiece |
+| `education.html` | "Learning, not Education": the prerequisite graph as navigation; the record (a 2×2 grid); a cubic-roots tailpiece |
 | `projects.html` | Tri-Valley Tutoring (Overleaf-style worked problem, blank until compiled), USAMO Guide (video showcase + 2×3 stats), a short "also running" list, a cubic-roots tailpiece |
 | `404.html` | A proof-by-contradiction not-found page, with a Clifford-attractor tailpiece |
 | `cv.pdf` | The CV, a static PDF. To update it, replace this file |
@@ -63,7 +63,12 @@ If the file fails to load, the counts stay as dashes and every link still works.
   scroll and dimming again as you go back up. Every page ends with a small drawn ornament
   (a tailpiece); each footer carries the five ways to reach out.
 - **Hidden**: press `b` for the night board, the same paper after dark. Every figure
-  repaints itself in chalk. Press it again to come back; the choice is remembered.
+  repaints itself in chalk. Press it again to come back; the choice is remembered. If your
+  system is set to dark and you have never chosen, the site opens on the board.
+- **On a phone**: the top bar tucks itself away as you scroll down and comes back the moment
+  you scroll up.
+- **Discord** has no link, so the handle in the contact row and in every footer copies itself
+  when you click it. If the browser refuses the clipboard, it selects the handle instead.
 
 All of it is a bonus layer over plain HTML. With JavaScript off, the goal panel shows a
 finished proof, the morphism figure shows six generations, and the stats show their real
