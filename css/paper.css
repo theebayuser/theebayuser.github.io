@@ -638,7 +638,13 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 /* Figures sit directly on the paper: no frame, no fill. The drawings are
    ink, and ink does not come in a box. */
 .canvas-wrap { position: relative; width: 100%; aspect-ratio: 4 / 3; }
-.canvas-wrap canvas { width: 100%; height: 100%; display: block; }
+/* The canvas is taken OUT of flow on purpose. In flow with `height: 100%` inside a
+   wrap whose own height comes from `aspect-ratio`, the percentage does not resolve,
+   so the canvas falls back to its buffer's intrinsic ratio and then stretches the
+   wrap to match it. That is how the contents band came to render 2:1 while its CSS
+   said 12/5. Absolute means the canvas can never contribute height, so every figure
+   is the shape it declares. */
+.canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .figcap { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); margin-top: 10px; }
 
 .eq {
@@ -649,13 +655,18 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 
 /* the contents, filed among the primes: section numerals pinned to the
    spiral at the coordinates of six actual primes */
+/* The numerals are the navigation, so they are the darkest marks in the figure and
+   the stipple behind them is texture. They were 11px at --ink-3 over a hairline for
+   three rounds, which made the contents the quietest thing in their own drawing, and
+   on the night board the dots outright glowed while the numbers sank. Size, weight,
+   and ink all moved together. */
 .ulam-node {
   position: absolute; transform: translate(-50%, -50%);
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 22px; padding: 3px 5px; border: 0;
-  font: 500 11px var(--mono); font-variant-numeric: tabular-nums;
-  color: var(--ink-3); background: var(--paper);
-  box-shadow: 0 0 0 1px var(--rule);
+  min-width: 26px; padding: 4px 7px; border: 0;
+  font: 600 13px var(--mono); font-variant-numeric: tabular-nums;
+  color: var(--ink); background: var(--paper);
+  box-shadow: 0 0 0 1px var(--rule-strong);
   transition: color 140ms var(--ease), box-shadow 140ms var(--ease),
     opacity 260ms var(--ease), transform 260ms var(--ease);
 }
@@ -680,10 +691,12 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 .contents-hero { display: flex; flex-direction: column; align-items: center; }
 /* The signature figure was a 380px square in the middle of a 940px page, which
    made the most important drawing on the site the smallest one. It now takes the
-   whole measure as a band across the centre of the spiral, at the same height it
-   had: 2.4:1, the ratio the education graph already uses, so the site's two wide
-   navigation figures at least agree with each other. */
-.contents-hero .canvas-wrap { width: 100%; max-width: none; aspect-ratio: 12 / 5; }
+   whole measure as a band across the centre of the spiral: 2:1, the ratio the
+   education graph also uses, so the site's two wide navigation figures agree with
+   each other. It said 12/5 for two rounds and rendered 2:1 the whole time (see the
+   note on .canvas-wrap canvas); 2:1 is the one that was on screen and the one the
+   six numerals need the vertical room of, so it is now what the CSS says. */
+.contents-hero .canvas-wrap { width: 100%; max-width: none; aspect-ratio: 2 / 1; }
 /* This caption sits ABOVE its figure, which no other figure here does. It is not
    really a caption: it is a live readout that renames itself on hover, so it
    works as a label line over the figure rather than a note under it. Ruled off
@@ -722,8 +735,10 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 }
 
 /* the education graph: the prerequisite chart, used as the page's navigation */
-.graph-wrap { position: relative; width: 100%; aspect-ratio: 12 / 5; }
-.graph-wrap canvas { width: 100%; height: 100%; display: block; }
+/* 2:1, matching the contents band. At 12/5 the twelve chips were packing four rows
+   into 365px and the labels had no air between them. */
+.graph-wrap { position: relative; width: 100%; aspect-ratio: 2 / 1; }
+.graph-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .node-chip {
   position: absolute; transform: translate(-50%, -50%);
   display: none; align-items: center; justify-content: center;
@@ -738,6 +753,20 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 }
 [data-edu-graph="on"] .node-chip { display: inline-flex; }
 .node-chip:hover { color: var(--ink); border-color: var(--rule-strong); }
+
+/* One attribute carries the whole relationship to whatever is selected, set in one
+   place in JS: what the selection required, what it led to, and what it never
+   touched. Reading the chart is then a matter of what is dark, not of tracing lines. */
+.node-chip[data-rel="up"] { color: var(--ink); border-color: var(--rule-strong); }
+.node-chip[data-rel="down"] { color: var(--ink-2); }
+/* --ink-3, not --ink-4: these are still real buttons, and the disabled level made
+   them look switched off rather than merely off the chain. */
+.node-chip[data-rel="off"] { color: var(--ink-3); border-color: var(--rule-soft); }
+
+/* The subject of the drawing gets the ring; only the committed selection also gets
+   the underline. Otherwise a hovered chip and the selected one look identical and
+   the reader cannot tell which card they are looking at. */
+.node-chip[data-rel="self"] { color: var(--ink); border-color: var(--ballpoint); }
 .node-chip[aria-pressed="true"] {
   color: var(--ink); border-color: var(--ballpoint);
   box-shadow: inset 0 -2px 0 var(--ballpoint);
@@ -753,6 +782,12 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 .node-pop .np-when {
   margin-left: auto; font-family: var(--mono); font-size: var(--fs-meta);
   color: var(--ink-3); white-space: nowrap;
+}
+/* what the selection required and what it led to, counted off the graph itself */
+.node-pop .np-chain {
+  font-family: var(--mono); font-size: var(--fs-label);
+  color: var(--ballpoint); letter-spacing: 0.04em; margin-top: 6px;
+  font-variant-numeric: tabular-nums;
 }
 .node-pop .np-body { color: var(--ink-2); font-size: 16px; margin-top: var(--s1); }
 .node-pop .np-more { font-family: var(--mono); font-size: var(--fs-meta); margin-top: var(--s2); }

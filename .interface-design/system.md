@@ -114,24 +114,78 @@ Each appears on more than one page — that is what makes it a signature rather 
    resize and repaint only, never per frame. And **finishing must stop the loop**: see the
    note under the canvas bugs.
    **It is a wide band** (round 17): it was a 380px square in a 940px page, which made the
-   most important drawing on the site the smallest thing on it. Now `12 / 5` at the full
-   measure, same height, about 2.4× the primes at the same density. `ulamWalk` takes the cell
+   most important drawing on the site the smallest thing on it. Now `2 / 1` at the full
+   measure, about 2× the primes at the same density. `ulamWalk` takes the cell
    size from the *height*, fits as many cells across as the width holds, walks the square that
    circumscribes the band and keeps only what falls inside it, so the band is a real window
-   onto the spiral rather than a different figure. `pickAnchors` targets an **ellipse**, not a
-   circle: aiming at plain radii put every numeral past half-way outside the band and all six
-   collapsed into the middle third. Its radii are interleaved rather than ascending, or the far
-   ones all land on one flank. **Under 760px it goes back to the square**, like the education
-   graph flipping to `3 / 5`: a 375px band is 156px tall and the numerals would sit on top of
-   each other. **Its caption sits above it**, the only one on the site that does, ruled off
-   beneath and set left: it is not really a caption but a live readout that renames itself on
-   hover, and centred text that changes length on every hover jitters.
+   onto the spiral rather than a different figure. **Under 760px it goes back to the square**,
+   like the education graph flipping to `3 / 5`: a 375px band is 156px tall and the numerals
+   would sit on top of each other. **Its caption sits above it**, the only one on the site that
+   does, ruled off beneath and set left: it is not really a caption but a live readout that
+   renames itself on hover, and centred text that changes length on every hover jitters.
+   **The navigation has to beat the ornament** (round 18). For three rounds the numerals were
+   11px at `--ink-3` on a hairline while the field stippled at alpha 0.78, so the contents were
+   the quietest marks in their own drawing, and on the night board the dots outright glowed
+   while the numbers sank. Four changes, and they only work together:
+   the field drops to **alpha 0.66** and becomes texture; the numerals go to **13px / 600 /
+   `--ink`** over a `--rule-strong` ring; each anchored prime is **circled in ballpoint** (ink
+   dot, 1px ring at `dot + 3.5`) rather than covered, so the caption's claim is visible instead
+   of asserted; and the numeral **stands off its prime on a leader** instead of sitting on it.
+   Two things that were got wrong first and are easy to repeat. A *filled* ballpoint blob on the
+   prime reads as a UI pin dropped on the drawing rather than a mark made on it. And the
+   clearing must be the **chip's rectangle** (`ULAM_PAD`), not a disc at the prime: clearing at
+   the prime while the chip sat 34px away punched a visible hole beside every label and left
+   the label itself on undisturbed stipple. The standoff is measured from the chip's **edge**
+   (`ULAM_GAP`, via a ray-box intersection), because a fixed radius left the sideways numerals
+   almost touching their prime while the ones above and below had a clear stub of line.
+   **The numerals are ordered outward from the middle**: 01 on the smallest of the six primes,
+   06 on the largest. `pickAnchors` steps target radii up from 0.22 to 0.88 and target angles by
+   the **golden angle**, then sorts the winners by `prime.n` so the ordering is true by
+   construction rather than by hoping the targets came out in order. Distance is measured the
+   way the walk measures it, **per axis and by the larger of the two**, because Ulam's walk goes
+   out in square rings: an elliptical radius calls a prime 40 cells east and one 20 cells north
+   equally far out when the first arrives four times later. The payoff is that the numerals now
+   land **01 through 06 in sequence** as the figure inks itself in. The frame constraint tests
+   the chip's **box**, not its centre (`MARGIN`); testing the centre let a numeral's top edge
+   come within 18px of the frame, and 02 and 04 used to sit on the right and bottom edges.
 8. **The prerequisite graph as navigation** (education) — every node is a real `<button>`
    over a canvas of curved edges, and selecting one fills a `.node-pop` card with dates, a
    line, and a jump link into the section below. Wide, it reads as two chains meeting.
-   Under 560px the identical graph relayouts to one column in chronological order, chips
+   Narrow, the identical graph relayouts to one column in chronological order, chips
    centred on the nodes and edges bowed out to the side. Chip x is clamped to the figure,
    or a label near an edge hangs off it.
+   **The direction is the content** (round 18). It is a DAG and it used to be drawn as though
+   it were not: no arrowheads, and selecting a node lit only the edges touching it, which is the
+   least interesting question the chart can answer. Now every edge carries a 7px arrowhead at
+   its target, and selecting a node lights its **whole chain** — everything it required in solid
+   ballpoint at 1.4px, everything it led to at 0.45 alpha, the rest in `--fig-guide`, painted in
+   that order so the line the reader is meant to follow is never crossed by a faded one. Chips
+   take a single `data-rel` of `self` / `up` / `down` / `off` and CSS does the rest. Two details
+   worth keeping: `off` is `--ink-3`, not `--ink-4`, because these are still real buttons and the
+   disabled level made them look switched off; and only the committed selection gets the inset
+   underline, while `data-rel="self"` gets the ring alone, or a hovered chip and the selected one
+   look identical. The card's `needed N · led to M` line is **counted off the graph**, never
+   written down. Hover previews a chain but never rewrites the card, which would flicker under a
+   moving pointer.
+   **The chip is the node.** It used to sit 20px off a 2.4px dot; the dot is gone and edges are
+   clipped to the chip rectangles at both ends (`boxExit`). That fixes the *ends* of an edge and
+   not its middle, and the middles were the real problem: five edges ran behind labels they did
+   not belong to, and because the chips are opaque a line that vanishes and reappears reads as
+   piercing. **Six node positions were moved** until nothing crossed, verified by sampling every
+   edge against every chip box in the browser: at the 876px layout every edge clears every
+   unrelated chip by **≥16px** and no two chips come within **36px**. Re-run that check if a
+   label's wording changes, because chip widths are what the clearances are made of. Bowing
+   harder does not help and made it worse, since the apex rises *into* the chip above.
+   **The column flip is a media query, not a pixel count in JS.** It was `w < 560` measured on
+   the canvas while CSS turned the box from 2:1 into the tall 3:5 at a 760px *viewport*: two
+   different signals, so between them twelve rows could be laid out inside a wide box. Both now
+   read `(max-width: 760px)`. 560 was also simply too late — chips are a fixed pixel size while
+   their positions are fractions of the width, so at a 652px canvas "college, concurrent" and
+   "linear algebra, ODEs" came within 2px of each other.
+   **Arrow keys walk the chart, not the DOM**: left and right step along the prerequisite
+   direction, up and down move within a column (by `EDU_COLUMN` when stacked). Tab order stays
+   the platform's, on real buttons. The column tolerance is 0.05, not 0.02, because the nodes in
+   a column no longer share an exact x.
 9. **The ledger** — hand-kept counts as an account book: mono platform label, handle,
    figure right-aligned in tabular numerals, and a `.ledger-sum` balance line ruled off
    at the foot with the running total. Never a dashboard tile. A count of zero means
@@ -171,12 +225,20 @@ Each appears on more than one page — that is what makes it a signature rather 
     `clientWidth < 40`. The caption is a true claim like every other figure caption: verify
     the count or construction before writing it (walk = 90k steps, attractor = 42k points,
     roots = every integer cubic with coefficients in −5..5).
-18. **The cubic-roots figure** (`cubicRoots`, education tailpiece) — the complex roots of
+18. **The cubic-roots figure** (`cubicRoots`, **projects** tailpiece) — the complex roots of
     every `ax³ + bx² + cx + d` with `a ∈ 1..5`, `b,c,d ∈ −5..5` (positive `a` covers the
     sign symmetry), each normalized to monic and solved by a 30-pass Durand–Kerner
-    iteration, then stippled at low alpha so overlapping roots build density. This is our
+    iteration, then stippled so overlapping roots build density. This is our
     own ink recreation of a copyrighted "Bohemian roots" artwork the user linked, not the
     raster itself — recreating the mathematics keeps it night-board safe and license-clean.
+    (Education's tailpiece is `figure-network`. This entry and rule 23 both said education
+    for two rounds; they were wrong, the ids are the authority.)
+    **Alpha 0.30 and view radius 1.9** (round 18). It was 0.20 at `R = 2.6`, which put the
+    structure in the middle 40% of a 320px frame as a pale haze with the rest empty plane.
+    Almost every root of a small integer cubic lies inside `|z| < 2`, so tightening is a crop
+    and not a change to the mathematics: 90.7% of the root set is in frame at 1.9 against
+    95.6% at 2.6, and out-of-frame points were already being skipped. Judge it at 320px, on
+    paper and on the board, not in a shrunk grid cell.
 19. **Film reels are seamless** (`[data-film]`, `initFilms`) — every `<video>` autoplays
     muted, loops, and carries no control bar; an IntersectionObserver plays it in view and
     pauses it off-screen, a click toggles play/pause, and under `prefers-reduced-motion`
@@ -208,10 +270,12 @@ Each appears on more than one page — that is what makes it a signature rather 
     (`for n in 18 17 … 2; do perl -pi -e "s/fig\. $n\b/fig. $((n+1))/g" *.html; done`) or the
     replacements collide.
 23. **All tailpieces draw in one ink** — `--ballpoint`, so the closing figures read as a set.
-    The faint ones were darkened (walk α .22, roots α .20); the dense ones keep their original
-    density (attractor α .16) and only changed hue (Mandelbrot ink → ballpoint). Judge new
-    alphas at the real 320px tailpiece size, not a shrunk grid cell, or a dense figure looks
-    solid when it is fine full-size.
+    The faint ones were darkened (walk α .22, roots α **.30** as of round 18); the dense ones
+    keep their original density (attractor α .16) and only changed hue (Mandelbrot ink →
+    ballpoint). Judge new alphas at the real 320px tailpiece size, not a shrunk grid cell, or a
+    dense figure looks solid when it is fine full-size. `.tailpiece { opacity: 0.85 }` stays:
+    it is what makes closing art recede, so a figure that reads faint is fixed in its own ink,
+    not by lifting the blanket the whole set is balanced under.
 24. **Thue–Morse strips are rationed** — at most **one per page**, marking the single real
     hinge (index: title block → contents; research: intro → vocabulary; lean: numbers →
     contents; manim: figures → films; education: graph → record). Sibling cards on the same
@@ -390,8 +454,12 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
   `rgba(0,0,0,0.1)` outline
 - `.titleblock` — `--s6 0 --s5` (was `--s8 0 --s6`; trimmed in round 16 so the first screen
   reaches the Thue–Morse strip at 1280×800) · `.revision` 6px top, `--ink-4`, +0.06em tracked
-- `.contents-hero .canvas-wrap` — `12 / 5` at the full measure, back to `1` and 380px under
+- `.contents-hero .canvas-wrap` — `2 / 1` at the full measure, back to `1` and 380px under
   760px. Caption above, ruled off, left-aligned
+- `.ulam-node` — 13px/600 mono · `--ink` over `--paper` · 1px `--rule-strong` ring ·
+  26px min-width · `4px 7px` pad · 44px hit area · ballpoint ring and text on hover
+- `.node-chip` — 12px/400 mono · `5px 9px` pad · 1px border · the node itself, not a label
+  beside one · `data-rel` carries `self` / `up` / `down` / `off`
 - **The mobile top bar** — 214px and four lines at 375px, which is a quarter of the screen held
   permanently by a sticky element. Now ~143px: nav at `8px 6px / 12.5px` packs to two rows of
   three with the numbers intact and 40px hit areas kept, and `.nav { order: 1 }` puts the board
@@ -400,7 +468,11 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
   listener with a 6px deadband. Never rAF: same reason as the progress strip
 - `.btn` — `flex: 0 0 auto`, so a wrapping row wraps instead of crushing a button into its
   40px min-width and swallowing its own label
-- `.canvas-wrap` — 4:3, 1px `--board-rule`, canvas DPR-scaled in JS
+- `.canvas-wrap` — 4:3, 1px `--board-rule`, canvas DPR-scaled in JS. **The canvas is
+  `position: absolute; inset: 0`**, and must stay that way: in flow with `height: 100%`
+  inside a wrap whose height comes from `aspect-ratio`, the percentage does not resolve, the
+  canvas falls back to its buffer's intrinsic ratio, and it then stretches the wrap to match.
+  That is how the contents band spent two rounds declaring `12 / 5` and rendering 2:1
 - `.catalog-rail` — `1fr / minmax(230px, 0.46fr)`, `align-items: start`, gap `--s5`; collapses
   at 860px
 - `.figure-row.listing` — `1fr / 1.18fr`, the widest a Lean listing needs before it scrolls.

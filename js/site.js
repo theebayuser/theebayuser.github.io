@@ -761,18 +761,84 @@
     };
   }
 
-  /* Stipple the primes in spiral order, out to `progress` of the way round. */
-  function ulamDraw(ctx, walk, progress) {
+  /* How far the numeral stands off the prime it labels, and how much bare paper is
+     cleared around the circled prime itself. The chip's own clearing is a rectangle
+     taken from the chip, not a disc: clearing a disc at the prime while the chip sat
+     34px away punched a visible hole beside every label and left the label itself on
+     undisturbed stipple, which is exactly backwards. */
+  var ULAM_LEAD = 34;
+  var ULAM_CLEAR = 11;
+  var ULAM_PAD = 6;
+  /* The gap is measured from the chip's edge, not its centre, so the leader is the
+     same length whichever way it points. Offsetting by a fixed radius instead left
+     the sideways numerals almost touching their prime (the chip is 30px wide and
+     24px tall) while the ones above and below had a clear stub of line. */
+  var ULAM_GAP = 13;
+
+  /* Stipple the primes in spiral order, out to `progress` of the way round.
+     The field is the quiet layer here and the six anchored primes are the loud
+     one, which is the opposite of how this figure first shipped: at alpha 0.78 the
+     ornament was darker than the navigation drawn on top of it. Anchors also punch
+     a clearing in the stipple and carry a leader out to their numeral, so a label
+     never sits on top of its own subject. */
+  function ulamDraw(ctx, walk, progress, anchors) {
     var upTo = Math.floor(walk.primes.length * (progress === undefined ? 1 : progress));
-    ctx.fillStyle = palette().ink;
-    ctx.globalAlpha = 0.78;
-    for (var i = 0; i < upTo; i++) {
+    var pal = palette();
+    var marks = anchors || [];
+    var i, k;
+
+    ctx.fillStyle = pal.ink;
+    ctx.globalAlpha = 0.66;
+    for (i = 0; i < upTo; i++) {
       var pr = walk.primes[i];
+      var clear = false;
+      for (k = 0; k < marks.length; k++) {
+        var mk = marks[k];
+        if (mk.prime !== pr &&
+            Math.hypot(mk.prime.x - pr.x, mk.prime.y - pr.y) < ULAM_CLEAR) {
+          clear = true; break;
+        }
+        if (Math.abs(pr.x - mk.cx) < mk.hw + ULAM_PAD &&
+            Math.abs(pr.y - mk.cy) < mk.hh + ULAM_PAD) {
+          clear = true; break;
+        }
+      }
+      if (clear) continue;
       ctx.beginPath();
       ctx.arc(pr.x, pr.y, walk.dot, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
+
+    /* Each anchor appears exactly when the walk reaches it, so the marks arrive
+       with the ink rather than sitting on an empty frame. */
+    for (k = 0; k < marks.length; k++) {
+      var a = marks[k];
+      if (walk.primes.indexOf(a.prime) >= upTo) continue;
+      var px = a.prime.x, py = a.prime.y;
+      var ring = walk.dot + 3.5;
+
+      /* the prime stays ink and gets circled in pen, the way you would mark one on
+         a printed table. A filled ballpoint blob was tried first and read as a UI
+         pin dropped on the drawing rather than a mark made on it. */
+      var out = (a.dist === undefined ? ULAM_LEAD : a.dist - a.half) - 1;
+      ctx.strokeStyle = pal.ballpoint;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px + Math.cos(a.off) * (ring + 2), py + Math.sin(a.off) * (ring + 2));
+      ctx.lineTo(px + Math.cos(a.off) * out, py + Math.sin(a.off) * out);
+      ctx.stroke();
+
+      ctx.fillStyle = pal.ink;
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(px, py, walk.dot, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(px, py, ring, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }
 
   function ulam(canvas, progress) {
@@ -782,34 +848,83 @@
     return walk;
   }
 
-  /* Pick well-separated primes to hang the section numerals on: one per angular
-     sector, each at its own distance from the middle. The targets sit on an
-     **ellipse**, not a circle, because the frame is a wide band: aiming at plain
-     radii put every numeral past half-way outside the band, so all six collapsed
-     into the middle third and the ends of the figure sat empty. The radii are
-     interleaved rather than ascending, or the far ones all land on one flank. */
-  function pickAnchors(primes, maxRX, maxRY, count, side) {
-    var wants = [0.34, 0.88, 0.52, 0.96, 0.44, 0.80];
-    /* keep the numerals apart in proportion to the figure, or a narrow
-       viewport shrinks every gap below a fixed threshold and strands them */
-    var apart = Math.max(24, Math.min(46, (side || 400) * 0.11));
+  /* Pick six well-separated primes to hang the section numerals on, ordered
+     **outward from the middle**: 01 on the smallest of the six, 06 on the largest.
+     That is the figure's own logic rather than an arrangement, and because the walk
+     runs outward too, it means the numerals land 01 through 06 in sequence as the
+     spiral inks itself in.
+
+     Distance is measured the way the walk measures it, per axis and by the larger
+     of the two (`max`, not `hypot`), because Ulam's walk goes out in square rings:
+     an elliptical radius would call a prime 40 cells east and one 20 cells north
+     equally far out when the first arrives four times later in the walk. Angles are
+     stepped by the golden angle so no two numerals share a flank at any count. */
+  function pickAnchors(primes, maxRX, maxRY, count, side, w, h) {
+    var GOLDEN = 2.399963;
+    /* nominal chip half-extents, since nothing has been measured at pick time, and
+       the clear space its **box** must keep from every frame edge. Testing the
+       centre instead let a numeral's top edge come within 18px of the frame. */
+    var NHW = 15, NHH = 13, MARGIN = 14;
+    var apart = Math.max(52, Math.min(104, (side || 400) * 0.12));
+    var cx = w / 2, cy = h / 2;
+
+    /* The numeral stands off its prime rather than covering it. Straight out from
+       the middle is the first choice, so the leader reads as radial; near an edge
+       it swings around until the chip lands back on the paper. */
+    function offsetFor(pr) {
+      var base = (pr.gx || pr.gy) ? Math.atan2(pr.y - cy, pr.x - cx) : -Math.PI / 2;
+      for (var t = 0; t < 8; t++) {
+        var swing = t ? (t % 2 ? 1 : -1) * Math.ceil(t / 2) * (Math.PI / 4) : 0;
+        var ang = base + swing;
+        var dx = Math.cos(ang), dy = Math.sin(ang);
+        var half = Math.min(
+          Math.abs(dx) > 1e-6 ? NHW / Math.abs(dx) : Infinity,
+          Math.abs(dy) > 1e-6 ? NHH / Math.abs(dy) : Infinity
+        );
+        var d = half + ULAM_GAP;
+        var x = pr.x + dx * d, y = pr.y + dy * d;
+        if (x - NHW >= MARGIN && x + NHW <= w - MARGIN &&
+            y - NHH >= MARGIN && y + NHH <= h - MARGIN) return ang;
+      }
+      return null;
+    }
+
     var picked = [];
     for (var i = 0; i < count; i++) {
-      var t = wants[i % wants.length];
-      var ang = (-Math.PI / 2) + (i / count) * Math.PI * 2;
-      var tx = Math.cos(ang) * t * maxRX;
-      var ty = Math.sin(ang) * t * maxRY;
-      var best = null, bestCost = Infinity;
-      primes.forEach(function (pr) {
-        /* error normalised per axis, so a 2.4:1 frame does not make horizontal
-           misses look cheap and vertical ones expensive */
-        var ex = (pr.gx - tx) / maxRX, ey = (pr.gy - ty) / maxRY;
-        var cost = Math.hypot(ex, ey);
-        var clash = picked.some(function (q) { return Math.hypot(q.x - pr.x, q.y - pr.y) < apart; });
-        if (!clash && cost < bestCost) { bestCost = cost; best = pr; }
-      });
-      if (best) picked.push(best);
+      var tr = 0.22 + (i / (count - 1)) * 0.66;        /* 0.22 innermost … 0.88 out */
+      var ta = -Math.PI / 2 + i * GOLDEN;
+      var chosen = null;
+      /* If nothing satisfies the spacing, loosen it and go again rather than return
+         five numerals: this is navigation, and a missing section is not an option. */
+      for (var pass = 0; pass < 4 && !chosen; pass++) {
+        var room = apart * (1 - pass * 0.2);
+        var bestCost = Infinity;
+        /* eslint-disable no-loop-func */
+        primes.forEach(function (pr) {
+          var nx = pr.gx / maxRX, ny = pr.gy / maxRY;
+          var rad = Math.max(Math.abs(nx), Math.abs(ny));
+          var da = Math.atan2(ny, nx) - ta;
+          da = Math.atan2(Math.sin(da), Math.cos(da));
+          var cost = Math.abs(rad - tr) * 2.4 + Math.abs(da) / Math.PI;
+          if (cost >= bestCost) return;
+          var clash = picked.some(function (q) {
+            return Math.hypot(q.prime.x - pr.x, q.prime.y - pr.y) < room;
+          });
+          if (clash) return;
+          var off = offsetFor(pr);
+          if (off === null) return;
+          bestCost = cost;
+          chosen = { prime: pr, off: off };
+        });
+        /* eslint-enable no-loop-func */
+      }
+      if (chosen) picked.push(chosen);
     }
+
+    /* Assign them to 01…06 by where they actually fall in the walk, so the claim
+       "01 is the smallest of the six" is true by construction and not by hoping the
+       targets came out in order. */
+    picked.sort(function (a, b) { return a.prime.n - b.prime.n; });
     return picked;
   }
 
@@ -828,6 +943,7 @@
        numerals that kept disappearing would be navigation that comes and goes. */
     var DRAW_MS = 2600;
     var ctx = null, walk = null, view = { w: 0, h: 0 };
+    var anchors = [];               /* the six primes the numerals are filed on */
     var lands = [];                 /* chip i lands when the walk passes lands[i] */
     var p = 1;                      /* 1 until the animation actually takes over */
 
@@ -837,17 +953,32 @@
       var m = fitCanvas(canvas);
       ctx = m.ctx; view = { w: m.w, h: m.h };
       walk = ulamWalk(m.w, m.h);
-      var anchors = pickAnchors(walk.primes, walk.maxRX, walk.maxRY, chips.length, side);
+      anchors = pickAnchors(walk.primes, walk.maxRX, walk.maxRY, chips.length, side, m.w, m.h);
       lands = [];
       Array.prototype.forEach.call(chips, function (chip, i) {
         var a = anchors[i];
         if (!a) { chip.style.display = "none"; return; }
         chip.style.display = "";
-        chip.style.left = a.x + "px";
-        chip.style.top = a.y + "px";
-        chip.title = "prime " + a.n;
-        chip.setAttribute("data-prime", a.n);
-        lands[i] = walk.primes.indexOf(a) / walk.primes.length;
+        /* Measured, so the clearing is the chip's real footprint and the standoff is
+           its real edge. A chip that has not laid out yet falls back to its CSS
+           minimum rather than collapsing onto the prime. */
+        a.hw = (chip.offsetWidth || 30) / 2;
+        a.hh = (chip.offsetHeight || 24) / 2;
+        var dx = Math.cos(a.off), dy = Math.sin(a.off);
+        /* where the leader leaves the chip: the ray from its centre meets its box */
+        a.half = Math.min(
+          Math.abs(dx) > 1e-6 ? a.hw / Math.abs(dx) : Infinity,
+          Math.abs(dy) > 1e-6 ? a.hh / Math.abs(dy) : Infinity
+        );
+        a.dist = a.half + ULAM_GAP;
+        /* the numeral stands off the prime at the end of its leader, never on it */
+        a.cx = a.prime.x + dx * a.dist;
+        a.cy = a.prime.y + dy * a.dist;
+        chip.style.left = a.cx + "px";
+        chip.style.top = a.cy + "px";
+        chip.title = "prime " + a.prime.n;
+        chip.setAttribute("data-prime", a.prime.n);
+        lands[i] = walk.primes.indexOf(a.prime) / walk.primes.length;
       });
       return true;
     }
@@ -861,7 +992,7 @@
     function paint() {
       if (!walk) return;
       ctx.clearRect(0, 0, view.w, view.h);
-      ulamDraw(ctx, walk, p);
+      ulamDraw(ctx, walk, p, anchors);
     }
 
     /* a repaint (the night board, a resize) redraws whatever is drawn so far,
@@ -909,6 +1040,11 @@
 
     onRepaint(redraw);
     window.addEventListener("resize", redraw);
+
+    /* Paper never shows a half-finished widget. The walk only starts when the figure
+       comes into view, so printing from the top of the page used to put the six
+       numerals on a blank frame; the contents are the one figure that must be whole. */
+    window.addEventListener("beforeprint", finish);
 
     if (animate) {
       onceInView(canvas, run, 0.25);
@@ -958,6 +1094,15 @@
      and one through contests, meeting where the research starts. Each node is
      a button; the sections below it stay the complete, no-JS version. */
 
+  /* The positions are hand-placed but not arbitrary: they were moved until no edge
+     crosses a chip it does not belong to. Because the chips are opaque, an edge
+     passing behind one vanishes and reappears, which reads as piercing the label,
+     and five edges were doing it. Six nodes shifted (college, discrete structures,
+     calculus, linear algebra, Lean, combinatorics) to open real corridors; the two
+     chains and every edge are unchanged. Measured at the 876px layout: every edge
+     now clears every unrelated chip by at least 18px and no two chips come within
+     36px. Re-check that if a label's wording changes, because the chip widths are
+     what the clearances are made of. */
   var EDU_NODES = [
     { x: 0.06, y: 0.22, t: "Dougherty Valley",
       kind: "Dougherty Valley High School", when: "2023 \u2013 2027",
@@ -971,7 +1116,7 @@
       kind: "AP Computer Science A and Principles", when: "2024 \u2013 2026",
       body: "My first real programming classes. Writing code that either compiles or does not turned out to be good preparation for a proof assistant.",
       more: "#coursework", moreText: "coursework" },
-    { x: 0.28, y: 0.44, t: "college, concurrent",
+    { x: 0.28, y: 0.43, t: "college, concurrent",
       kind: "Cerro Coso and San Diego City College", when: "2025 \u2013 2027",
       body: "Concurrent enrollment means taking college classes for college credit while still in high school. I do it because the math I want is not offered at my school.",
       more: "#schools", moreText: "schools" },
@@ -979,15 +1124,15 @@
       kind: "Olympiad mathematics, self-taught", when: "2025 \u2013 2026",
       body: "Combinatorics, number theory, algebra, and geometry. There is no class for any of it, so all of it came from books, handouts, and old contests.",
       more: "#coursework", moreText: "self-taught" },
-    { x: 0.53, y: 0.72, t: "discrete structures",
+    { x: 0.32, y: 0.60, t: "discrete structures",
       kind: "Discrete structures", when: "college",
       body: "Induction, counting, graphs, and formal proof writing. This is the class where I first had to write proofs properly instead of explaining them out loud.",
       more: "#coursework", moreText: "coursework" },
-    { x: 0.53, y: 0.20, t: "calculus 1\u20133",
+    { x: 0.56, y: 0.11, t: "calculus 1\u20133",
       kind: "Calculus 1 through 3", when: "college",
       body: "Single variable through multivariable calculus. Useful everywhere, and a good reminder that computing something and proving it are different skills.",
       more: "#coursework", moreText: "coursework" },
-    { x: 0.53, y: 0.44, t: "linear algebra, ODEs",
+    { x: 0.52, y: 0.44, t: "linear algebra, ODEs",
       kind: "Linear algebra and differential equations", when: "college",
       body: "Linear algebra is about structure: bases, maps, and what stays fixed when everything else changes. Differential equations put that structure to work.",
       more: "#coursework", moreText: "coursework" },
@@ -999,11 +1144,11 @@
       kind: "Combinatorics on words", when: "2025 \u2013 present",
       body: "The study of infinite sequences of symbols and which patterns they can avoid forever. This is where both chains meet, and it is the research I actually do.",
       more: "research.html", moreText: "the research" },
-    { x: 0.80, y: 0.70, t: "Lean 4 \u00b7 Mathlib",
+    { x: 0.82, y: 0.68, t: "Lean 4 \u00b7 Mathlib",
       kind: "Lean 4 and Mathlib", when: "2025 \u2013 present",
       body: "Lean is a proof assistant and Mathlib is its crowdsourced library of formalized mathematics. I taught myself both from the manual and a lot of error messages.",
       more: "lean.html", moreText: "the formalization" },
-    { x: 0.66, y: 0.60, t: "combinatorics, proof writing",
+    { x: 0.77, y: 0.88, t: "combinatorics, proof writing",
       kind: "Combinatorics and proof writing", when: "college",
       body: "A branch off the linear algebra term: organized casework, generating functions, and writing arguments meant to be checked rather than believed. These are the habits research runs on.",
       more: "#coursework", moreText: "coursework" }
@@ -1014,13 +1159,52 @@
     [2, 10], [5, 10], [7, 9], [8, 9], [9, 10], [7, 11]
   ];
 
+  /* Who required whom. A prerequisite chart is a directed graph and the direction is
+     the whole content of it, so both are precomputed once and every reachable node
+     upstream and downstream of a selection is what the drawing actually highlights.
+     Adjacent edges alone, which is what this used to light, answer a much less
+     interesting question than "what did this need, and where did it lead". */
+  function eduRelations() {
+    var parents = EDU_NODES.map(function () { return []; });
+    var kids = EDU_NODES.map(function () { return []; });
+    EDU_EDGES.forEach(function (e) { kids[e[0]].push(e[1]); parents[e[1]].push(e[0]); });
+    function reach(from, via) {
+      var seen = {}, queue = via[from].slice();
+      while (queue.length) {
+        var n = queue.shift();
+        if (seen[n]) continue;
+        seen[n] = true;
+        queue = queue.concat(via[n]);
+      }
+      return seen;
+    }
+    return {
+      parents: parents, kids: kids,
+      up: EDU_NODES.map(function (nd, i) { return reach(i, parents); }),
+      down: EDU_NODES.map(function (nd, i) { return reach(i, kids); })
+    };
+  }
+
+  /* Where the ray leaving a box's centre crosses its edge. Edges are clipped to this
+     at both ends so a line never runs under a label and out the far side, which is
+     what made the chart read as a tangle: the chips are opaque, so an edge crossing
+     one looked exactly like an edge piercing it. */
+  function boxExit(hw, hh, dx, dy) {
+    var tx = Math.abs(dx) > 1e-6 ? hw / Math.abs(dx) : Infinity;
+    var ty = Math.abs(dy) > 1e-6 ? hh / Math.abs(dy) : Infinity;
+    return Math.min(tx, ty);
+  }
+
   function eduGraph(root) {
     var wrap = root.querySelector(".graph-wrap");
     var canvas = wrap && wrap.querySelector("canvas");
     var pop = root.querySelector(".node-pop");
     if (!canvas || !pop) return;
 
+    var rel = eduRelations();
     var here = 9;
+    var preview = -1;               /* hovered node: highlights without taking the card */
+
     var chips = EDU_NODES.map(function (nd, i) {
       var b = document.createElement("button");
       b.type = "button";
@@ -1029,16 +1213,32 @@
       b.setAttribute("aria-pressed", i === here ? "true" : "false");
       wrap.appendChild(b);
       b.addEventListener("click", function () { select(i); });
+      /* Hover shows the chain but never rewrites the card: a card that changed under
+         a moving pointer would flicker its way across the whole figure. */
+      b.addEventListener("pointerenter", function () { preview = i; draw(); });
+      b.addEventListener("pointerleave", function () { preview = -1; draw(); });
+      b.addEventListener("keydown", function (e) { onKey(e, i); });
       return b;
     });
 
     /* Wide, the chart reads left to right as two chains meeting. Narrow, that
        cannot fit, so the same nodes stack into one column in the order they
-       actually happened. Same graph, same edges, one turn of the page. */
+       actually happened. Same graph, same edges, one turn of the page.
+
+       The flip used to be a bare `w < 560` in here, which was both too late and in
+       the wrong units. The chips are a fixed pixel size while their positions are
+       fractions of the width, so at a 652px canvas "college, concurrent" and
+       "linear algebra, ODEs" came within 2px of each other and the chart was
+       unreadable across the whole 560-to-760 band. It is also CSS, not JS, that
+       turns the box from 2:1 into the tall 3:5 the column needs, so the two have to
+       flip on the same signal or one of them lays twelve rows out inside a wide
+       box. Both now read the same 760px query. */
+    var narrowQ = window.matchMedia("(max-width: 760px)");
+    function isNarrow() { return narrowQ.matches; }
     var EDU_COLUMN = [0, 2, 3, 6, 7, 11, 5, 1, 4, 8, 9, 10];
 
     function pt(i, w, h) {
-      if (w < 560) {
+      if (isNarrow()) {
         var row = EDU_COLUMN.indexOf(i);
         return {
           x: w / 2,
@@ -1048,59 +1248,105 @@
       return { x: 20 + EDU_NODES[i].x * (w - 40), y: 18 + EDU_NODES[i].y * (h - 36) };
     }
 
+    /* The chip IS the node. It used to sit 20px off a 2.4px dot, which left every
+       label floating beside a mark it did not obviously own. */
+    function place(w, h) {
+      var boxes = [];
+      chips.forEach(function (chip, i) {
+        var p = pt(i, w, h);
+        var hw = chip.offsetWidth / 2, hh = chip.offsetHeight / 2;
+        /* keep the whole label on the paper: a node near an edge would
+           otherwise hang its chip off the side of the figure */
+        var x = Math.min(Math.max(p.x, hw + 2), w - hw - 2);
+        chip.style.left = x + "px";
+        chip.style.top = p.y + "px";
+        boxes[i] = { x: x, y: p.y, hw: hw, hh: hh };
+      });
+      return boxes;
+    }
+
+    function arrow(ctx, x, y, ang) {
+      var HEAD = 7, SPREAD = 0.42;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - Math.cos(ang - SPREAD) * HEAD, y - Math.sin(ang - SPREAD) * HEAD);
+      ctx.lineTo(x - Math.cos(ang + SPREAD) * HEAD, y - Math.sin(ang + SPREAD) * HEAD);
+      ctx.closePath();
+      ctx.fill();
+    }
+
     function draw() {
       if (canvas.clientWidth < 40) return;   /* not laid out yet */
       var m = fitCanvas(canvas);
       var ctx = m.ctx, w = m.w, h = m.h;
       var pal = palette();
+      var narrow = isNarrow();
+      var boxes = place(w, h);
 
-      var narrow = w < 560;
-      ctx.lineWidth = 1;
+      /* A hovered node previews its chain; with nothing hovered the selection owns
+         the drawing. Either way exactly one node is the subject. */
+      var focus = preview >= 0 ? preview : here;
+      var soft = preview >= 0 && preview !== here;
+      var up = rel.up[focus], down = rel.down[focus];
+
+      /* off first, then descendants, then the required chain on top, so the line a
+         reader is meant to follow is never crossed by a faded one */
+      var lanes = [[], [], []];
       EDU_EDGES.forEach(function (e) {
-        var a = pt(e[0], w, h), b = pt(e[1], w, h);
-        var live = e[0] === here || e[1] === here;
-        ctx.strokeStyle = live ? pal.ballpoint : pal.guide;
-        var mx, my;
-        if (narrow) {
-          /* one column: bow each edge out to the side so a long jump between
-             chains is visibly a different edge from a step to the next row */
-          var rows = Math.abs(EDU_COLUMN.indexOf(e[1]) - EDU_COLUMN.indexOf(e[0]));
-          mx = a.x + (e[0] % 2 ? -1 : 1) * Math.min(w * 0.34, 14 + rows * 16);
-          my = (a.y + b.y) / 2;
-        } else {
-          mx = (a.x + b.x) / 2;
-          my = (a.y + b.y) / 2 - Math.abs(b.x - a.x) * 0.12;
-        }
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.quadraticCurveTo(mx, my, b.x, b.y);
-        ctx.stroke();
+        var lane = 0;
+        if ((up[e[0]] || e[0] === focus) && (up[e[1]] || e[1] === focus)) lane = 2;
+        else if ((down[e[0]] || e[0] === focus) && (down[e[1]] || e[1] === focus)) lane = 1;
+        lanes[lane].push(e);
       });
 
-      /* In one column the chip sits on the node, so it is the node. */
-      if (!narrow) {
-        EDU_NODES.forEach(function (nd, i) {
-          var p = pt(i, w, h);
-          var hot = i === here;
-          ctx.fillStyle = pal.paper;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = hot ? pal.ballpoint : pal.ink3;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, hot ? 4 : 2.4, 0, Math.PI * 2);
-          ctx.fill();
-        });
-      }
+      lanes.forEach(function (group, lane) {
+        ctx.strokeStyle = lane ? pal.ballpoint : pal.guide;
+        ctx.fillStyle = lane ? pal.ballpoint : pal.guide;
+        ctx.lineWidth = lane === 2 ? 1.4 : 1;
+        ctx.globalAlpha = lane === 1 ? 0.45 : (soft && lane === 2 ? 0.7 : 1);
+        group.forEach(function (e) {
+          var a = boxes[e[0]], b = boxes[e[1]];
+          var mx, my;
+          if (narrow) {
+            /* one column: bow each edge out to the side so a long jump between
+               chains is visibly a different edge from a step to the next row */
+            var rows = Math.abs(EDU_COLUMN.indexOf(e[1]) - EDU_COLUMN.indexOf(e[0]));
+            mx = a.x + (e[0] % 2 ? -1 : 1) * Math.min(w * 0.34, 14 + rows * 16);
+            my = (a.y + b.y) / 2;
+          } else {
+            /* Bow in proportion to the span. Clipping fixes the ends of an edge but
+               not its middle, and the long diagonal from USAMO up to the research
+               used to run straight through the "combinatorics, proof writing" chip,
+               which reads as piercing it because the chip is opaque. A deeper bow
+               carries the long edges over the labels between their endpoints. */
+            mx = (a.x + b.x) / 2;
+            my = (a.y + b.y) / 2 - Math.abs(b.x - a.x) * 0.22;
+          }
 
-      var column = w < 560;
+          /* clip both ends to the chips, leaving the arrowhead just off the border */
+          var d0x = mx - a.x, d0y = my - a.y;
+          var t0 = boxExit(a.hw, a.hh, d0x, d0y) + 3;
+          var n0 = Math.hypot(d0x, d0y) || 1;
+          var sx = a.x + (d0x / n0) * t0, sy = a.y + (d0y / n0) * t0;
+
+          var d1x = b.x - mx, d1y = b.y - my;
+          var t1 = boxExit(b.hw, b.hh, d1x, d1y) + 4;
+          var n1 = Math.hypot(d1x, d1y) || 1;
+          var ex = b.x - (d1x / n1) * t1, ey = b.y - (d1y / n1) * t1;
+
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.quadraticCurveTo(mx, my, ex, ey);
+          ctx.stroke();
+          arrow(ctx, ex, ey, Math.atan2(d1y, d1x));
+        });
+      });
+      ctx.globalAlpha = 1;
+
+      /* one attribute per chip, so the states cannot drift out of step */
       chips.forEach(function (chip, i) {
-        var p = pt(i, w, h);
-        /* keep the whole label on the paper: a node near an edge would
-           otherwise hang its chip off the side of the figure */
-        var half = chip.offsetWidth / 2;
-        chip.style.left = Math.min(Math.max(p.x, half + 2), w - half - 2) + "px";
-        chip.style.top = (column ? p.y : p.y + (EDU_NODES[i].y > 0.5 ? 20 : -20)) + "px";
+        chip.setAttribute("data-rel",
+          i === focus ? "self" : up[i] ? "up" : down[i] ? "down" : "off");
       });
     }
 
@@ -1125,6 +1371,20 @@
       body.className = "np-body";
       body.textContent = nd.body;
 
+      /* Counted from the graph, never written down, so the line cannot drift out of
+         agreement with the edges the reader is looking at. */
+      function tally(set) {
+        var n = 0;
+        for (var k in set) if (set[k]) n++;
+        return n;
+      }
+      var needed = tally(rel.up[i]), led = tally(rel.down[i]);
+      var chain = document.createElement("p");
+      chain.className = "np-chain";
+      chain.textContent = needed === 0 && led === 0
+        ? "stands on its own"
+        : "needed " + needed + " · led to " + led;
+
       var more = document.createElement("p");
       more.className = "np-more";
       var link = document.createElement("a");
@@ -1134,9 +1394,43 @@
       more.appendChild(link);
 
       pop.appendChild(head);
+      pop.appendChild(chain);
       pop.appendChild(body);
       pop.appendChild(more);
       draw();
+    }
+
+    /* Walking the chart with the keyboard should follow the chart, not the DOM: left
+       and right step along the prerequisite direction, up and down move between the
+       nodes sharing a column. Tab order stays the platform's, on real buttons. */
+    function onKey(e, i) {
+      var go = -1;
+      var step = e.key === "ArrowDown" ? 1 : -1;
+      if (e.key === "ArrowLeft") go = rel.parents[i][0];
+      else if (e.key === "ArrowRight") go = rel.kids[i][0];
+      else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        if (isNarrow()) {
+          /* stacked, the only neighbours are the rows above and below */
+          var row = EDU_COLUMN.indexOf(i);
+          go = EDU_COLUMN[row + step];
+        } else {
+          /* Grouped by column with a loose tolerance: the nodes in a column no
+             longer share an exact x, because several were nudged apart to open
+             corridors for the edges. */
+          var col = EDU_NODES
+            .map(function (nd, k) { return { k: k, x: nd.x, y: nd.y }; })
+            .filter(function (n) { return Math.abs(n.x - EDU_NODES[i].x) < 0.05; })
+            .sort(function (a, b) { return a.y - b.y; });
+          var at = col.map(function (n) { return n.k; }).indexOf(i);
+          var next = col[at + step];
+          if (next) go = next.k;
+        }
+      } else return;
+
+      e.preventDefault();
+      if (go === undefined || go < 0) return;
+      select(go);
+      chips[go].focus();
     }
 
     root.setAttribute("data-edu-graph", "on");
@@ -1351,7 +1645,11 @@
   function cubicRoots(canvas) {
     if (canvas.clientWidth < 40) return;
     var m = fitCanvas(canvas), ctx = m.ctx, w = m.w, h = m.h, pal = palette();
-    var N = 5, R = 2.6;                 /* coefficients in -N..N, view radius R */
+    /* R was 2.6 and left the structure sitting in the middle 40% of the frame as a
+       pale haze. Almost every root of a small integer cubic lies inside |z| < 2,
+       so the outer plane was empty paper; this is a crop, not a change to the
+       mathematics, and out-of-frame points were already being skipped. */
+    var N = 5, R = 1.9;                 /* coefficients in -N..N, view radius R */
     var cx = w / 2, cy = h / 2, s = Math.min(w, h) / (2 * R);
 
     /* one Durand–Kerner pass over a monic cubic x^3 + Bx^2 + Cx + D. Returns the
@@ -1389,7 +1687,7 @@
 
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = pal.ballpoint;
-    ctx.globalAlpha = 0.20;
+    ctx.globalAlpha = 0.3;
     for (var a = 1; a <= N; a++) {           /* a > 0 covers the sign symmetry */
       for (var b = -N; b <= N; b++) {
         for (var c = -N; c <= N; c++) {
