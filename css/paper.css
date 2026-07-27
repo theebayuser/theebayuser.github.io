@@ -363,17 +363,56 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   padding: var(--s3);
 }
 
-/* --------------------------------------------------------------- stats --- */
+/* -------------------------------------------------------------- tables --- */
 
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
-.stat { background: var(--paper); padding: var(--s3); }
-.stat .v {
-  font-size: 30px; font-weight: 600; letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums; line-height: 1.1;
+/* A paper reports measurements in a table, not in metric tiles. The old `.stats`
+   and `.stats-grid2` were a grid of equal boxes with hairline gutters, each holding
+   a 30px figure over an uppercase mono label: the canonical dashboard KPI block,
+   and the one component here that could have been lifted onto any SaaS page without
+   anyone noticing. This replaces both (and `.stats-col`, which no page used).
+
+   Rules only, three weights, and they mean different things — `--rule-strong` closes
+   the table top and bottom, `--rule` sits under the column heads, and body rows get
+   nothing at all. A border on every row is what makes a table read as a spreadsheet.
+   Tables caption ABOVE; figures caption below. That asymmetry is real typesetting
+   practice, and it is what keeps the two kinds of block from reading as one. */
+.tabf {
+  width: 100%; border-collapse: collapse;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+  margin-top: var(--s2);
 }
-.stat .k {
+.tabf caption {
+  caption-side: top; text-align: left;
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--ink-3); margin-top: 6px;
+  text-transform: uppercase; color: var(--ink-3); padding-bottom: 8px;
+}
+.tabf thead th {
+  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 400;
+  border-bottom: 1px solid var(--rule); padding: 0 0 8px;
+  text-align: left;                 /* th centres by default; align to its column */
+}
+.tabf thead th:last-child { text-align: right; }
+.tabf tbody th {
+  text-align: left; font-weight: 400; color: var(--ink-2);
+  padding: 10px 0; padding-right: var(--s3);
+}
+/* The figure still leads, through weight and alignment rather than 30px and a box.
+   Dropping the size is exactly what stops it reading as a tile. */
+.tabf tbody td {
+  text-align: right; font-size: 19px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+  padding: 10px 0; white-space: nowrap;
+}
+/* a row whose right-hand cell is a name rather than a count */
+.tabf tbody td.word {
+  font-size: var(--fs-body); font-weight: 400; color: var(--ink-2);
+  letter-spacing: 0;
+}
+.tabnote {
+  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-3);
+  margin-top: var(--s2);
 }
 
 /* a showcase: a portrait reel with its numbers read down the side of it, both
@@ -388,22 +427,10 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   width: 100%; height: 100%; display: block;
   object-fit: cover; background: var(--film); cursor: pointer;
 }
-/* the same numbers as .stats, but stacked into a single ruled column */
-.stats-col {
-  flex: 1 1 200px; display: flex; flex-direction: column;
-  border: 1px solid var(--rule);
-}
-.stats-col .stat {
-  flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
-  border-bottom: 1px solid var(--rule);
-}
-.stats-col .stat:last-child { border-bottom: 0; }
-/* six numbers as a 2×3 block beside the reel, the hairline gaps doing the dividing */
-.stats-grid2 {
-  flex: 1 1 260px; display: grid; grid-template-columns: 1fr 1fr;
-  gap: 1px; background: var(--rule); border: 1px solid var(--rule);
-}
-.stats-grid2 .stat { background: var(--paper); display: flex; flex-direction: column; justify-content: center; }
+/* The numbers beside the reel are a table like every other set of numbers here.
+   `.stats-col` and `.stats-grid2` were deleted with `.stats`; the first had no
+   page using it at all. */
+.showcase .tabf { flex: 1 1 260px; align-self: flex-start; margin-top: 0; }
 
 /* the texview: a small Overleaf, the way a LaTeX editor looks. A source pane of
    real LaTeX on the left, the typeset result on the right (set in STIX, no math
@@ -1091,6 +1118,11 @@ a.btn .fill { color: var(--ink-3); }
   display: flex; align-items: flex-start; gap: 0;
   padding: var(--s3) 0 var(--s5);
 }
+/* Two owners, two properties, no argument: CSS owns `transform` (the fan rotation,
+   the seat, the lift) and JS owns the independent `translate` property. `translate`
+   is applied before `transform`, so a sheet is moved and then turned about its own
+   centre, which is what picking paper up off a desk does. Nothing script writes can
+   clobber the fan, and nothing the stylesheet writes can strand a dragged sheet. */
 .sheet {
   flex: 1 1 0; min-width: 0;
   display: flex; flex-direction: column; gap: 7px;
@@ -1098,19 +1130,53 @@ a.btn .fill { color: var(--ink-3); }
   border: 1px solid var(--rule);
   padding: var(--s3) var(--s3) var(--s4);
   text-decoration: none; color: inherit;
-  transition: transform 200ms var(--ease), border-color 200ms var(--ease);
-  will-change: transform;
+  transform: translateY(var(--seat, 0px)) rotate(var(--rot, 0deg)) scale(var(--lift, 1));
+  transition: translate 200ms var(--ease), transform 200ms var(--ease),
+    border-color 200ms var(--ease);
+  will-change: transform, translate;
 }
 /* fanned: each sheet turned a little and overlapped onto the last, the way a
    stack of paper actually lies. Kept to transforms so nothing reflows. */
-.sheet:nth-child(1) { transform: rotate(-1.4deg); z-index: 1; }
-.sheet:nth-child(2) { transform: rotate(0.5deg) translateY(6px); margin-left: -12px; z-index: 2; }
-.sheet:nth-child(3) { transform: rotate(1.8deg) translateY(2px); margin-left: -12px; z-index: 3; }
+.sheet:nth-child(1) { --rot: -1.4deg; z-index: 1; }
+.sheet:nth-child(2) { --rot: 0.5deg; --seat: 6px; margin-left: -12px; z-index: 2; }
+.sheet:nth-child(3) { --rot: 1.8deg; --seat: 2px; margin-left: -12px; z-index: 3; }
+/* after the :nth-child rules on purpose: same specificity, so source order decides */
 .sheet:hover, .sheet:focus-visible {
-  transform: rotate(0deg) translateY(-8px);
+  --rot: 0deg; --seat: -8px;
   border-color: var(--rule-strong);
   z-index: 4;
 }
+
+/* Held. No shadow to lift it with, so the sheet squares up, grows a little, and
+   takes the emphasis border. z-index 20 and not higher: the topbar is 30, so a
+   dragged sheet slides under the bar instead of covering the navigation. */
+/* "on" is set by JS once dragging is actually wired, so a no-JS reader never gets a
+   grab cursor for something that cannot happen */
+[data-desk="on"] .sheet { cursor: grab; }
+.sheet.is-held {
+  --rot: 0deg; --seat: 0px; --lift: 1.03;
+  border-color: var(--rule-strong);
+  z-index: 20; cursor: grabbing;
+  user-select: none;
+  transition: none;                 /* track the pointer exactly, no lag */
+}
+
+/* The affordance has to be said somewhere or nobody finds it, the same way the
+   contents note carries the key map. Pointer-only, like the drag itself. */
+.desk-note {
+  display: none; align-items: baseline; gap: var(--s2); flex-wrap: wrap;
+  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-3);
+  margin-top: calc(var(--s2) * -1);
+}
+.desk-note[data-on] { display: flex; }
+.desk-tidy {
+  font: inherit; color: var(--ink-2); background: none; cursor: pointer;
+  border: 0; border-bottom: 1px solid var(--rule-strong);
+  padding: 4px 2px; min-height: 40px;
+}
+.desk-tidy:hover { color: var(--ballpoint); border-bottom-color: var(--ballpoint); }
+.desk-tidy:active { transform: scale(0.97); }
+.desk-tidy[hidden] { display: none; }
 .sheet-kind {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--ink-3);
@@ -1135,12 +1201,20 @@ a.btn .fill { color: var(--ink-3); }
 .sheet-count b { color: var(--ink); font-weight: 500; }
 
 @media (max-width: 720px) {
-  /* no room to fan: the stack becomes a squared-up pile */
+  /* No room to fan: the stack becomes a squared-up pile. The drag offsets are
+     zeroed too, not just the fan — a narrow viewport is usually a touch viewport,
+     where dragging is off, and a sheet left displaced by a desktop session would
+     have nothing to move it back. */
   .deskstack { flex-direction: column; gap: -1px; padding-bottom: var(--s4); }
-  .sheet, .sheet:nth-child(1), .sheet:nth-child(2), .sheet:nth-child(3) {
-    transform: none; margin-left: 0; margin-top: -1px;
+  /* !important because JS writes `translate` as an inline style, and an inline
+     declaration beats a stylesheet one without it. Same reason in @media print. */
+  .sheet, .sheet:nth-child(1), .sheet:nth-child(2), .sheet:nth-child(3),
+  .sheet:hover, .sheet:focus-visible, .sheet.is-held {
+    translate: none !important;
+    --rot: 0deg; --seat: 0px; --lift: 1;
+    margin-left: 0; margin-top: -1px;
   }
-  .sheet:hover, .sheet:focus-visible { transform: none; }
+  [data-desk="on"] .sheet { cursor: pointer; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sheet:hover, .sheet:focus-visible { transform: none; }
@@ -1157,16 +1231,19 @@ a.btn .fill { color: var(--ink-3); }
   display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
   gap: var(--s5); align-items: center;
 }
+/* One figure read as a line of prose, not as a tile without its box. It used to be
+   30px/600 over an uppercase tracked mono label, which is the `.stat` treatment
+   exactly, so it carried the same tell after the stat tiles were retired. The
+   number still leads, on weight and size against the sentence around it. */
 .onair-n {
-  font-size: 30px; font-weight: 600; letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums; line-height: 1.1;
-  margin-top: var(--s3);
+  font-size: var(--fs-body); color: var(--ink-2);
+  margin-top: var(--s3); line-height: 1.5;
 }
-.onair-k {
-  display: block; font-family: var(--mono); font-size: var(--fs-label);
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
-  font-weight: 400; margin-top: 6px;
+.onair-n b {
+  font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
+.onair-k { color: var(--ink-2); }
 @media (max-width: 700px) {
   .onair { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
   .onair-reel { max-width: 340px; }
@@ -1442,14 +1519,22 @@ a.btn .fill { color: var(--ink-3); }
   }
 
   /* keep a figure with its caption and a claim with its card */
-  .entry, .env, .figure-row, .goal, .texview, .stats, .stats-grid2,
-  .stats-col, .tailpiece, .clipping, .record-col, .plate, .quote,
+  .entry, .env, .figure-row, .goal, .texview, .tabf,
+  .tailpiece, .clipping, .record-col, .plate, .quote,
   .canvas-wrap, .wordart, .sierpinski { break-inside: avoid; }
   .figcap { break-before: avoid; }
   h1, h2, h3 { break-after: avoid; }
 
   /* the drawn underline never animates on paper */
   .uline { background-size: 100% 1.5px !important; }
+
+  /* Paper gets the squared stack whatever the reader did to the desk on screen,
+     and no control asking to be pressed. CSS only: nothing to hook on beforeprint. */
+  .sheet {
+    translate: none !important;
+    --rot: 0deg; --seat: 0px; --lift: 1;
+  }
+  .desk-note { display: none !important; }
   .cv-head { padding-top: 0; }
 }
 

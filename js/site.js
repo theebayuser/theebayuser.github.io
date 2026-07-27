@@ -2253,6 +2253,187 @@
     });
   }
 
+  /* --- the desk you can move ----------------------------------------------
+     The stack was already "the work as it sits on a desk", but the only thing you
+     could do to a sheet was click it. Now a sheet can be picked up and put down
+     anywhere on the page, which is what the metaphor was claiming all along.
+
+     Pointer-only, and deliberately so: dragging needs `touch-action: none`, which
+     would take vertical scrolling away over the stack, and a portfolio you cannot
+     scroll on a phone is broken. Same restriction the word art and the film scrub
+     already use. Touch keeps tap-to-open. */
+
+  function initDesk() {
+    var stack = document.querySelector("[data-desk]");
+    var note = document.querySelector("[data-desk-note]");
+    if (!stack || !note) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    var sheets = Array.prototype.slice.call(stack.querySelectorAll(".sheet"));
+    if (!sheets.length) return;
+
+    var KEY = "desk";
+    var DEAD = 6;                   /* same deadband as the bar-hide listener */
+    var EDGE = 8;
+    var offs = sheets.map(function () { return { x: 0, y: 0 }; });
+    var docW = 0, docH = 0;
+
+    /* Measured before any stored offset is applied. Clamping keeps every sheet
+       inside this box, so the box never grows and the number stays good: a
+       transform does not reflow, but it does extend the scrollable overflow, and
+       an unclamped drag would add scrollbars to the page. */
+    function measure() {
+      docW = document.documentElement.scrollWidth;
+      docH = document.documentElement.scrollHeight;
+    }
+
+    /* the independent `translate` property, so the fan rotation in `transform` is
+       never touched — see the note above `.sheet` in the stylesheet */
+    function set(el, i, x, y) {
+      offs[i].x = x; offs[i].y = y;
+      el.style.translate = x || y ? x + "px " + y + "px" : "";
+    }
+
+    /* the sheet's page-space box with its own offset taken back out */
+    function homeBox(el, i) {
+      var r = el.getBoundingClientRect();
+      return {
+        left: r.left + window.pageXOffset - offs[i].x,
+        top: r.top + window.pageYOffset - offs[i].y,
+        w: r.width, h: r.height
+      };
+    }
+
+    function clampTo(box, x, y) {
+      x = Math.max(EDGE - box.left, Math.min(x, docW - EDGE - box.left - box.w));
+      y = Math.max(EDGE - box.top, Math.min(y, docH - EDGE - box.top - box.h));
+      return [x, y];
+    }
+
+    function save() {
+      try { window.sessionStorage.setItem(KEY, JSON.stringify(offs)); } catch (err) {}
+    }
+
+    var tidy = document.createElement("button");
+    tidy.type = "button";
+    tidy.className = "desk-tidy";
+    tidy.textContent = "tidy the desk";
+    tidy.hidden = true;
+    note.appendChild(tidy);
+
+    /* no dead control: the reset only exists once something has actually moved */
+    function reflect() {
+      tidy.hidden = !offs.some(function (o) { return o.x || o.y; });
+    }
+
+    tidy.addEventListener("click", function () {
+      sheets.forEach(function (el, i) {
+        window.setTimeout(function () { set(el, i, 0, 0); }, reduced ? 0 : i * 60);
+      });
+      try { window.sessionStorage.removeItem(KEY); } catch (err) {}
+      tidy.hidden = true;
+    });
+
+    sheets.forEach(function (el, i) {
+      /* stop the browser's own link-dragging without preventDefault on pointerdown,
+         which would also cost the sheet its focus */
+      el.draggable = false;
+
+      /* A drag ends in a click on the link, and that one click has to be dropped.
+         Doing it by attaching a one-shot listener and removing it on a timer was
+         racy in both directions: the timer could fire before the click (and the
+         drag would navigate) or after the next real click (and a genuine click
+         would be eaten). A flag set on release, cleared by the click it is meant
+         for, and cleared again by the next press, cannot land either way. */
+      var justDragged = false;
+
+      el.addEventListener("click", function (ev) {
+        if (!justDragged) return;
+        justDragged = false;
+        ev.preventDefault();
+        ev.stopPropagation();
+      }, true);
+
+      el.addEventListener("pointerdown", function (e) {
+        if (e.button !== 0) return;
+        justDragged = false;
+        var sx = e.clientX, sy = e.clientY;
+        var bx = offs[i].x, by = offs[i].y;
+        var box = null, moved = false;
+
+        /* Captured on the press, not once the deadband is crossed. Waiting meant a
+           fast first movement could leave the sheet before capture was taken, and
+           since the listeners live on the element, the drag then never started at
+           all. Capture does not suppress the click, so the link is unaffected. */
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+
+        function move(ev) {
+          var dx = ev.clientX - sx, dy = ev.clientY - sy;
+          /* Under the deadband nothing happens at all, so a click with a two-pixel
+             twitch in it still follows the link like any other link. */
+          if (!moved) {
+            if (Math.hypot(dx, dy) < DEAD) return;
+            moved = true;
+            box = homeBox(el, i);
+            el.classList.add("is-held");
+          }
+          var p = clampTo(box, bx + dx, by + dy);
+          set(el, i, p[0], p[1]);
+        }
+
+        function up() {
+          el.removeEventListener("pointermove", move);
+          el.removeEventListener("pointerup", up);
+          el.removeEventListener("pointercancel", up);
+          if (!moved) return;
+          el.classList.remove("is-held");
+          justDragged = true;
+          save();
+          reflect();
+        }
+
+        el.addEventListener("pointermove", move);
+        el.addEventListener("pointerup", up);
+        el.addEventListener("pointercancel", up);
+      });
+    });
+
+    /* A narrower window can leave a sheet parked off the page with no way back,
+       so every stored position is re-clamped whenever the box changes.
+
+       The bail is the same one the figures use, for the same reason: a page that
+       boots in a background tab measures zero, and clamping every sheet against a
+       zero-width document would pin the whole desk into the corner with no resize
+       event coming to undo it. Leave the offsets alone and try again when the page
+       is actually looked at. */
+    function reclamp() {
+      if (document.documentElement.clientWidth < 40) return;
+      measure();
+      sheets.forEach(function (el, i) {
+        var p = clampTo(homeBox(el, i), offs[i].x, offs[i].y);
+        set(el, i, p[0], p[1]);
+      });
+      reflect();
+    }
+
+    measure();
+    try {
+      var saved = JSON.parse(window.sessionStorage.getItem(KEY) || "null");
+      if (saved && saved.length === sheets.length) {
+        sheets.forEach(function (el, i) { set(el, i, saved[i].x || 0, saved[i].y || 0); });
+      }
+    } catch (err) {}
+    reflect();
+    reclamp();
+
+    window.addEventListener("resize", reclamp);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") reclamp();
+    });
+    stack.setAttribute("data-desk", "on");
+    note.setAttribute("data-on", "");
+  }
+
   /* --- a handle you copy --------------------------------------------------
      Discord has no link format, so the handle is the thing itself. The static
      markup is a <span> carrying it in plain text: nothing is hidden and there is
@@ -2495,6 +2676,7 @@
     initProgress();
     initPrint();
     initCopy();
+    initDesk();
     initBarHide();
     initKeys();
 

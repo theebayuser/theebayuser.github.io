@@ -247,9 +247,10 @@ Each appears on more than one page — that is what makes it a signature rather 
     film plates are 9:16 (`.plate-frame`), the projects showcase reel is 4:5 (`.reel`), both
     over `--film`.
 20. **The showcase** (`.showcase`, projects) — a portrait reel with its numbers read down
-    the side of it: the 4:5 video on one flank, a single ruled column of `.stat` rows
-    (`.stats-col`) on the other, both standing vertically so a phone-shaped video and its
-    stats share one line. Wraps to stacked on mobile.
+    the side of it: the 4:5 video on one flank and `Table 3` on the other, both standing
+    vertically so a phone-shaped video and its numbers share one line. Wraps to stacked on
+    mobile. The numbers were a 2×3 block of tiles until round 19; a six-row table stands the
+    same height beside the reel and reads as a table pinned next to a plate.
 21. **The texview** (`.texview`, projects) — a small Overleaf standing in for a project
     visual: a LaTeX **source** pane (real `\documentclass`/`\subsection*`/`\[…\]` in mono)
     beside the **typeset** result (STIX, pure HTML/CSS: italic `<i>` variables, `<sup>`/
@@ -269,6 +270,12 @@ Each appears on more than one page — that is what makes it a signature rather 
     figure; the captions still have to be true. Do it highest-number-first
     (`for n in 18 17 … 2; do perl -pi -e "s/fig\. $n\b/fig. $((n+1))/g" *.html; done`) or the
     replacements collide.
+    **Tables run their own series** (round 19): `Table 1` on formalization, `Table 2` and
+    `Table 3` on projects, in the same nav order. A paper numbers its tables separately from
+    its figures, and keeping the runs apart means inserting a figure never renumbers a table.
+    The other half of the convention matters as much: **tables caption above, figures caption
+    below**. That asymmetry is what stops two ruled blocks on the same page reading as one
+    kind of thing.
 23. **All tailpieces draw in one ink** — `--ballpoint`, so the closing figures read as a set.
     The faint ones were darkened (walk α .22, roots α **.30** as of round 18); the dense ones
     keep their original density (attractor α .16) and only changed hue (Mandelbrot ink →
@@ -320,6 +327,38 @@ Each appears on more than one page — that is what makes it a signature rather 
     it. Transforms only, so nothing reflows; under 720px the fan becomes a squared pile and
     hover does nothing. It replaced a three-card list that duplicated the research page
     almost word for word: the homepage points, the section carries the substance.
+    **You can pick a sheet up** (`initDesk`, round 19) — the stack claimed to be a desk and
+    the only thing you could do to a sheet was click it. Now a sheet drags anywhere on the
+    page, stays where it is dropped, and survives a reload; a `.desk-note` line under the
+    stack carries the affordance and a `tidy the desk` button that deals all three back with
+    a 60ms stagger. The button is created in JS and only appears once something has actually
+    moved, so there is no dead control and no no-JS orphan.
+    Six things this needed, all of them the kind that look optional until they bite:
+    **Two properties, not one.** CSS owns `transform` (the fan rotation, the seat, the lift)
+    and JS owns the independent **`translate`** property. `translate` is applied before
+    `transform`, so a sheet moves and then turns about its own centre, and neither owner can
+    clobber the other. Writing a whole `transform` string from script would have destroyed
+    the fan on the first drag.
+    **The narrow and print resets need `!important`**, because JS writes `translate` inline
+    and an inline declaration otherwise wins. Without it a sheet dragged on a desktop would
+    still be displaced on paper and on a phone.
+    **Pointer-only**, `(hover: hover) and (pointer: fine)`, the same restriction the word art
+    and the film scrub use: dragging wants `touch-action: none`, which would take vertical
+    scrolling away over the stack. Touch keeps tap-to-open, and `cursor: grab` lives inside
+    `[data-desk="on"]` so no-JS readers never see an affordance that does not exist.
+    **A 6px deadband** decides drag from click (the same one `initBarHide` uses), and the
+    click a drag ends in is dropped by a flag — set on release, cleared by the click it is
+    meant for, cleared again by the next press. A one-shot listener removed on a timer was
+    tried first and is racy in both directions: the timer can fire before the click, and the
+    drag navigates, or after the next real click, and a genuine click is eaten.
+    **Capture on the press, not on the deadband.** Waiting until the threshold was crossed
+    meant a fast first movement could leave the sheet before capture was taken, and since the
+    listeners are on the element the drag then never started at all.
+    **Clamped to the document, and the clamp bails when the page measures zero** — the same
+    guard the figures use, for the same reason. A transform does not reflow but it does
+    extend the scrollable overflow, so an unclamped drag grows the page; and a tab that boots
+    in the background measures zero, which would pin the whole desk into a corner with no
+    resize event coming to undo it.
 30. **The pager** (`.pager`) — numbered sections should be walkable in order, so every
     section page ends on a two-ended hairline row: the section behind and the one ahead, in
     the nav's mono, number first. Projects wraps back to the contents rather than dead-ending.
@@ -441,12 +480,29 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 - `.btn` — 40px min height/width · 0 14px pad · 1px `--rule-strong` border ·
   `:active scale(0.97)`
 - `.env` (theorem card) — 24px vertical pad · hairline top · body capped at 68ch · 16px body
-- `.stat` — 30px/600 value with tabular numerals · 11.5px uppercase mono key ·
-  grid gapped by 1px over a `--rule` background, so the dividers *are* the gap
+- `.tabf` (the only way numbers are displayed) — a real `<table>` with `<caption>`,
+  `<thead>` and `<th scope="row">`, so it announces properly instead of being a pile of
+  divs. **Three rule weights that mean different things**: `--rule-strong` top and bottom,
+  `--rule` under the column heads, and **nothing between body rows** — a border on every row
+  is what makes a table read as a spreadsheet. Column heads 11.5px uppercase mono `--ink-3`,
+  left-aligned to their columns (a `th` centres by default). Quantity in the body face at
+  `--ink-2`/400; figure right-aligned, 19px/600 `--ink`, tabular numerals; `td.word` for a
+  row whose right cell is a name rather than a count. Rows pad `10px 0`. `.tabnote` beneath
+  for the "counted from…" line. `.showcase .tabf` takes the reel's flex slot at `1 1 260px`,
+  `align-self: flex-start`.
+  **It replaced `.stats`, `.stats-grid2` and `.stats-col`, which are deleted.** Those were a
+  grid of equal boxes with hairline gutters, each holding a 30px/600 figure over an uppercase
+  tracked mono label: the canonical dashboard KPI tile, and the one component here that could
+  have been lifted onto any SaaS page unnoticed. `.stats-col` had no page using it at all.
+  The figure lost 11px in the move and still leads, on weight and alignment — dropping the
+  size is exactly what stops it reading as a tile. The tracked mono label now has one correct
+  home, the column head, instead of sitting under every number.
 - `.plate-frame` — 9:16 film reel, `object-fit: cover` over `--film`, no controls
 - `.reel` (showcase) — 4:5 portrait video, hairline border over `--film`
-- `.stats-col` — `.stat` rows stacked into one hairline-ruled column, beside a reel
-- `.stats-grid2` — six `.stat`s as a 2×3 block (1px hairline gaps over `--rule`), beside a reel
+- `.onair-n` (index) — one figure read as a line of prose: 26px/600 `<b>` inside 17px
+  `--ink-2` body. It used to be `.stat`'s 30px/600 over an uppercase mono label, so it
+  carried the tile's tell without the box. `.reach` on animations is deliberately untouched:
+  a single display figure between two rules is the epigraph treatment, not a tile
 - `.texview` — a small Overleaf: `.texview-code` (LaTeX source) + `.texview-out` (STIX
   render), `.tv-run` recompile button, `.bigsum` for summation limits
 - `.wordart` — a ternary word set as a solid block, three letters at three ink shades
