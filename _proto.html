@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stat prototypes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/paper.css">
+<style>
+  .proto { max-width: 1180px; margin: 0 auto; padding: 0 var(--s4) var(--s6);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--s6); align-items: start; }
+  .proto > .full { grid-column: 1 / -1; }
+  .proto-head { border-top: 1px solid var(--rule-strong); padding-top: 10px; margin: var(--s4) 0 var(--s2); }
+  .proto-head .n { font: 500 var(--fs-label) var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ballpoint); }
+  .proto-head .d { font-size: 15px; color: var(--ink-3); margin-top: 2px; }
+  .kicker { font: 400 var(--fs-label) var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+
+  /* ---------- A · narrow ledger, no column heads ---------- */
+  .sA { max-width: 400px; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); }
+  .sA div { display: flex; align-items: baseline; gap: var(--s2); padding: 9px 0; }
+  .sA div + div { border-top: 1px solid var(--rule-soft); }
+  .sA .k { color: var(--ink-2); }
+  .sA .v { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+
+  /* ---------- B · dot leaders ---------- */
+  .sB { max-width: 440px; list-style: none; margin: 0; padding: 0; }
+  .sB li { display: flex; align-items: baseline; padding: 7px 0; }
+  .sB .k { color: var(--ink-2); }
+  .sB .dots { flex: 1; margin: 0 8px; border-bottom: 1px dotted var(--rule-strong); transform: translateY(-4px); }
+  .sB .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ---------- C · figures set into prose ---------- */
+  .sC { max-width: 62ch; font-size: 19px; line-height: 1.75; color: var(--ink-2); }
+  .sC b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+
+  /* ---------- D · figure first, in a mono rail ---------- */
+  .sD { max-width: 460px; }
+  .sD div { display: grid; grid-template-columns: 5.5ch 1fr; gap: var(--s2); align-items: baseline; padding: 8px 0; }
+  .sD div + div { border-top: 1px solid var(--rule-soft); }
+  .sD .v { font: 500 15px var(--mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink); }
+  .sD .k { color: var(--ink-2); }
+
+  /* ---------- E · rule-per-figure, display size ---------- */
+  .sE { display: flex; flex-wrap: wrap; gap: 0 var(--s6); border-top: 1px solid var(--rule-strong); padding-top: var(--s2); }
+  .sE div { padding: 4px 0 var(--s2); }
+  .sE .v { font-size: 33px; font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .sE .k { font-size: 15px; color: var(--ink-3); margin-top: 6px; }
+
+  /* ---------- F · marginal, hung in the gutter ---------- */
+  .sF { max-width: 640px; }
+  .sF div { display: grid; grid-template-columns: 92px 1fr; gap: var(--s3); align-items: first baseline; padding: 10px 0; }
+  .sF div + div { border-top: 1px solid var(--rule-soft); }
+  .sF .v { text-align: right; font-size: 21px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .sF .k { color: var(--ink-2); padding-top: 3px; }
+</style>
+</head>
+<body>
+<div class="proto">
+
+  <div class="block full"><div class="proto-head"><span class="n">Current · booktabs table</span>
+    <p class="d">What is shipping. Two columns at the full 876px measure, so the label and its
+    figure sit at opposite ends of a very wide, very empty row.</p></div>
+  <table class="tabf">
+    <caption>Table 1 &#183; the library, counted</caption>
+    <thead><tr><th scope="col">quantity</th><th scope="col">count</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">lines of Lean</th><td>7,665</td></tr>
+      <tr><th scope="row">theorems and lemmas</th><td>394</td></tr>
+      <tr><th scope="row">classical results, closed</th><td>2</td></tr>
+      <tr><th scope="row">built on</th><td class="word">Lean 4 + Mathlib</td></tr>
+    </tbody>
+  </table>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+  <div class="block"><div class="proto-head"><span class="n">A · narrow ledger</span>
+    <p class="d">Same table, capped at 400px so the figure never drifts away from its label.
+    No column heads: with two columns they only repeat the caption.</p></div>
+  <p class="kicker">The library, counted</p>
+  <div class="sA">
+    <div><span class="k">lines of Lean</span><span class="v">7,665</span></div>
+    <div><span class="k">theorems and lemmas</span><span class="v">394</span></div>
+    <div><span class="k">classical results, closed</span><span class="v">2</span></div>
+    <div><span class="k">built on</span><span class="v">Lean 4 + Mathlib</span></div>
+  </div>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+  <div class="block"><div class="proto-head"><span class="n">B · dot leaders</span>
+    <p class="d">The contents list already on the homepage, carrying numbers instead of
+    sections. The leader is what closes a gap this wide in print.</p></div>
+  <p class="kicker">The library, counted</p>
+  <ul class="sB">
+    <li><span class="k">lines of Lean</span><span class="dots"></span><span class="v">7,665</span></li>
+    <li><span class="k">theorems and lemmas</span><span class="dots"></span><span class="v">394</span></li>
+    <li><span class="k">classical results, closed</span><span class="dots"></span><span class="v">2</span></li>
+    <li><span class="k">built on</span><span class="dots"></span><span class="v">Lean 4 + Mathlib</span></li>
+  </ul>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+  <div class="block"><div class="proto-head"><span class="n">C · set into prose</span>
+    <p class="d">No block at all. The figures are heavier and tabular inside a real sentence,
+    the way a paper states its own measurements.</p></div>
+  <p class="sC">The library runs to <b>7,665</b> lines of Lean carrying <b>394</b> theorems and
+  lemmas, <b>two</b> of them classical results closed end to end, on Lean&nbsp;4 and Mathlib.</p>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+  <div class="block"><div class="proto-head"><span class="n">D · figure first, in a mono rail</span>
+    <p class="d">The number leads and the columns are locked by a mono rail, so the eye reads
+    down a single edge instead of across a gap.</p></div>
+  <p class="kicker">The library, counted</p>
+  <div class="sD">
+    <div><span class="v">7,665</span><span class="k">lines of Lean</span></div>
+    <div><span class="v">394</span><span class="k">theorems and lemmas</span></div>
+    <div><span class="v">2</span><span class="k">classical results, closed</span></div>
+    <div><span class="v">&#183;</span><span class="k">built on Lean 4 and Mathlib</span></div>
+  </div>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+  <div class="block"><div class="proto-head"><span class="n">E · display figures on one rule</span>
+    <p class="d">Back to a row, but with one rule instead of a grid of boxes and no uppercase
+    labels. The figures are the size they were before the table.</p></div>
+  <p class="kicker">The library, counted</p>
+  <div class="sE">
+    <div><p class="v">7,665</p><p class="k">lines of Lean</p></div>
+    <div><p class="v">394</p><p class="k">theorems and lemmas</p></div>
+    <div><p class="v">2</p><p class="k">classical results, closed</p></div>
+    <div><p class="v">Lean 4</p><p class="k">and Mathlib</p></div>
+  </div>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+  <div class="block"><div class="proto-head"><span class="n">F · hung in the gutter</span>
+    <p class="d">Figures right-aligned in a narrow rail with the description running beside
+    them, the way a paper hangs equation numbers.</p></div>
+  <p class="kicker">The library, counted</p>
+  <div class="sF">
+    <div><span class="v">7,665</span><span class="k">lines of Lean across the whole library</span></div>
+    <div><span class="v">394</span><span class="k">theorems and lemmas, every one type-checked</span></div>
+    <div><span class="v">2</span><span class="k">classical results closed end to end</span></div>
+    <div><span class="v">&#8212;</span><span class="k">built on Lean 4 and Mathlib</span></div>
+  </div>
+  <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+  </div>
+</div>
+</body>
+</html>

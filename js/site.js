@@ -761,26 +761,21 @@
     };
   }
 
-  /* How far the numeral stands off the prime it labels, and how much bare paper is
-     cleared around the circled prime itself. The chip's own clearing is a rectangle
-     taken from the chip, not a disc: clearing a disc at the prime while the chip sat
-     34px away punched a visible hole beside every label and left the label itself on
-     undisturbed stipple, which is exactly backwards. */
-  var ULAM_LEAD = 34;
-  var ULAM_CLEAR = 11;
+  /* Bare paper cleared around each numeral, taken from the chip's own measured
+     rectangle so the label never sits on stipple.
+
+     Round 19 removed the pen ring and the leader that used to connect an offset
+     numeral to its prime. The box is the mark: a ring plus a line plus a box is
+     three annotations doing one job, and at figure size they read as clutter. The
+     numeral now sits directly on the prime it names, which is also what the caption
+     has always claimed. */
   var ULAM_PAD = 6;
-  /* The gap is measured from the chip's edge, not its centre, so the leader is the
-     same length whichever way it points. Offsetting by a fixed radius instead left
-     the sideways numerals almost touching their prime (the chip is 30px wide and
-     24px tall) while the ones above and below had a clear stub of line. */
-  var ULAM_GAP = 13;
 
   /* Stipple the primes in spiral order, out to `progress` of the way round.
-     The field is the quiet layer here and the six anchored primes are the loud
-     one, which is the opposite of how this figure first shipped: at alpha 0.78 the
-     ornament was darker than the navigation drawn on top of it. Anchors also punch
-     a clearing in the stipple and carry a leader out to their numeral, so a label
-     never sits on top of its own subject. */
+     The field is the quiet layer here and the six numerals are the loud one, which
+     is the opposite of how this figure first shipped: at alpha 0.78 the ornament was
+     darker than the navigation drawn on top of it. Each numeral clears its own
+     rectangle out of the stipple and nothing else is drawn for it. */
   function ulamDraw(ctx, walk, progress, anchors) {
     var upTo = Math.floor(walk.primes.length * (progress === undefined ? 1 : progress));
     var pal = palette();
@@ -794,11 +789,8 @@
       var clear = false;
       for (k = 0; k < marks.length; k++) {
         var mk = marks[k];
-        if (mk.prime !== pr &&
-            Math.hypot(mk.prime.x - pr.x, mk.prime.y - pr.y) < ULAM_CLEAR) {
-          clear = true; break;
-        }
-        if (Math.abs(pr.x - mk.cx) < mk.hw + ULAM_PAD &&
+        if (mk.cx !== undefined &&
+            Math.abs(pr.x - mk.cx) < mk.hw + ULAM_PAD &&
             Math.abs(pr.y - mk.cy) < mk.hh + ULAM_PAD) {
           clear = true; break;
         }
@@ -809,36 +801,6 @@
       ctx.fill();
     }
     ctx.globalAlpha = 1;
-
-    /* Each anchor appears exactly when the walk reaches it, so the marks arrive
-       with the ink rather than sitting on an empty frame. */
-    for (k = 0; k < marks.length; k++) {
-      var a = marks[k];
-      if (walk.primes.indexOf(a.prime) >= upTo) continue;
-      var px = a.prime.x, py = a.prime.y;
-      var ring = walk.dot + 3.5;
-
-      /* the prime stays ink and gets circled in pen, the way you would mark one on
-         a printed table. A filled ballpoint blob was tried first and read as a UI
-         pin dropped on the drawing rather than a mark made on it. */
-      var out = (a.dist === undefined ? ULAM_LEAD : a.dist - a.half) - 1;
-      ctx.strokeStyle = pal.ballpoint;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(px + Math.cos(a.off) * (ring + 2), py + Math.sin(a.off) * (ring + 2));
-      ctx.lineTo(px + Math.cos(a.off) * out, py + Math.sin(a.off) * out);
-      ctx.stroke();
-
-      ctx.fillStyle = pal.ink;
-      ctx.globalAlpha = 1;
-      ctx.beginPath();
-      ctx.arc(px, py, walk.dot, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(px, py, ring, 0, Math.PI * 2);
-      ctx.stroke();
-    }
   }
 
   function ulam(canvas, progress) {
@@ -866,27 +828,13 @@
        centre instead let a numeral's top edge come within 18px of the frame. */
     var NHW = 15, NHH = 13, MARGIN = 14;
     var apart = Math.max(52, Math.min(104, (side || 400) * 0.12));
-    var cx = w / 2, cy = h / 2;
 
-    /* The numeral stands off its prime rather than covering it. Straight out from
-       the middle is the first choice, so the leader reads as radial; near an edge
-       it swings around until the chip lands back on the paper. */
-    function offsetFor(pr) {
-      var base = (pr.gx || pr.gy) ? Math.atan2(pr.y - cy, pr.x - cx) : -Math.PI / 2;
-      for (var t = 0; t < 8; t++) {
-        var swing = t ? (t % 2 ? 1 : -1) * Math.ceil(t / 2) * (Math.PI / 4) : 0;
-        var ang = base + swing;
-        var dx = Math.cos(ang), dy = Math.sin(ang);
-        var half = Math.min(
-          Math.abs(dx) > 1e-6 ? NHW / Math.abs(dx) : Infinity,
-          Math.abs(dy) > 1e-6 ? NHH / Math.abs(dy) : Infinity
-        );
-        var d = half + ULAM_GAP;
-        var x = pr.x + dx * d, y = pr.y + dy * d;
-        if (x - NHW >= MARGIN && x + NHW <= w - MARGIN &&
-            y - NHH >= MARGIN && y + NHH <= h - MARGIN) return ang;
-      }
-      return null;
+    /* The numeral sits on its prime, so the only placement question left is whether
+       its box clears the frame. Testing the centre instead of the box let a numeral's
+       top edge come within 18px of the edge. */
+    function fits(pr) {
+      return pr.x - NHW >= MARGIN && pr.x + NHW <= w - MARGIN &&
+        pr.y - NHH >= MARGIN && pr.y + NHH <= h - MARGIN;
     }
 
     var picked = [];
@@ -910,11 +858,9 @@
           var clash = picked.some(function (q) {
             return Math.hypot(q.prime.x - pr.x, q.prime.y - pr.y) < room;
           });
-          if (clash) return;
-          var off = offsetFor(pr);
-          if (off === null) return;
+          if (clash || !fits(pr)) return;
           bestCost = cost;
-          chosen = { prime: pr, off: off };
+          chosen = { prime: pr };
         });
         /* eslint-enable no-loop-func */
       }
@@ -938,10 +884,11 @@
     var readout = document.querySelector("[data-spiral-readout]");
     var idle = readout ? readout.textContent : "";
 
-    /* The walk inks itself in over ~2.6s on first view and then rests. It does
-       not loop like the other plotted figures: this one is the contents, and
-       numerals that kept disappearing would be navigation that comes and goes. */
-    var DRAW_MS = 2600;
+    /* The walk inks itself in on first view and then rests. It does not loop like
+       the other plotted figures: this one is the contents, and numerals that kept
+       disappearing would be navigation that comes and goes. 2.6s was long enough
+       that the last numerals felt withheld; 1.5s still reads as drawing. */
+    var DRAW_MS = 1500;
     var ctx = null, walk = null, view = { w: 0, h: 0 };
     var anchors = [];               /* the six primes the numerals are filed on */
     var lands = [];                 /* chip i lands when the walk passes lands[i] */
@@ -959,21 +906,13 @@
         var a = anchors[i];
         if (!a) { chip.style.display = "none"; return; }
         chip.style.display = "";
-        /* Measured, so the clearing is the chip's real footprint and the standoff is
-           its real edge. A chip that has not laid out yet falls back to its CSS
-           minimum rather than collapsing onto the prime. */
+        /* Measured, so the clearing is the chip's real footprint rather than a
+           guess. A chip that has not laid out yet falls back to its CSS minimum. */
         a.hw = (chip.offsetWidth || 30) / 2;
         a.hh = (chip.offsetHeight || 24) / 2;
-        var dx = Math.cos(a.off), dy = Math.sin(a.off);
-        /* where the leader leaves the chip: the ray from its centre meets its box */
-        a.half = Math.min(
-          Math.abs(dx) > 1e-6 ? a.hw / Math.abs(dx) : Infinity,
-          Math.abs(dy) > 1e-6 ? a.hh / Math.abs(dy) : Infinity
-        );
-        a.dist = a.half + ULAM_GAP;
-        /* the numeral stands off the prime at the end of its leader, never on it */
-        a.cx = a.prime.x + dx * a.dist;
-        a.cy = a.prime.y + dy * a.dist;
+        /* the numeral sits on the prime it names */
+        a.cx = a.prime.x;
+        a.cy = a.prime.y;
         chip.style.left = a.cx + "px";
         chip.style.top = a.cy + "px";
         chip.title = "prime " + a.prime.n;
