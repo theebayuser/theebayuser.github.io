@@ -61,7 +61,11 @@
     return { ctx: ctx, w: rect.width, h: rect.height };
   }
 
-  function countUp(el, target, finalText) {
+  /* `pre`/`suf` are optional and default to nothing: a figure that ships with a
+     unit welded to it ($100k) has to count through that unit, or the run reads
+     as a bare number that only becomes money on the last frame. */
+  function countUp(el, target, finalText, pre, suf) {
+    pre = pre || ""; suf = suf || "";
     if (reduced || document.visibilityState === "hidden") { el.textContent = finalText; return; }
     var start = null, dur = 650;
     function tick(now) {
@@ -69,13 +73,13 @@
       var t = Math.min(1, (now - start) / dur);
       var eased = 1 - Math.pow(1 - t, 3);
       if (t < 1) {
-        el.textContent = Math.round(target * eased).toLocaleString();
+        el.textContent = pre + Math.round(target * eased).toLocaleString() + suf;
         window.requestAnimationFrame(tick);
       } else {
         el.textContent = finalText;
       }
     }
-    el.textContent = "0";
+    el.textContent = pre + "0" + suf;
     window.requestAnimationFrame(tick);
     window.setTimeout(function () { el.textContent = finalText; }, 1500);
   }
@@ -625,6 +629,145 @@
       ctx.arc(tip[0], tip[1], 3, 0, Math.PI * 2);
       ctx.fill();
     }
+  }
+
+  /* --- fig. 12: a cubic bezier, drawn as the envelope of its own
+     construction ---------------------------------------------------------
+     Four control points, one S with a real inflection (verified below: the
+     signed curvature B'(t) × B''(t) changes sign exactly once over t in
+     [0,1], and the tangent speed never drops near zero, so the weave fans
+     both ways and there is no cusp to draw around).
+
+     de Casteljau at parameter t collapses the four points in three rounds:
+     level 1 has three points (the lerps of consecutive control points),
+     level 2 has two (the lerps of those), level 3 is B(t) itself. The level-2
+     segment is the last line the algorithm draws before it lands on the
+     curve, and it is tangent to B(t) there — verified numerically before
+     this shipped: sampling t across [0,1], the level-2 segment direction and
+     B'(t) are parallel to within 1e-15 (floating-point exact), for this
+     control polygon and for a plain arch. So stroking that one segment at
+     many t values draws a family of tangent lines whose envelope is the
+     curve — the curve itself is never stroked, only implied by the weave. */
+
+  var BEZIER_P = [
+    [0.12, 0.78], [0.62, 0.05], [0.30, 0.95], [0.90, 0.30]
+  ];
+  var BEZIER_RAYS = 46;    /* tangent lines drawn per full pass */
+
+  function bezierLevels(t) {
+    var p0 = BEZIER_P;
+    var p1 = [lerp2(p0[0], p0[1], t), lerp2(p0[1], p0[2], t), lerp2(p0[2], p0[3], t)];
+    var p2 = [lerp2(p1[0], p1[1], t), lerp2(p1[1], p1[2], t)];
+    var p3 = lerp2(p2[0], p2[1], t);
+    return [p0, p1, p2, p3];
+  }
+  function lerp2(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; }
+
+  /* The control polygon is mapped to the canvas RECT, not to a square inscribed
+     in it. The old square left ~77px of dead paper down each side of a 424×318
+     figure, which is a quarter of the frame spent on nothing. A non-uniform
+     scale is still affine, and every claim this figure makes — that the level-2
+     segment is tangent, that the tangents envelope the curve — is affine-
+     invariant, so the drawing fills the frame and stays exactly as true. */
+  function bezierWeave(ctx, w, h, progress, pal) {
+    var padX = 26, padY = 22;
+    var sx = w - padX * 2, sy = h - padY * 2;
+    function at(pt) { return [padX + pt[0] * sx, padY + pt[1] * sy]; }
+
+    /* the control polygon, faint, always fully present as the frame the
+       weave is built from, with its four points ringed so the polygon reads as
+       a construction someone chose rather than a stray line in the figure */
+    ctx.strokeStyle = pal.guide;
+    ctx.lineWidth = 0.7;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    for (var k = 0; k < BEZIER_P.length; k++) {
+      var cp = at(BEZIER_P[k]);
+      if (k === 0) ctx.moveTo(cp[0], cp[1]); else ctx.lineTo(cp[0], cp[1]);
+    }
+    ctx.stroke();
+    for (k = 0; k < BEZIER_P.length; k++) {
+      var cr = at(BEZIER_P[k]);
+      ctx.beginPath();
+      ctx.arc(cr[0], cr[1], 2.4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    /* the envelope: the level-2 (tangent) segment at many t, accumulating
+       with progress so the weave inks in rather than appearing whole */
+    var upTo = Math.max(1, Math.floor(BEZIER_RAYS * progress));
+    ctx.strokeStyle = pal.ballpoint;
+    ctx.lineWidth = 0.7;
+    ctx.lineCap = "round";
+    ctx.globalAlpha = 0.55;
+    for (var i = 0; i <= upTo; i++) {
+      var t = i / BEZIER_RAYS;
+      var L = bezierLevels(t);
+      var q0 = at(L[2][0]), q1 = at(L[2][1]);
+      /* extend the tangent segment past its two endpoints so consecutive
+         rays overlap and the envelope reads as a curve, not a fan of
+         disjoint chords */
+      var dx = q1[0] - q0[0], dy = q1[1] - q0[1];
+      ctx.beginPath();
+      ctx.moveTo(q0[0] - dx * 0.35, q0[1] - dy * 0.35);
+      ctx.lineTo(q1[0] + dx * 0.35, q1[1] + dy * 0.35);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    /* The live construction at the leading t, all of it in laurel.
+
+       It used to be drawn in `--ink-3` and `--ink`, which put a mid grey and a
+       near-black over a blue weave: three hues, none of them saying anything,
+       and the grey scaffold the muddiest thing in the figure. The figure only
+       ever has two states to tell apart — ink already laid down, and the pen
+       laying it — so it gets two colours. Everything drawn is ballpoint;
+       everything live is laurel, ending on the laurel point that was already
+       the site's mark for the pen. Depth inside the live assembly comes from
+       alpha and weight, not from a third hue: the first-order lerps sit back at
+       0.4, the level-2 segment (the one actually tangent to the curve, the one
+       whose sweep IS the envelope) carries full laurel at 1.7px. */
+    var t = Math.min(1, progress);
+    var Lc = bezierLevels(t);
+    var a0 = at(Lc[1][0]), a1 = at(Lc[1][1]), a2 = at(Lc[1][2]);
+    ctx.strokeStyle = pal.laurel;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.moveTo(a0[0], a0[1]); ctx.lineTo(a1[0], a1[1]); ctx.lineTo(a2[0], a2[1]);
+    ctx.stroke();
+    /* the three first-order points, so the collapse from four points to three
+       to two to one is legible while it happens */
+    ctx.fillStyle = pal.laurel;
+    ctx.globalAlpha = 0.55;
+    var lerps = [a0, a1, a2];
+    for (var j = 0; j < 3; j++) {
+      ctx.beginPath();
+      ctx.arc(lerps[j][0], lerps[j][1], 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    var b0 = at(Lc[2][0]), b1 = at(Lc[2][1]);
+    ctx.strokeStyle = pal.laurel;
+    ctx.lineWidth = 1.7;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(b0[0], b0[1]); ctx.lineTo(b1[0], b1[1]);
+    ctx.stroke();
+
+    var pt = at(Lc[3]);
+    ctx.fillStyle = pal.laurel;
+    ctx.beginPath();
+    ctx.arc(pt[0], pt[1], 3.4, 0, Math.PI * 2);
+    ctx.fill();
+    /* a paper ring under the point, so it stays a point and not a bead melted
+       into whichever ray happens to pass under it */
+    ctx.strokeStyle = pal.paper;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(pt[0], pt[1], 4.4, 0, Math.PI * 2);
+    ctx.stroke();
   }
 
   /* --- the Thue–Morse turtle ---------------------------------------------
@@ -1847,7 +1990,9 @@
     Array.prototype.forEach.call(els, function (el) {
       var target = parseFloat(el.getAttribute("data-count"));
       var final = el.textContent;
-      onceInView(el, function () { countUp(el, target, final); }, 0.4);
+      var pre = el.getAttribute("data-prefix");
+      var suf = el.getAttribute("data-suffix");
+      onceInView(el, function () { countUp(el, target, final, pre, suf); }, 0.4);
     });
   }
 
@@ -1903,14 +2048,25 @@
 
       var total = 0;
       data.channels.forEach(function (ch) {
-        var cell = root.querySelector('[data-platform="' + ch.platform + '"] .lg-count');
         if (typeof ch.followers === "number" && ch.followers > 0) total += ch.followers;
-        if (!cell || typeof ch.followers !== "number") return;
+      });
+
+      data.channels.forEach(function (ch) {
+        var row = root.querySelector('[data-platform="' + ch.platform + '"]');
+        if (!row || typeof ch.followers !== "number") return;
         /* zero means "not written down yet", not "nobody follows this" */
         if (ch.followers <= 0) return;
-        var text = ch.followers.toLocaleString();
-        cell.setAttribute("data-empty", "false");
-        onceInView(cell, function () { countUp(cell, ch.followers, text); }, 0.4);
+        var cell = row.querySelector(".lg-count");
+        if (cell) {
+          var text = ch.followers.toLocaleString();
+          cell.setAttribute("data-empty", "false");
+          onceInView(cell, function () { countUp(cell, ch.followers, text); }, 0.4);
+        }
+        /* the share bar, re-derived rather than trusted: the widths in the HTML
+           are only the no-JS fallback, and a hand-edited percentage is exactly
+           the thing that goes stale a count later */
+        var bar = row.querySelector(".lg-bar i");
+        if (bar && total > 0) bar.style.width = (ch.followers / total * 100) + "%";
       });
 
       var sumCell = root.querySelector("[data-ledger-total]");
@@ -2563,11 +2719,14 @@
     var fig0 = document.getElementById("figure-pendulum");
     if (fig0) plotter(fig0, { draw: pendulum, seconds: 15, hold: 1.4 });
 
-    /* the same attractor stands on two pages: § 03 and the homepage */
-    Array.prototype.forEach.call(
-      document.querySelectorAll("#figure-lorenz, #figure-lorenz-home"),
-      function (el) { plotter(el, { draw: lorenz, seconds: 11, hold: 2.4 }); }
-    );
+    /* the homepage keeps the Lorenz; § 03's own copy was a reprint of it and
+       is now the bezier weave instead, so the two pages no longer open on
+       the same drawing */
+    var figHome = document.getElementById("figure-lorenz-home");
+    if (figHome) plotter(figHome, { draw: lorenz, seconds: 11, hold: 2.4 });
+
+    var figBezier = document.getElementById("figure-bezier");
+    if (figBezier) plotter(figBezier, { draw: bezierWeave, seconds: 3.2, hold: 2.6 });
 
     var fig2 = document.getElementById("figure-tmgrid");
     if (fig2) plotter(fig2, { draw: tmGrid, seconds: 3.2, hold: 2.6 });

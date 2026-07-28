@@ -116,6 +116,12 @@ h3 { font-size: var(--fs-h3); letter-spacing: -0.006em; }
 p { margin: 0 0 var(--s2); text-wrap: pretty; }
 p:last-child { margin-bottom: 0; }
 
+/* an inline literal — a Lean token quoted in running prose, `sorry` above all */
+code {
+  font-family: var(--mono); font-size: 0.9em; color: var(--ink-2);
+  background: var(--paper-inset); padding: 0.05em 0.35em;
+}
+
 a {
   color: var(--ballpoint);
   text-decoration: none;
@@ -430,6 +436,53 @@ a.env:hover .env-kind { color: var(--ballpoint); }
    paper puts it in the line underneath, where the ambient system is named */
 .vecf-where { color: var(--ink-2); margin: var(--s3) 0 0; }
 
+/* two blocks that are peers, not a sequence: what is finished beside what is
+   still open. `.pair` (below) is the general two-peer grid; this one is
+   narrower and asymmetric on purpose, because a vector wants less width than
+   a three-row ledger with a source note on every line. */
+.numrow {
+  display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 0 var(--s6); align-items: start;
+}
+@media (max-width: 760px) {
+  .numrow { grid-template-columns: 1fr; gap: var(--s5) 0; }
+}
+
+/* --- the turnstile ledger ---------------------------------------------------
+   What the vector does not show: the goals still open, in Lean's own marks.
+   ⊢ (a goal still to prove) stays ink; ∎ (one closed) goes `--qed`, the
+   site's one semantic for machine-checked. This is the disclosure the
+   library's own rule requires: a "machine-verified" claim is incomplete
+   without the axioms it rests on, so the trusted-evaluation count ships
+   beside the open and closed ones rather than being left off as a hedge. */
+.goals { margin-top: var(--s2); }
+.goals table { width: 100%; border-collapse: collapse; }
+.goals tr + tr td, .goals tr + tr th { border-top: 1px solid var(--rule-soft); }
+/* matches the goal panel's own convention exactly: ⊢ in --ballpoint (`.goal-body
+   .turn`), ∎ in --qed (`.goal-ok`), both mono, so the ledger reads as the same
+   proof vocabulary rather than a new one */
+.goals td.gl-mark {
+  width: 1.4em; padding: 11px 0; font: 400 15px var(--mono); color: var(--ballpoint);
+  text-align: left; vertical-align: baseline;
+}
+.goals td.gl-mark.gl-qed { color: var(--qed); }
+.goals td.v {
+  text-align: right; padding: 11px var(--s2) 11px 0; font-size: 21px;
+  font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em; vertical-align: baseline; white-space: nowrap;
+}
+.goals th {
+  text-align: left; font-weight: 400; color: var(--ink-2); padding: 11px 0;
+  vertical-align: baseline;
+}
+.goals th code {
+  font-family: var(--mono); font-size: 0.92em; background: none; padding: 0;
+}
+.goals .gl-where {
+  display: block; font-family: var(--mono); font-size: var(--fs-meta);
+  color: var(--ink-4); margin-top: 2px;
+}
+
 /* --- the align environment -------------------------------------------------
    Rows locked on the relation, the way `align` locks on the `=`. The point here
    is the relation column itself: these three counts are lower bounds, and `≥ 25`
@@ -447,58 +500,185 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   font-variant-numeric: tabular-nums; letter-spacing: -0.02em; padding: 9px 0;
 }
 
+/* --- the align environment, in a row ---------------------------------------
+   Four bounds side by side on one line rather than stacked, for a set short
+   enough to read across rather than down. `≥` and the figure share one cell
+   (`.rn`) so the relation can never break away from its figure at a wrap.
+   `<th scope="row">` still points at the row's one data cell regardless of
+   where it sits in the DOM, so it comes last without breaking the row-header
+   association a screen reader relies on.
+
+   Each stat is ONE line — figure and label on a shared baseline, 8px apart —
+   because the two-line form (figure over label) let a two-word label wrap and
+   opened a ragged gutter under every figure. One line makes each stat a phrase
+   you read, and four phrases fit the 876px measure with room to spare.
+
+   No vertical hairlines. The columns are content-width with the slack spread
+   between them by `space-between` (~68px at full measure), which is eight times
+   the 8px inside a stat, so the grouping is unambiguous without a rule drawn to
+   say so. This is also what keeps it one step from the KPI tile grid the site
+   deleted twice already (`.stats`, `.stats-grid2`): no box, no fill, no
+   uppercase tracked mono label, only the `≥` — the actual mathematical content
+   a tile never carried. */
+/* the base `.eqf` caps its table at 460px, which is right for a stacked column
+   of relations and wrong for a line of them: the row form spends the whole
+   measure, and that width is the only thing holding the four stats apart. */
+.eqf-row table { display: block; max-width: none; width: 100%; }
+.eqf-row tbody {
+  display: flex; flex-wrap: wrap; justify-content: space-between;
+  column-gap: var(--s5); row-gap: var(--s2);
+}
+.eqf-row tr {
+  display: flex; flex-direction: row; align-items: baseline; gap: 8px;
+  white-space: nowrap;
+}
+.eqf-row .rn { display: flex; align-items: baseline; gap: 4px; }
+.eqf-row .rel { color: var(--ink-3); font-size: 14px; }
+.eqf-row .v {
+  font-size: 22px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+}
+.eqf-row th { text-align: left; font-weight: 400; color: var(--ink-2); font-size: 15px; }
+/* stacked, with the hairline back, once four phrases across stop fitting */
+@media (max-width: 620px) {
+  .eqf-row tbody { flex-direction: column; row-gap: 0; }
+  .eqf-row tr {
+    justify-content: flex-start;
+    border-bottom: 1px solid var(--rule-soft); padding-bottom: 8px; margin-top: 8px;
+  }
+  .eqf-row tr:first-child { margin-top: 0; }
+  .eqf-row tr:last-child { border-bottom: 0; padding-bottom: 0; }
+}
+
 /* --- the logarithmic rail --------------------------------------------------
    Six counts spanning four decades cannot be compared in a column: 20 and
    200,000 in the same list are two strings of digits. On a log rail they are a
    distance. This is a figure, not a table, so it captions below and takes a
    number in the global `fig.` sequence.
 
-   Positions are `bottom` percentages measured from log10, computed once and
-   written into the HTML. No canvas: a hairline and a few absolutely positioned
-   marks read the custom properties directly, so the night board repaints them
-   with no `palette()` call and no `onRepaint` registration at all. */
-.railf { position: relative; height: 440px; margin: var(--s2) 0 0 46px; }
-.railf-plot { position: absolute; left: 0; right: 0; top: 14px; bottom: 14px; }
+   The rail runs HORIZONTAL where there is width for it (round 23), which is the
+   axis a paper would actually print and the only orientation that fills the
+   column beside a 4:5 reel instead of towering over it. Below 760px, where the
+   showcase has already wrapped the reel and its column apart, it stands back up
+   vertical — the form that survives a phone.
+
+   One measured number per mark, `--p`, serves both: `left` when horizontal,
+   `bottom` when vertical. Nothing is measured twice, so the two orientations
+   cannot drift apart. No canvas either: a hairline and a few absolutely
+   positioned marks read the custom properties directly, so the night board
+   repaints them with no `palette()` call and no `onRepaint` registration.
+
+   Six labels on one axis need tiers, because 25,000 and 42,000 are 5.6% apart
+   (~30px here) and no two labels fit in 30px. `.t1`/`.t2`/`.t3` set the leader
+   length, `.a-l`/`.a-r` push a label off its own tick instead of centring it,
+   and both are hand-set in the HTML against the measured positions: a leader
+   must rise through clear air, so no label may sit over a taller mark's tick. */
+.railf { position: relative; height: 182px; margin: var(--s3) 0 0; }
+.railf-plot { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
 .railf-axis {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  position: absolute; left: 0; right: 0; bottom: 30px; height: 1px;
   background: var(--rule-strong);
 }
-.railf-dec { position: absolute; left: -5px; width: 11px; height: 1px; background: var(--rule); }
+.railf-dec {
+  position: absolute; left: var(--p); bottom: 25px; width: 1px; height: 11px;
+  background: var(--rule);
+}
 .railf-dec i {
-  position: absolute; right: 16px; top: -9px; font-style: normal;
-  font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-4);
+  position: absolute; top: 13px; left: 50%; transform: translateX(-50%);
+  font-style: normal; font-family: var(--mono); font-size: var(--fs-label);
+  color: var(--ink-4);
 }
 .railf ul { list-style: none; margin: 0; padding: 0; }
+/* A mark and a leader, and they must not look like the same thing. The stem is
+   `--rule`, faint, and only carries the label up to its tier; the ballpoint is
+   spent on the 9px sitting ON the axis, which is where the datum actually is.
+   Drawn in one colour the stems read as bars, and three hand-set tier heights
+   would then look like a second variable nobody measured. */
 .railf li {
-  position: absolute; left: 0; width: 14px; height: 1px;
+  position: absolute; left: var(--p); bottom: 30px; width: 1px;
+  background: var(--rule);
+}
+.railf li::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 1px; height: 9px;
   background: var(--ballpoint);
 }
-/* line-height 1.2, not the inherited 1.65: 25,000 and 42,000 sit 5.63% apart,
-   which is 23px on this rail, and a body-height line box overlaps its neighbour
-   by ~5px. The two closest labels are what set the rail's height. */
+.railf li.t1 { height: 22px; }
+.railf li.t2 { height: 62px; }
+.railf li.t3 { height: 102px; }
+/* line-height 1.25, not the inherited 1.65: the figure and its unit are one
+   label, and a body-height line box opens a gap that reads as two. */
 /* `li > span`, not `li span`: the label wrapper holds a nested `.rel` span for a
    bound, and the descendant selector absolutely positioned that one too, dropping
    the `≥` on top of its own figure where it vanished. */
 .railf li > span {
-  position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
-  white-space: nowrap; line-height: 1.2;
+  position: absolute; left: 0; bottom: 100%; margin-bottom: 6px;
+  transform: translateX(-50%); text-align: center;
+  white-space: nowrap; line-height: 1.25;
 }
+.railf li.a-l > span { transform: none; text-align: left; }
+.railf li.a-r > span { transform: translateX(-100%); text-align: right; }
 /* a count that is really a lower bound says so, the same way `.eqf` does */
 .railf .rel { font-size: 13px; color: var(--ink-3); margin-right: 3px; }
 .railf b {
   font-size: 15px; font-weight: 600; color: var(--ink);
   font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
 }
-.railf i { font-style: normal; font-size: 12.5px; color: var(--ink-3); margin-left: 8px; }
+.railf i {
+  display: block; font-style: normal; font-size: 12.5px;
+  color: var(--ink-3); margin-top: 1px;
+}
 
-/* a showcase: a portrait reel with its numbers read down the side of it, both
-   standing vertically so a phone-shaped video and its stats share one line */
-.showcase { display: flex; gap: var(--s4); align-items: stretch; flex-wrap: wrap; }
-/* `align-self: flex-start` holds the 4:5. The container is `align-items: stretch`,
-   and the rail beside it is the taller item, so without this the reel is stretched
-   to the rail's height and the portrait frame silently becomes 300×440. */
+/* Stood back up. 760px is where the measure drops under ~690px and the showcase
+   wraps its own two columns apart, so the rail turns at the same width the space
+   beside it disappears. Every tier collapses to one 14px tick: with the full
+   height of a column to spend, no label needs to be pushed off its own mark. */
+@media (max-width: 760px) {
+  .railf { height: 440px; margin: var(--s2) 0 0 46px; }
+  .railf-plot { top: 14px; bottom: 14px; }
+  .railf-axis {
+    left: 0; right: auto; top: 0; bottom: 0; width: 1px; height: auto;
+  }
+  .railf-dec { left: -5px; bottom: var(--p); width: 11px; height: 1px; }
+  .railf-dec i { top: -9px; left: auto; right: 16px; transform: none; }
+  /* a 14px tick with nothing to lead to is all datum, so it is all ballpoint */
+  .railf li { left: 0; bottom: var(--p); width: 14px; background: var(--ballpoint); }
+  .railf li.t1, .railf li.t2, .railf li.t3 { height: 1px; }
+  .railf li::after { display: none; }
+  .railf li > span,
+  .railf li.a-l > span,
+  .railf li.a-r > span {
+    left: 22px; bottom: auto; top: 50%; margin-bottom: 0;
+    transform: translateY(-50%); text-align: left;
+  }
+  .railf i { display: inline; margin-top: 0; margin-left: 8px; }
+}
+
+/* a showcase: a portrait reel, the sentence describing the thing it shows, and
+   the counts measuring it — one block, three parts, and no hole in it.
+
+   Round 23 collapsed three columns into two. The third (`.implied`, the
+   quotients the counts imply) was cut, and the rail that stood beside the reel
+   was laid down horizontal. A horizontal rail is ~180px tall against a ~375px
+   reel, which is a 200px void unless something stands above it, so the section's
+   own `env-body` came down off the top of the section and into the column: reel
+   left, sentence over numbers on the right, both flanks ending level.
+
+   Grid rather than flex, because the three parts have to REORDER, not just wrap.
+   Below 760px the rail stands back up vertical and wants a reel beside it, not
+   a paragraph — so the paragraph goes back over the top of both, which is a
+   change of areas flex cannot express. One template per band, no `order`
+   juggling and no second copy of the prose in the DOM. */
+.showcase {
+  display: grid; align-content: start;
+  grid-template-columns: clamp(220px, 34%, 300px) 1fr;
+  grid-template-areas: "reel copy" "reel nums";
+  gap: var(--s3) var(--s4);
+}
+/* `align-self: start` holds the 4:5. The reel spans both rows, and a grid item
+   stretches to its span by default, which silently makes the portrait frame
+   whatever shape the two rows add up to. */
 .showcase .reel {
-  flex: 0 0 clamp(240px, 34%, 300px); align-self: flex-start;
+  grid-area: reel; align-self: start;
   aspect-ratio: 4 / 5; background: var(--film);
   border: 1px solid var(--rule); overflow: hidden;
 }
@@ -506,13 +686,31 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   width: 100%; height: 100%; display: block;
   object-fit: cover; background: var(--film); cursor: pointer;
 }
-/* The numbers beside the reel are the log rail. Six counts in a 260px column is
-   what killed every other treatment: a table of six rows at that width puts the
-   figures so far from their labels the row stops reading, and the rail turned
-   on its side is the one shape that wants to be tall and narrow. `flex-start`,
-   because the rail sets its own height and must not be stretched to the reel's. */
-.showcase .railf { flex: 0 1 340px; align-self: flex-start; margin-top: 0; }
-.showcase .railf + .figcap { flex-basis: 100%; }
+.showcase > .env-body { grid-area: copy; margin-top: 0; }
+/* `min-width: 0` so the rail's `white-space: nowrap` labels cannot push the
+   column past its 1fr share and drag the reel narrower */
+.showcase-nums { grid-area: nums; min-width: 0; }
+.showcase-nums .railf { margin-top: 0; }
+.showcase-nums .figcap { margin-top: var(--s2); }
+
+/* The rail turns vertical at 760px (see `.railf`), so the areas turn with it:
+   the paragraph back over the full width, reel and rail side by side under it,
+   which is the arrangement a tall rail has always wanted. */
+@media (max-width: 760px) {
+  .showcase {
+    grid-template-columns: clamp(200px, 38%, 280px) 1fr;
+    grid-template-areas: "copy copy" "reel nums";
+  }
+}
+/* one column, and the reel capped: a 4:5 frame given a full narrow measure is
+   taller than the viewport before the numbers even start */
+@media (max-width: 520px) {
+  .showcase {
+    grid-template-columns: 1fr;
+    grid-template-areas: "copy" "reel" "nums";
+  }
+  .showcase .reel { max-width: 300px; justify-self: start; }
+}
 
 /* the texview: a small Overleaf, the way a LaTeX editor looks. A source pane of
    real LaTeX on the left, the typeset result on the right (set in STIX, no math
@@ -903,13 +1101,14 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 
 /* the channel ledger: a hand-kept account book, not a dashboard */
 .ledger { border-top: 1px solid var(--rule); }
+/* No `border-bottom` here: the share bar below is a full-width hairline in the
+   rule colour, so a border as well would rule every row twice, 12px apart, and
+   read as a mistake rather than as two things. The bar IS the row divider, part
+   of it inked. */
 .ledger-row {
-  display: flex; align-items: baseline; gap: var(--s2);
-  padding: 14px 2px; border-bottom: 1px solid var(--rule-soft);
-  border-bottom: 1px solid var(--rule-soft);
-  color: inherit;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2);
+  padding: 14px 2px 0; color: inherit;
 }
-a.ledger-row { border-bottom: 1px solid var(--rule-soft); }
 a.ledger-row:hover { background: var(--hover); }
 a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 .lg-plat {
@@ -923,11 +1122,28 @@ a.ledger-row:hover .lg-plat { color: var(--ballpoint); }
 }
 .lg-count[data-empty="true"] { color: var(--ink-4); font-weight: 400; }
 .lg-unit { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); margin-left: 6px; }
+/* Each row's share of the total, as its own divider partly inked. Three counts
+   in a column say what each platform is; they do not say that Instagram alone
+   is three quarters of the whole and 12.7× TikTok, and that is the only thing a
+   breakdown is for. Full row width on every row, so all three read against one
+   scale — a bar sized to its own label would compare nothing.
+
+   `flex: 0 0 100%` drops it onto its own line under the row it measures; the
+   14px is a top margin rather than the flex `gap`, which would also push the
+   name, the handle and the count apart on the line above. */
+/* `order: 4` because the narrow-screen rule drops `.lg-handle` onto its own line
+   with `order: 3`; without this the bar, at the default 0, would sort above it
+   and rule the row through its middle. */
+.lg-bar {
+  flex: 0 0 100%; order: 4; height: 2px; margin-top: 14px; background: var(--rule-soft);
+}
+.lg-bar i { display: block; height: 100%; background: var(--ballpoint); opacity: 0.7; }
+a.ledger-row:hover .lg-bar i { opacity: 1; }
 
 /* the sum line: the book's balance, ruled off from the entries above it */
 .ledger-sum {
   display: flex; align-items: baseline; gap: var(--s2);
-  padding: var(--s2) 2px 0; margin-top: 6px;
+  padding: var(--s2) 2px 0; margin-top: var(--s2);
   border-top: 1px solid var(--rule);
 }
 .ledger-sum .lg-plat { color: var(--ink-2); }
@@ -1349,6 +1565,13 @@ a.btn .fill { color: var(--ink-3); }
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--ink-3); margin: 10px 0 0;
 }
+
+/* The worked sum (`.reach-sum`, `.sum`, `.sum-bar`, `.sum-rule`) stood here
+   from round 22: the three addends stacked above the total, each with a share
+   bar. It made the headline figure into a table and buried the one number the
+   panel exists to state. The breakdown it was doing belongs to the itemised
+   ledger at the foot of the page, and that is where the share bars went
+   (`.lg-bar`); the total is back to being a total. */
 
 /* ------------------------------------------------------------- catalog --- */
 

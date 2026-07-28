@@ -90,11 +90,26 @@ Each appears on more than one page — that is what makes it a signature rather 
 6. **Plotted ink figures** — a bare `.canvas-wrap` with **no frame and no fill**, since
    the drawings are ink and ink does not come in a box, plus a mono `fig. N · caption`
    beneath. Each draws itself like a pen plotter: a faint full guide underneath, the
-   ballpoint line tracing over it, a laurel mark at the pen. Lorenz and a double pendulum on
-   animations, the Thue–Morse difference table on formalization, Ulam's spiral and the Lorenz
-   again on the index, the Mandelbrot on 404. The Lorenz stands on two pages off one plotter:
-   `lorenzPoints()` caches the integration at module level and the registration takes both ids
-   (`#figure-lorenz, #figure-lorenz-home`), so a second instance costs nothing.
+   ballpoint line tracing over it, a laurel mark at the pen. A bézier weave and a double
+   pendulum on animations, the Thue–Morse difference table on formalization, Ulam's spiral
+   and the Lorenz on the index, the Mandelbrot on 404. The Lorenz used to stand on two pages
+   off one plotter (animations reprinting the homepage's own opening figure); as of round 21
+   animations draws a cubic bézier instead (`#figure-bezier`, `bezierWeave` in site.js) as the
+   envelope of its own de Casteljau construction — many level-2 tangent segments, swept across
+   t, whose common envelope *is* the curve, which is never stroked directly. `lorenzPoints()`
+   still caches its integration at module level for the one registration that remains,
+   `#figure-lorenz-home`.
+   **Two colours, round 23.** The bézier's live construction used `--ink-3` and `--ink`,
+   putting a mid grey and a near-black over a blue weave: three hues saying nothing, the
+   grey scaffold the muddiest thing in the figure. It has only two states to tell apart, ink
+   already laid down and the pen laying it, so everything drawn is `--ballpoint` and
+   everything live is `--laurel`, ending on the laurel point that was already the site's
+   mark for the pen. Depth inside the live assembly comes from alpha and weight, never a
+   third hue: first-order lerps at 0.4/1px, the level-2 tangent at full laurel/1.7px.
+   It also **maps to the canvas rect rather than a square inscribed in it** — the square
+   left ~77px of dead paper down each side of a 424×318 figure. A non-uniform scale is still
+   affine, and tangency and the envelope property are affine-invariant, so the drawing fills
+   the frame and stays exactly as true.
 7. **Contents filed among the primes** — on the index the spiral *is* the contents. The
    numerals are absolutely positioned onto six real primes (`.ulam-node`, paper backplate,
    hairline ring, 44px hit area via `::after`) and are **real links**, not decoration. A
@@ -246,14 +261,23 @@ Each appears on more than one page — that is what makes it a signature rather 
     attributes ship in the HTML so it still works with no JS. Export vertical: the manim
     film plates are 9:16 (`.plate-frame`), the projects showcase reel is 4:5 (`.reel`), both
     over `--film`.
-20. **The showcase** (`.showcase`, projects) — a portrait reel with its numbers read down
-    the side of it: the 4:5 video on one flank and the log rail (`fig. 18`) on the other,
-    both standing vertically so a phone-shaped video and its numbers share one line. Wraps
-    to stacked under about 560px. The numbers were a 2×3 block of tiles, then `Table 3`, and
+20. **The showcase** (`.showcase`, projects) — the 4:5 reel on one flank and, on the other,
+    everything said about what it shows: the section's `env-body` over the log rail
+    (`fig. 18`) over its caption. The numbers were a 2×3 block of tiles, then `Table 3`, and
     are now a figure; see the numbers entry below for why each swap happened.
-    **The reel needs `align-self: flex-start`.** The container is `align-items: stretch` and
-    the rail is the taller item, so without it the 4:5 frame is silently stretched to the
-    rail's 440px and prints as a 300×440 portrait that is not the shape it claims to be.
+    **The reel needs `align-self: start`.** It spans both grid rows, and a grid item
+    stretches to its span by default, so without it the 4:5 frame silently becomes whatever
+    shape the two rows add up to.
+    **Two columns, round 23.** `.implied` (the quotients the rail implied) was cut and the
+    rail was laid down horizontal. A horizontal rail is ~180px against a ~375px reel, a
+    200px void unless something stands above it, which is why the paragraph came down off
+    the top of the section into the column: reel 300px, column 546px, both flanks ending
+    level (measured, 372px vs 381px).
+    **Grid, not flex** — the three parts have to REORDER, not just wrap. Under 760px the
+    rail stands back up vertical and wants a reel beside it, not a paragraph, so the
+    paragraph goes back over the top of both: `"reel copy" / "reel nums"` becomes
+    `"copy copy" / "reel nums"`, then one column under 520px with the reel capped at 300px.
+    Flex cannot express a change of areas without a second copy of the prose in the DOM.
 21. **The texview** (`.texview`, projects) — a small Overleaf standing in for a project
     visual: a LaTeX **source** pane (real `\documentclass`/`\subsection*`/`\[…\]` in mono)
     beside the **typeset** result (STIX, pure HTML/CSS: italic `<i>` variables, `<sup>`/
@@ -433,6 +457,16 @@ Each appears on more than one page — that is what makes it a signature rather 
     260px a portrait reel wanted to 340px). Two consequences that are easy to miss: the copy
     described the balls and pegs and had to be rewritten, and the drawing is a figure, so it
     took a number and the whole run shifted by one.
+    **§ 03's own figure was a second reprint** (round 21): `#figure-lorenz` sat right above
+    this section running the *same* Lorenz `#figure-lorenz-home` runs, so the page opened on
+    a drawing and then repeated it lower down. Replaced with a cubic bézier drawn as the
+    envelope of its own de Casteljau construction (see `.goals`-adjacent entry above and the
+    signature list below); the id changed to `#figure-bezier` so it stops implying the
+    Lorenz connection this note describes. **`.reach` went out and came back**: round 22 made
+    the single display figure a worked sum, addends above the total; round 23 put it back to
+    a total and moved the breakdown to the foot ledger where it belongs. See `.lg-bar` in
+    Component measurements. Landing somewhere you already were is a fine outcome — what the
+    detour bought is knowing the breakdown was the good idea and the placement was not.
 39. **Widgets end somewhere real** — the texview's compile used to terminate in nothing. It now
     ends in a link to the actual handout library at trivalleytutoring.org/resources, shipped in
     the static HTML so no-JS readers get it too. A fake interaction that leads to a real
@@ -485,6 +519,10 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 - `.btn` — 40px min height/width · 0 14px pad · 1px `--rule-strong` border ·
   `:active scale(0.97)`
 - `.env` (theorem card) — 24px vertical pad · hairline top · body capped at 68ch · 16px body
+- `code` (inline) — the site's first use of a literal token quoted in running prose
+  (`sorry`, round 21): mono, 0.9em, `--paper-inset` pill, `0.05em 0.35em` pad. `.goals th
+  code` strips the pill back to plain mono inside the ledger, where the mark already
+  carries enough weight without a second box.
 - **Numbers: three treatments, one per shape of data** (round 20). There is no single stat
   component any more, and that is the point. `.stats`/`.stats-grid2`/`.stats-col` were KPI
   tiles (deleted round 19); `.tabf` was one booktabs table for everything (deleted round 20).
@@ -512,22 +550,73 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
   and better set than `2,000+`. Left-aligned rather than centred (fleqn), because everything
   else on the site sets from the left margin.
 - `.railf` — **counts spanning decades** (projects, `fig. 18`). 20 and 200,000 in the same
-  column are two strings of digits; on a log rail they are a distance. Marks are `bottom`
-  percentages from log10, normalised over the four decades the data itself spans, computed
-  once and written into the HTML as inline styles, so the whole figure works with no JS.
-  440px tall, 46px left margin for the decade labels, plot inset 14px top and bottom so the
-  marks at 0% and 100% have room for their labels. **Two constraints set the height**: the
-  two closest counts (25,000 and 42,000) sit 5.63% apart, which is 23px here, so the labels
-  run `line-height: 1.2` rather than the inherited 1.65 or they overlap. A bound on the rail
-  keeps its `≥` (`.railf .rel`), same as `.eqf`. No canvas: a hairline and a few positioned
-  marks read the tokens directly, so the night board repaints them with no `palette()` call
-  and no `onRepaint` registration.
+  column are two strings of digits; on a log rail they are a distance. **Horizontal above
+  760px** (round 23), which is the axis a paper actually prints and the only orientation
+  that fills the column beside a 4:5 reel instead of towering over it; **vertical below**,
+  the form that survives a phone. One measured number per mark, `--p` (log10, normalised
+  over the four decades the data spans), serves both — `left` when horizontal, `bottom` when
+  vertical — so the two orientations cannot drift apart. Inline styles, so the whole figure
+  works with no JS.
+  Horizontal: 182px tall, axis 30px up for the decade labels beneath it. **Six labels on one
+  axis need tiers**: 25,000 and 42,000 are 5.6% apart (~30px), so `.t1`/`.t2`/`.t3` set the
+  leader length (22/62/102px) and `.a-l`/`.a-r` push a label off its own tick rather than
+  centring it. Both are hand-set against the measured positions under one rule: a leader
+  must rise through clear air, so no label may sit over a taller mark's tick. Verified in
+  the DOM at 546px and again at 429px (the narrowest the horizontal form ever gets) — zero
+  label overlaps, zero leader crossings, nothing outside the plot.
+  **The stem is `--rule`, not ballpoint**; the ballpoint is spent on the 9px sitting ON the
+  axis, which is where the datum is. One colour and the stems read as bars, and three
+  hand-set tier heights then look like a second variable nobody measured.
+  Vertical (≤760px): 440px tall, 46px left margin, plot inset 14px top and bottom, every
+  tier collapsed to one 14px ballpoint tick. A bound on the rail keeps its `≥`
+  (`.railf .rel`), same as `.eqf`. No canvas: a hairline and a few positioned marks read the
+  tokens directly, so the night board repaints them with no `palette()` call and no
+  `onRepaint` registration.
+- `.goals` (lean, beside `.vecf`) — **the frontier, in Lean's own marks** (round 21). `⊢`
+  for a goal still open, `∎` for one closed, both mono, both the goal panel's own colours
+  (`--ballpoint` and `--qed`, matched to `.goal-body .turn` / `.goal-ok` exactly rather than
+  invented) so the ledger reads as the same proof vocabulary, not a new one. Figures 21px/600
+  tabular; the source note (`P3 frontier`, `native_decide, base cases 11–42`) sits under the
+  label in `.gl-where`, 13px `--ink-4`. Third row is disclosure, not a hedge: the library's
+  own rule is that a "machine-verified" claim is incomplete without the axioms it rests on,
+  so the trusted-evaluation count ships beside open and closed rather than being left off.
+  `.numrow` is the two-column wrapper (`.vecf` | `.goals`, `0.85fr`/`1.15fr`, `--s6` gap)
+  that holds the pair; collapses under 760px.
+- `.eqf-row` — **four bounds across on ONE line each** (round 23, Tri-Valley `Table 2`).
+  `≥` and its figure share one cell (`.rn`) so the relation can never break away from its
+  figure at a wrap. `<th scope="row">` moves to last in the DOM without breaking the
+  row-header association — scope ties it to the row, not to DOM position.
+  **One line, not two.** The stacked form (figure over label) let a two-word label wrap and
+  opened a ragged gutter under every figure; figure and label on a shared baseline 8px
+  apart makes each stat a phrase you read. Figures 22px/600 tabular, labels 15px `--ink-2`,
+  `white-space: nowrap`.
+  **No vertical hairlines.** Columns are content-width with the slack spread by
+  `space-between` (~68px at the 876px measure, eight times the 8px inside a stat), so the
+  grouping is unambiguous without a rule drawn to say so. The base `.eqf` caps its table at
+  460px and the row form must override it (`max-width: none; width: 100%`) — that width is
+  the only thing holding the four apart. Collapses to stacked rows, hairlines back, under
+  620px.
+  Still one step from the KPI tile grid the site has now deleted twice (`.stats`, `.tabf`):
+  what keeps it apart is what is missing — no box, no fill, no uppercase tracked label —
+  plus the `≥` itself, which a tile never carried.
+- `.lg-bar` — **each ledger row's share of the total, as its own divider partly inked**
+  (round 23, animations). Three counts in a column say what each platform is; they do not
+  say Instagram alone is three quarters of the whole and 12.7× TikTok, and that is the only
+  thing a breakdown is for. `flex: 0 0 100%` drops it under the row it measures, full row
+  width on every row so all three read against one scale. **`.ledger-row` has no
+  `border-bottom`**: the bar's own 2px `--rule-soft` track IS the divider, and a border as
+  well ruled every row twice 12px apart. `order: 4`, because the narrow-screen rule drops
+  `.lg-handle` onto its own line with `order: 3` and the bar would otherwise sort above it
+  and rule the row through its middle. `initLedger` re-derives every width from
+  `data/socials.json`; the inline percentages are the no-JS fallback only.
+  This replaced `.sum`/`.reach-sum` (round 22), which stacked the same three addends with
+  the same bars *above the headline total*. It turned the one figure the panel exists to
+  state into a table. The breakdown belongs to the itemised ledger; the total is a total.
 - `.plate-frame` — 9:16 film reel, `object-fit: cover` over `--film`, no controls
 - `.reel` (showcase) — 4:5 portrait video, hairline border over `--film`
 - `.onair-n` (index) — one figure read as a line of prose: 26px/600 `<b>` inside 17px
   `--ink-2` body. It used to be `.stat`'s 30px/600 over an uppercase mono label, so it
-  carried the tile's tell without the box. `.reach` on animations is deliberately untouched:
-  a single display figure between two rules is the epigraph treatment, not a tile
+  carried the tile's tell without the box.
 - `.texview` — a small Overleaf: `.texview-code` (LaTeX source) + `.texview-out` (STIX
   render), `.tv-run` recompile button, `.bigsum` for summation limits
 - `.wordart` — a ternary word set as a solid block, three letters at three ink shades

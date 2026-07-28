@@ -78,24 +78,54 @@ hw : w = thueMorse</span>
         <p class="kicker">By the numbers</p>
         <h2>The library, measured</h2>
       </div>
-      <div class="vecf">
-        <p class="tabcap" id="tab-library">Table 1 &#183; the library, counted</p>
-        <div class="vecf-row">
-          <span class="vecf-name" aria-hidden="true">L</span>
-          <span class="vecf-rel" aria-hidden="true">=</span>
-          <div class="vecf-body">
-            <table aria-labelledby="tab-library">
-              <colgroup><col class="cv"><col></colgroup>
-              <tbody>
-                <tr><td class="v" data-count="7665">7,665</td><th scope="row">lines of Lean</th></tr>
-                <tr><td class="v" data-count="394">394</td><th scope="row">theorems and lemmas</th></tr>
-                <tr><td class="v" data-count="2">2</td><th scope="row">classical results, closed</th></tr>
-              </tbody>
-            </table>
+      <div class="numrow">
+        <div class="vecf">
+          <p class="tabcap" id="tab-library">Table 1 &#183; the library, counted</p>
+          <div class="vecf-row">
+            <span class="vecf-name" aria-hidden="true">L</span>
+            <span class="vecf-rel" aria-hidden="true">=</span>
+            <div class="vecf-body">
+              <table aria-labelledby="tab-library">
+                <colgroup><col class="cv"><col></colgroup>
+                <tbody>
+                  <tr><td class="v" data-count="10707">10,707</td><th scope="row">lines of Lean</th></tr>
+                  <tr><td class="v" data-count="509">509</td><th scope="row">theorems and lemmas</th></tr>
+                  <tr><td class="v" data-count="2">2</td><th scope="row">classical results, closed</th></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+          <p class="vecf-where">over <em>Lean&nbsp;4</em> and <em>Mathlib</em>.</p>
+          <p class="tabnote">Counted from the working repository, July 2026.</p>
         </div>
-        <p class="vecf-where">over <em>Lean&nbsp;4</em> and <em>Mathlib</em>.</p>
-        <p class="tabnote">Counted from the working repository, July 2026.</p>
+
+        <!-- The vector is what is finished; this is what is still moving, in
+             Lean's own marks: ⊢ a goal still to prove, ∎ one already closed.
+             The third row discloses the trust base rather than hiding it,
+             per the library's own rule that a "machine-verified" claim is
+             incomplete without the axioms it actually rests on. -->
+        <div class="goals">
+          <p class="tabcap" id="tab-goals">The frontier, as it stands</p>
+          <table aria-labelledby="tab-goals">
+            <tbody>
+              <tr>
+                <td class="gl-mark" aria-hidden="true">&#8866;</td>
+                <td class="v" data-count="7">7</td>
+                <th scope="row">named obligations, open<span class="gl-where">P3 frontier</span></th>
+              </tr>
+              <tr>
+                <td class="gl-mark gl-qed" aria-hidden="true">&#8718;</td>
+                <td class="v" data-count="0">0</td>
+                <th scope="row"><code>sorry</code> in the classification<span class="gl-where">P2, end to end</span></th>
+              </tr>
+              <tr>
+                <td class="gl-mark" aria-hidden="true">&#8866;</td>
+                <td class="v" data-count="32">32</td>
+                <th scope="row">trusted evaluations<span class="gl-where">native_decide, base cases 11&#8211;42</span></th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -133,15 +163,16 @@ hw : w = thueMorse</span>
           </div>
 
           <div class="cat-row">
-            <span class="cat-what">Manuscript I <i>in progress</i></span>
+            <span class="cat-what">Manuscript I <i>closed</i></span>
             <span class="cat-body">The classification wired end to end: the structural argument, the
-            upper bound, and the finite base cases compile together. Four named obligations remain
-            open and are stated as such in the source, not papered over.</span>
+            upper bound, and the finite base cases compile together with no <code>sorry</code>
+            anywhere in the development. The open frontier has moved to a second manuscript,
+            seven named obligations, stated as such in the source and counted above.</span>
           </div>
 
           <div class="cat-foot">
             <span class="cat-what">In total</span>
-            <span class="cat-body">7,665 lines of Lean, 394 theorems and lemmas, counted from the
+            <span class="cat-body">10,707 lines of Lean, 509 theorems and lemmas, counted from the
             working repository in July 2026.</span>
           </div>
         </div>

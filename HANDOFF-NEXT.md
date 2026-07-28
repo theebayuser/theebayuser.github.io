@@ -1,129 +1,142 @@
-# Handoff — 2026-07-27 session, continued
+# Handoff — round 21
 
-Written for a session starting cold. Picks up right after the "round 19" commit
-(`02e4da7`) and covers uncommitted work on top of it.
+Written for a session starting cold. Picks up after round 20 (the three number
+treatments — `.vecf`, `.eqf`, `.railf` — replacing `.tabf`) and covers this round's
+uncommitted work on top of it.
 
 ## Read first
 
-This portfolio has its own design system doc at
-[.interface-design/system.md](.interface-design/system.md). Read it before touching
-any UI — it has the direction ("a living preprint"), the depth strategy (hairlines
-only, no shadows), the type scale, and detailed notes on every signature component
-including the ones touched this session (entries 7, 8, 18, 20, 22, 23, 29 in the
-numbered list).
+[.interface-design/system.md](.interface-design/system.md) has the direction ("a living
+preprint"), the depth strategy, the type scale, and detailed notes on every component
+touched this round: the numbered signature entries 6, 20, 38, and the "Component
+measurements" section's `.goals` / `.eqf-row` / `.implied` / `.sum` / `code` entries.
 
 ## Uncommitted right now
 
-`git status` shows `js/site.js`, `css/paper.css`, `lean.html`, `projects.html`,
-`404.html` and `.interface-design/system.md` modified, and this file untracked.
-Nothing is committed yet. `_proto.html`, the scratch prototype page, has been deleted
-now that the stat treatments are chosen.
+`git status` shows `js/site.js`, `css/paper.css`, `manim.html`, `lean.html`,
+`projects.html`, `index.html`, `HANDOFF.md`, `.interface-design/system.md` modified,
+and this file untracked. Nothing is committed.
 
-### What's actually done and working
+## What this round did
 
-1. **Contents-spiral figure fixes** (index.html) — canvas aspect-ratio bug fixed
-   (canvas is now `position: absolute; inset: 0` so declared `aspect-ratio` actually
-   renders), numerals reordered outward-from-centre so they land 01→06 in sequence,
-   frame-edge clamping fixed, ink hierarchy inverted so the six numerals are the
-   loudest marks instead of the quietest. **This part is solid, tested, committable.**
+1. **The bézier figure** (`manim.html`, `js/site.js`) — § 03 opened on the Lorenz
+   attractor, the same drawing the homepage runs (`#figure-lorenz-home`), so the page's
+   headline figure was a reprint. Replaced with `bezierWeave`: a cubic bézier drawn as
+   the envelope of its own de Casteljau construction rather than stroked directly —
+   many level-2 tangent segments swept across `t`, whose common envelope is the curve.
+   The tangency claim was verified numerically before shipping (max deviation
+   `1.2e-15`, floating-point exact) for the chosen control points. Id renamed
+   `#figure-lorenz` → `#figure-bezier`; kept `fig. 12`, no renumbering. **Solid, tested,
+   committable.**
 
-2. **Education graph rebuild** — arrowheads, edge-to-chip-box clipping, ancestor/
-   descendant chain highlighting on selection, `needed N · led to M` counts, hover
-   preview, arrow-key navigation, node repositioning to eliminate edge/chip overlaps
-   (verified zero crossings at the 876px layout). **Solid, tested, committable.**
+2. **Lean's stale figures, refreshed** — `lean.html`'s Table 1 claimed 7,665 lines and
+   394 theorems "counted July 2026"; the live repo at
+   `/Users/danielliao/my_project` has grown to **10,707 lines, 509 theorems and
+   lemmas** across 100 `.lean` files. Refreshed everywhere it appears: `.vecf`
+   (`lean.html`), the catalog foot, and the homepage deskstack card (`index.html`).
+   The catalog's "Four named obligations remain open" on Manuscript I was also stale —
+   P2 is now sorry-free per the repo's own `docs/progress_tracker.md` — rewritten to say
+   so and point at where the frontier actually is (P3, 7 obligations). **Solid, counts
+   cross-checked against the source repo's own dashboard, committable.**
 
-3. **Projects tailpiece (cubic roots figure)** — tightened view radius and raised
-   alpha so it reads as a drawing instead of a haze. **Solid, tested, committable.**
+3. **The turnstile ledger** (`.goals`, lean.html) — fills the space beside `.vecf` with
+   what Table 1 doesn't show: `⊢ 7` named obligations open (P3), `∎ 0` `sorry` in the
+   classification (P2, end to end), `⊢ 32` trusted evaluations (`native_decide`, base
+   cases 11–42). Colors matched to the existing goal panel exactly (`--ballpoint` /
+   `--qed`), not invented. The third row is disclosure: the source repo's own rule is
+   that a "machine-verified" claim needs its trust base stated, so the axiom count
+   ships rather than being left off. **Solid, tested, committable.**
 
-4. **Number stats, resolved** (lean.html, projects.html, paper.css) — `.tabf` is gone,
-   and so is the idea of one stat component. Three treatments now ship, chosen by what
-   the numbers are: `.vecf` a column vector for lean's three exact counts (`Table 1`),
-   `.eqf` an align block with real `≥` relations for Tri-Valley's three lower bounds
-   (`Table 2`), `.railf` a logarithmic rail for USAMO Guide's six counts across four
-   decades (`fig. 18`, beside the reel). Documented in system.md's "Numbers: three
-   treatments". **Solid, verified against the rendered DOM, committable.** See below
-   for what was checked and the two things still open.
+4. **The follower sum, worked** (`.sum`, manim.html) — `.reach` was a single 52,244
+   with its evidence sixty lines below. Now the three addends (3,263 · 41,462 · 7,519)
+   stack above the total, each with a share-of-total hairline underneath (Instagram is
+   79% of the total and 12.7× TikTok, invisible in one number). `initLedger` re-derives
+   all three from `data/socials.json`, the same file the total and foot ledger already
+   read. **One real bug caught and fixed here**: the share bar was a flex child with no
+   explicit width, so it collapsed to zero — fixed with `flex-wrap` on the row and a
+   `calc()` width on the bar. **Solid, tested, committable.**
 
-5. **Draggable manuscript sheets** (index.html deskstack) — pointer-drag anywhere on
-   the page, clamped to viewport, persisted in `sessionStorage`, "tidy the desk"
-   reset control, full print/reduced-motion/no-JS fallback contracts. **Solid,
-   tested, committable.**
+5. **Tri-Valley, three in a row** (`.eqf-row`, projects.html) — the three bounds
+   (`≥ 25`, `≥ 2,000`, `≥ 100`) now sit side by side on one hairline instead of
+   stacked, `≥` and figure sharing one cell so they stack as a unit above the label.
+   Deliberately checked against the KPI-tile grid the site has now deleted twice
+   (`.stats`, `.tabf`): what keeps this from being a third version is what's missing —
+   no box, no fill, no tracked label — plus the `≥` itself. **Solid, tested,
+   committable.**
 
-6. **Spiral polish, this exact session** — removed the pen-ring + leader-line
-   annotation around each numbered box per user feedback ("box with number is
-   enough"); numeral now sits directly on its prime. Draw duration cut 2.6s → 1.5s
-   per user feedback ("speed up prime drawing"). Deleted now-dead code:
-   `ULAM_LEAD`, `ULAM_GAP`, the `offsetFor` ray-box intersection, per-anchor
-   leader/ring canvas drawing. **This is the last edit made, verified in-browser
-   (numerals still land in prime order, insets still clamped ≥36px), not yet
-   reflected in `.interface-design/system.md`.**
+6. **USAMO's implied column** (`.implied`, projects.html) — the ~200px empty to the
+   right of the rail now holds the quotients its own counts imply: `200,000 ÷ 25,000 =
+   8` visits a user, `25,000 ÷ 20 = 1,250` users a staff member (both exact), `993 ÷
+   158 ≈ 6.3` problems a section. Fitting a third column inside 876px cost the reel and
+   rail some width (300→270, 340→296); re-measured against the rendered DOM afterward
+   to confirm the rail's own labels still don't overlap at 296px. **Solid, tested,
+   committable.**
 
-### Number stats — done, with two things still open
+## What was verified, and how
 
-Fourteen prototypes were built across two rounds (round 1 A–F typographic, round 2 G–N
-mathematical). The user picked three, one per call site, and they are implemented:
+Every truth claim was checked before it was captioned, not after — the site's own
+rule ("Figures must be true"):
 
-| site | was | is |
-|---|---|---|
-| lean.html, `Table 1` | `.tabf` booktabs | **`.vecf`** column vector, `L = [ … ]` |
-| projects.html, `Table 2` | `.tabf`, figures `25+` | **`.eqf`** align block, `≥ 25` |
-| projects.html, `Table 3` | `.tabf` beside the reel | **`.railf`** log rail, now `fig. 18` |
+- The bézier's tangency claim: sampled `t` across [0,1], level-2 segment direction vs.
+  `B'(t)`, max deviation `1.2e-15`.
+- The Lean counts: recounted directly against `/Users/danielliao/my_project` and
+  cross-checked against that repo's own `docs/progress_tracker.md` (updated the same
+  day), not just against my own grep.
+- The follower sum: `3,263 + 41,462 + 7,519 = 52,244`, and the three share percentages
+  sum to 100.00%.
+- The three implied quotients: two are exact (`200,000 ÷ 25,000`, `25,000 ÷ 20`, both
+  divide with zero remainder) and marked `=`; the third is a genuine ratio and kept `≈`.
 
-`_proto.html` is deleted (a copy sits at `/tmp/protoshot/_proto.html.bak` until that
-directory is cleared, if the losing prototypes are ever wanted again).
+Then the layout and contract sweep, **measuring the rendered DOM rather than
+eyeballing**, at 1280/760/500, both palettes, print, reduced-motion, no-JS:
 
-**Consequences worth knowing.** Making the rail a figure renumbered the global run:
-cubic roots 18 → 19, the 404's Clifford 19 → 20, and the sequence is a clean 1–20 with
-no gaps. `Table 3` is retired, so the table series is now just 1 and 2. `.showcase .reel`
-needed `align-self: flex-start`, because the rail is taller than the reel and
-`align-items: stretch` was silently stretching the 4:5 frame to 300×440.
+- No new element overflows its container at any tested width (`.showcase`'s three
+  columns fit inside 876px with the reel still exactly 4:5).
+- Night board flips every new component: the bézier through `palette()`, the goals
+  ledger's turnstile and qed marks, the rail marks, the sum's bars, the eqf-row and
+  implied figures — ink lands on the correct side of the paper in both palettes.
+- `prefers-reduced-motion`: the bézier paints its full weave as a static final frame;
+  the sum settles to its exact figures with no animation.
+- No-JS: every new figure ships correct static text in the HTML source (grepped
+  directly, not inferred) — the sum, the goals ledger, the implied column, and all
+  `data-count` targets.
+- Print: the eqf-row and the three-column showcase both hold their layout.
+- Console clean on all three touched pages (`Uncaught` grepped for specifically; the
+  GPU shared-image warnings in headless Chrome's own log are compositor noise, not
+  page errors).
 
-**What was verified**, by measuring the rendered DOM rather than eyeballing: every rail
-mark sits at log10 of its count to within 0.01%; every figure settles to its `data-count`
-after the count-up; the vector's closing bracket lands exactly on the figure column's
-edge and the labels clear it; no two rail labels overlap (the tightest pair, 25,000 and
-42,000, clears by 2.8px); the reel holds 4:5; the night board flips the axis, marks and
-brackets and the ink lands on the right side of the paper in both palettes; the print
-rules keep all three from breaking across pages; no `.tabf`/`.stats` element is left in
-any DOM. Checked at 1280, 760 and 500.
+## Two things still open
 
-**Two things still open.**
-
-1. **375px is unverified.** Headless Chrome clamps its layout viewport at 500px, so
-   nothing below that was actually rendered. Check the vector and the align block on a
-   real phone: both have a long label column that will wrap.
-2. **The reel prints as a solid black rectangle.** `@media print` hides `video` but not
-   `.reel`, which keeps its `--film` background, so a printed page carries a 300×372
-   block of ink. This is **pre-existing**, not caused by this round, but it was noticed
-   while checking print and should be fixed (print `.reel` as its border only, or hide
-   it and let the caption carry the plate).
-
-A third thing worth a decision rather than a fix: system.md says a signature element
-"appears on more than one page — that is what makes it a signature rather than a
-flourish." These three each appear exactly once. The defence is that they are one
-family answering one question, and the data genuinely has three shapes; the risk is
-three bespoke components where one would have done. Left as is deliberately.
-
-### Verification note
-
-All six items above were checked live in the Browser pane against
-`python3 -m http.server 8899` this session (not yet against a fresh server — start
-one if continuing). No console errors were seen at the checkpoints tested. The
-education-graph zero-crossing claim and the spiral prime-ordering claim were both
-verified by measuring live DOM/canvas state in-browser, not by eyeballing.
+1. **375px is unverified**, same limitation as last round: headless Chrome clamps its
+   layout viewport at 500px. The narrowest confirmed width for all of this round's new
+   components is 500px. Check on a real phone before treating this as final,
+   particularly `.eqf-row`'s collapse and the goals ledger's label wrapping.
+2. **The reel still prints as a solid black rectangle** (pre-existing, flagged last
+   round, not touched this round either). `@media print` hides `video` but not `.reel`,
+   which keeps its `--film` background. Two rounds now without a decision: print
+   `.reel` as a border only, or hide it and let the caption carry the plate.
 
 ## Standing conventions worth knowing before editing further
 
 - No shadows anywhere, radius 0 throughout, hairline borders in three weights
-  (`--rule-soft` / `--rule` / `--rule-strong`) — see system.md's "Depth strategy".
+  (`--rule-soft` / `--rule` / `--rule-strong`).
 - One accent (`--ballpoint`), rationed semantic colors (`--qed` green, `--laurel`
-  gold) — see "Color".
-- Every canvas figure reads color through `palette()`, never a literal hex, so the
-  night-board dark mode (`html.board`, toggled by the `b` key or the topbar glyph)
-  repaints correctly. Any new canvas work must call `onRepaint()`.
-- Figures caption below (`fig. N`, one global sequence); tables caption above
-  (`Table N`, a separate sequence) — established this session, documented in
-  system.md entry 22.
-- Every progressive-enhancement JS feature (goal stepper, morphism widget, ledger,
-  spiral, deskstack drag) ships a complete static/no-JS fallback in the HTML and
-  fails open, never leaving content hidden if JS errors.
+  gold). Match new color use to an *existing* established meaning before inventing one
+  — the goals ledger's turnstile/qed colors were pulled from the goal panel's own CSS,
+  not chosen fresh.
+- Every canvas figure reads color through `palette()`, never a literal hex — the
+  bézier weave included, since it draws on `<canvas>` like every other plotted figure.
+  DOM-based figures (`.railf`, `.sum-bar`) read CSS custom properties directly instead
+  and need no `palette()`/`onRepaint()` call at all.
+- Figures caption below (`fig. N`, one global sequence, currently a clean 1–20); tables
+  caption above (`Table N`, currently just 1 and 2 — `Table 3` was retired in round 20
+  when it became a figure).
+- Every progressive-enhancement JS feature ships a complete static/no-JS fallback and
+  fails open. Verify this by grepping the raw HTML source for the real final values,
+  not by disabling JS in a headless browser and trusting an empty dump (that failed
+  silently this round — `--blink-settings=scriptEnabled=false` combined with
+  `--dump-dom` returned nothing rather than an error).
+- When refreshing a measured figure (line counts, theorem counts, follower counts),
+  recount from the actual source, don't just edit the number in place — this round
+  found the site's own headline Lean count was 40% low because it had never been
+  updated since the library grew.

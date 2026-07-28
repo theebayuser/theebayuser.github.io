@@ -174,9 +174,13 @@ Nothing on this site calls a live API. Five things are maintained by hand:
 - **The USAMO Guide statistics** on `projects.html` (42,000+ lines, 993 problems, 158 sections)
   were counted from a clone of `github.com/usamoguide/usamo-guide` in July 2026. Recount them
   if they are ever questioned.
-- **The Lean library figures** (7,665 lines, 394 theorems) come from the working repository,
-  July 2026, and appear in three places: the stats row and catalog foot on `lean.html`, and the
-  library card in the homepage deskstack. Update all three together.
+- **The Lean library figures** (10,707 lines, 509 theorems, refreshed round 21 from
+  `/Users/danielliao/my_project`) appear in three places: the `.vecf`/catalog-foot on
+  `lean.html`, and the library card in the homepage deskstack (`index.html`). The goals
+  ledger beside `.vecf` (7 open, 0 `sorry` in P2, 32 trusted evaluations) is a fourth
+  site, its own component (`.goals`), same source repo. Update all four together;
+  recount with `find MyProject -name '*.lean' | xargs cat | wc -l` and
+  `grep -cE '^\s*(theorem|lemma)\s' ` over the same file list.
 
 ## 7. Open items
 

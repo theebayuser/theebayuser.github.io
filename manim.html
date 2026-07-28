@@ -53,10 +53,11 @@
       <div class="figure-row">
         <div data-reveal>
           <div class="canvas-wrap">
-            <canvas id="figure-lorenz" role="img"
-              aria-label="The Lorenz attractor, its two lobes traced slowly as a single unbroken ink line."></canvas>
+            <canvas id="figure-bezier" role="img"
+              aria-label="A cubic bezier curve, drawn not as a stroked line but as the envelope of its own tangent lines: the second-order de Casteljau segment, swept across every value of t, weaving the curve into view without ever drawing it directly."></canvas>
           </div>
-          <p class="figcap">fig. 12 · the Lorenz attractor, integrated in the browser</p>
+          <p class="figcap">fig. 12 &#183; a cubic b&#233;zier, never stroked directly: only its tangent
+          at every <i>t</i> is, and the curve is what those lines have in common</p>
         </div>
         <div class="prose stack" data-reveal>
           <p class="kicker">Choosing</p>
@@ -106,7 +107,7 @@
       </div>
 
       <div class="reach" data-reach data-reveal>
-        <p class="reach-n"><span data-reach-total data-count="52244">52,244</span></p>
+        <p class="reach-n"><span data-reach-total data-count="55249">55,249</span></p>
         <p class="reach-k">followers across three platforms, as
         <span style="font-family: var(--mono); font-size: 14px;">@math.visualizations</span></p>
         <p class="reach-where" data-reach-where>TikTok &#183; Instagram &#183; Facebook</p>
@@ -163,24 +164,32 @@
         places. Follow along if you want.</p>
       </div>
 
+      <!-- Each row carries its share of the total as a filled hairline. The
+           counts themselves ship as dashes and arrive from data/socials.json,
+           but the bars ship at their real widths so no-JS still sees the
+           breakdown; JS re-derives the same percentages from that one file, so
+           the bars cannot drift from the counts printed beside them. -->
       <div class="ledger" data-ledger>
         <a class="ledger-row" href="https://www.tiktok.com/@math.visualizations"
            target="_blank" rel="noopener" data-platform="tiktok">
           <span class="lg-plat">TikTok</span>
           <span class="lg-handle">@math.visualizations</span>
           <span class="lg-count" data-empty="true">&#183;</span><span class="lg-unit">followers</span>
+          <span class="lg-bar" aria-hidden="true"><i style="width: 5.906%"></i></span>
         </a>
         <a class="ledger-row" href="https://www.instagram.com/math.visualizations/"
            target="_blank" rel="noopener" data-platform="instagram">
           <span class="lg-plat">Instagram</span>
           <span class="lg-handle">@math.visualizations</span>
           <span class="lg-count" data-empty="true">&#183;</span><span class="lg-unit">followers</span>
+          <span class="lg-bar" aria-hidden="true"><i style="width: 75.045%"></i></span>
         </a>
         <a class="ledger-row" href="https://www.facebook.com/profile/math.visualizations"
            target="_blank" rel="noopener" data-platform="facebook">
           <span class="lg-plat">Facebook</span>
           <span class="lg-handle">math.visualizations</span>
           <span class="lg-count" data-empty="true">&#183;</span><span class="lg-unit">followers</span>
+          <span class="lg-bar" aria-hidden="true"><i style="width: 19.049%"></i></span>
         </a>
         <div class="ledger-sum">
           <span class="lg-plat">In total</span>
