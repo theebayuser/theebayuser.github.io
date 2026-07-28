@@ -363,63 +363,142 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   padding: var(--s3);
 }
 
-/* -------------------------------------------------------------- tables --- */
+/* ------------------------------------------------------------- numbers --- */
 
-/* A paper reports measurements in a table, not in metric tiles. The old `.stats`
-   and `.stats-grid2` were a grid of equal boxes with hairline gutters, each holding
-   a 30px figure over an uppercase mono label: the canonical dashboard KPI block,
-   and the one component here that could have been lifted onto any SaaS page without
-   anyone noticing. This replaces both (and `.stats-col`, which no page used).
+/* Three number treatments, one per shape of data, replacing the single `.tabf`
+   booktabs table — which itself replaced `.stats`/`.stats-grid2`/`.stats-col`,
+   the KPI tile grid. Each step was the same argument: the block should be built
+   out of what the numbers are, not out of a container.
 
-   Rules only, three weights, and they mean different things — `--rule-strong` closes
-   the table top and bottom, `--rule` sits under the column heads, and body rows get
-   nothing at all. A border on every row is what makes a table read as a spreadsheet.
-   Tables caption ABOVE; figures caption below. That asymmetry is real typesetting
-   practice, and it is what keeps the two kinds of block from reading as one. */
-.tabf {
-  width: 100%; border-collapse: collapse;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule-strong);
-  margin-top: var(--s2);
-}
-.tabf caption {
-  caption-side: top; text-align: left;
+   `.tabf` was right to kill the tiles and wrong about the rest. Two columns at
+   the full 876px measure put every label and its figure at opposite ends of a
+   very wide, very empty row, and a booktabs table says the same thing about
+   three exact counts, three lower bounds, and six counts spanning four decades,
+   when those are not the same thing at all. So:
+
+     `.vecf`   a short fixed set of exact counts    → lean, Table 1
+     `.eqf`    counts that are really lower bounds  → projects, Table 2
+     `.railf`  counts spanning decades              → projects, fig. 18
+
+   All three keep a real `<table>` or list underneath with `<th scope="row">`, so
+   they announce as data; every bracket, relation glyph, rule and tick is either
+   `aria-hidden` or a pseudo-element. Tables still caption ABOVE and figures
+   below, which is the asymmetry that keeps the two kinds of block apart. */
+
+.tabcap {
   font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--ink-3); padding-bottom: 8px;
-}
-.tabf thead th {
-  font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--ink-3); font-weight: 400;
-  border-bottom: 1px solid var(--rule); padding: 0 0 8px;
-  text-align: left;                 /* th centres by default; align to its column */
-}
-.tabf thead th:last-child { text-align: right; }
-.tabf tbody th {
-  text-align: left; font-weight: 400; color: var(--ink-2);
-  padding: 10px 0; padding-right: var(--s3);
-}
-/* The figure still leads, through weight and alignment rather than 30px and a box.
-   Dropping the size is exactly what stops it reading as a tile. */
-.tabf tbody td {
-  text-align: right; font-size: 19px; font-weight: 600; color: var(--ink);
-  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
-  padding: 10px 0; white-space: nowrap;
-}
-/* a row whose right-hand cell is a name rather than a count */
-.tabf tbody td.word {
-  font-size: var(--fs-body); font-weight: 400; color: var(--ink-2);
-  letter-spacing: 0;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px;
 }
 .tabnote {
   font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-3);
   margin-top: var(--s2);
 }
 
+/* --- the column vector -----------------------------------------------------
+   A fixed set of counts is a vector, so it is set as one: every figure inside
+   one bracket, labels hung outside it. The brackets are drawn from borders, not
+   typed as glyphs, because a real square bracket grows with its matrix.
+
+   The geometry hangs off ONE number, `--vecw`, the width of the figure column.
+   The table is `table-layout: fixed` with a `<col>` at that width, the closing
+   bracket is positioned at exactly that offset, and the label column clears it
+   on padding. Change `--vecw` and the bracket follows; hardcode the bracket
+   offset anywhere else and it drifts off the column the first time a figure
+   gets longer. */
+.vecf { --vecw: 96px; margin-top: var(--s2); }
+.vecf-row { display: flex; align-items: center; gap: 14px; }
+.vecf-name { font-size: 21px; font-style: italic; color: var(--ink); }
+.vecf-rel { font-size: 19px; color: var(--ink-3); }
+.vecf-body { position: relative; flex: 1 1 auto; min-width: 0; }
+.vecf-body::before, .vecf-body::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 9px;
+  border: 1px solid var(--ink-2);
+}
+.vecf-body::before { left: 0; border-right: 0; }
+.vecf-body::after  { left: var(--vecw); border-left: 0; }
+.vecf table { table-layout: fixed; width: 100%; border-collapse: collapse; }
+.vecf col.cv { width: var(--vecw); }
+.vecf td.v {
+  text-align: right; padding: 9px 18px; font-size: 21px; font-weight: 600;
+  color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+}
+.vecf th {
+  text-align: left; font-weight: 400; color: var(--ink-2);
+  padding: 9px 0 9px 26px;          /* clears the closing bracket at --vecw + 9 */
+}
+/* the row that is a name rather than a count does not belong in the vector: a
+   paper puts it in the line underneath, where the ambient system is named */
+.vecf-where { color: var(--ink-2); margin: var(--s3) 0 0; }
+
+/* --- the align environment -------------------------------------------------
+   Rows locked on the relation, the way `align` locks on the `=`. The point here
+   is the relation column itself: these three counts are lower bounds, and `≥ 25`
+   is both truer and better set than `25+`. Left-aligned rather than centred
+   (fleqn), because everything else on the site sets from the left margin. */
+.eqf { margin-top: var(--s2); }
+.eqf table { border-collapse: collapse; max-width: 460px; }
+.eqf th {
+  text-align: right; font-weight: 400; color: var(--ink-2);
+  padding: 9px 0; width: 60%;
+}
+.eqf td.rel { text-align: center; color: var(--ink-3); padding: 9px 14px; }
+.eqf td.v {
+  text-align: left; font-size: 21px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em; padding: 9px 0;
+}
+
+/* --- the logarithmic rail --------------------------------------------------
+   Six counts spanning four decades cannot be compared in a column: 20 and
+   200,000 in the same list are two strings of digits. On a log rail they are a
+   distance. This is a figure, not a table, so it captions below and takes a
+   number in the global `fig.` sequence.
+
+   Positions are `bottom` percentages measured from log10, computed once and
+   written into the HTML. No canvas: a hairline and a few absolutely positioned
+   marks read the custom properties directly, so the night board repaints them
+   with no `palette()` call and no `onRepaint` registration at all. */
+.railf { position: relative; height: 440px; margin: var(--s2) 0 0 46px; }
+.railf-plot { position: absolute; left: 0; right: 0; top: 14px; bottom: 14px; }
+.railf-axis {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  background: var(--rule-strong);
+}
+.railf-dec { position: absolute; left: -5px; width: 11px; height: 1px; background: var(--rule); }
+.railf-dec i {
+  position: absolute; right: 16px; top: -9px; font-style: normal;
+  font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-4);
+}
+.railf ul { list-style: none; margin: 0; padding: 0; }
+.railf li {
+  position: absolute; left: 0; width: 14px; height: 1px;
+  background: var(--ballpoint);
+}
+/* line-height 1.2, not the inherited 1.65: 25,000 and 42,000 sit 5.63% apart,
+   which is 23px on this rail, and a body-height line box overlaps its neighbour
+   by ~5px. The two closest labels are what set the rail's height. */
+/* `li > span`, not `li span`: the label wrapper holds a nested `.rel` span for a
+   bound, and the descendant selector absolutely positioned that one too, dropping
+   the `≥` on top of its own figure where it vanished. */
+.railf li > span {
+  position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+  white-space: nowrap; line-height: 1.2;
+}
+/* a count that is really a lower bound says so, the same way `.eqf` does */
+.railf .rel { font-size: 13px; color: var(--ink-3); margin-right: 3px; }
+.railf b {
+  font-size: 15px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+.railf i { font-style: normal; font-size: 12.5px; color: var(--ink-3); margin-left: 8px; }
+
 /* a showcase: a portrait reel with its numbers read down the side of it, both
    standing vertically so a phone-shaped video and its stats share one line */
 .showcase { display: flex; gap: var(--s4); align-items: stretch; flex-wrap: wrap; }
+/* `align-self: flex-start` holds the 4:5. The container is `align-items: stretch`,
+   and the rail beside it is the taller item, so without this the reel is stretched
+   to the rail's height and the portrait frame silently becomes 300×440. */
 .showcase .reel {
-  flex: 0 0 clamp(240px, 34%, 300px);
+  flex: 0 0 clamp(240px, 34%, 300px); align-self: flex-start;
   aspect-ratio: 4 / 5; background: var(--film);
   border: 1px solid var(--rule); overflow: hidden;
 }
@@ -427,10 +506,13 @@ a.env:hover .env-kind { color: var(--ballpoint); }
   width: 100%; height: 100%; display: block;
   object-fit: cover; background: var(--film); cursor: pointer;
 }
-/* The numbers beside the reel are a table like every other set of numbers here.
-   `.stats-col` and `.stats-grid2` were deleted with `.stats`; the first had no
-   page using it at all. */
-.showcase .tabf { flex: 1 1 260px; align-self: flex-start; margin-top: 0; }
+/* The numbers beside the reel are the log rail. Six counts in a 260px column is
+   what killed every other treatment: a table of six rows at that width puts the
+   figures so far from their labels the row stops reading, and the rail turned
+   on its side is the one shape that wants to be tall and narrow. `flex-start`,
+   because the rail sets its own height and must not be stretched to the reel's. */
+.showcase .railf { flex: 0 1 340px; align-self: flex-start; margin-top: 0; }
+.showcase .railf + .figcap { flex-basis: 100%; }
 
 /* the texview: a small Overleaf, the way a LaTeX editor looks. A source pane of
    real LaTeX on the left, the typeset result on the right (set in STIX, no math
@@ -1519,7 +1601,7 @@ a.btn .fill { color: var(--ink-3); }
   }
 
   /* keep a figure with its caption and a claim with its card */
-  .entry, .env, .figure-row, .goal, .texview, .tabf,
+  .entry, .env, .figure-row, .goal, .texview, .vecf, .eqf, .railf,
   .tailpiece, .clipping, .record-col, .plate, .quote,
   .canvas-wrap, .wordart, .sierpinski { break-inside: avoid; }
   .figcap { break-before: avoid; }

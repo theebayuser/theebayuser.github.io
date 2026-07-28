@@ -247,10 +247,13 @@ Each appears on more than one page — that is what makes it a signature rather 
     film plates are 9:16 (`.plate-frame`), the projects showcase reel is 4:5 (`.reel`), both
     over `--film`.
 20. **The showcase** (`.showcase`, projects) — a portrait reel with its numbers read down
-    the side of it: the 4:5 video on one flank and `Table 3` on the other, both standing
-    vertically so a phone-shaped video and its numbers share one line. Wraps to stacked on
-    mobile. The numbers were a 2×3 block of tiles until round 19; a six-row table stands the
-    same height beside the reel and reads as a table pinned next to a plate.
+    the side of it: the 4:5 video on one flank and the log rail (`fig. 18`) on the other,
+    both standing vertically so a phone-shaped video and its numbers share one line. Wraps
+    to stacked under about 560px. The numbers were a 2×3 block of tiles, then `Table 3`, and
+    are now a figure; see the numbers entry below for why each swap happened.
+    **The reel needs `align-self: flex-start`.** The container is `align-items: stretch` and
+    the rail is the taller item, so without it the 4:5 frame is silently stretched to the
+    rail's 440px and prints as a 300×440 portrait that is not the shape it claims to be.
 21. **The texview** (`.texview`, projects) — a small Overleaf standing in for a project
     visual: a LaTeX **source** pane (real `\documentclass`/`\subsection*`/`\[…\]` in mono)
     beside the **typeset** result (STIX, pure HTML/CSS: italic `<i>` variables, `<sup>`/
@@ -265,14 +268,16 @@ Each appears on more than one page — that is what makes it a signature rather 
     the preview shows, and the mathematics is checked before shipping.
 22. **Figures are numbered globally** — one `fig. N` sequence runs across the whole site in
     nav order from the homepage (1–3 index, 4–7 research, 8–11 lean, 12–14 animations, 15–16
-    education, 17–18 projects, 19 the 404), interactive widgets and tailpieces included. Film
-    plates keep their own Plate I–III roman series. Renumber the whole run when inserting a
-    figure; the captions still have to be true. Do it highest-number-first
+    education, **17–19 projects, 20 the 404**), interactive widgets and tailpieces included.
+    Film plates keep their own Plate I–III roman series. Renumber the whole run when
+    inserting a figure; the captions still have to be true. Do it highest-number-first
     (`for n in 18 17 … 2; do perl -pi -e "s/fig\. $n\b/fig. $((n+1))/g" *.html; done`) or the
-    replacements collide.
-    **Tables run their own series** (round 19): `Table 1` on formalization, `Table 2` and
-    `Table 3` on projects, in the same nav order. A paper numbers its tables separately from
-    its figures, and keeping the runs apart means inserting a figure never renumbers a table.
+    replacements collide. The log rail went in at 18 in round 20 and pushed the cubic roots
+    to 19 and the 404's Clifford to 20.
+    **Tables run their own series** (round 19): `Table 1` on formalization and `Table 2` on
+    projects, in the same nav order. A paper numbers its tables separately from its figures,
+    and keeping the runs apart means inserting a figure never renumbers a table. `Table 3`
+    was retired in round 20 when the USAMO Guide counts became a figure instead.
     The other half of the convention matters as much: **tables caption above, figures caption
     below**. That asymmetry is what stops two ruled blocks on the same page reading as one
     kind of thing.
@@ -480,23 +485,43 @@ Render at n = 32, not 64; at 64 the nesting is too fine to read at figure size.
 - `.btn` — 40px min height/width · 0 14px pad · 1px `--rule-strong` border ·
   `:active scale(0.97)`
 - `.env` (theorem card) — 24px vertical pad · hairline top · body capped at 68ch · 16px body
-- `.tabf` (the only way numbers are displayed) — a real `<table>` with `<caption>`,
-  `<thead>` and `<th scope="row">`, so it announces properly instead of being a pile of
-  divs. **Three rule weights that mean different things**: `--rule-strong` top and bottom,
-  `--rule` under the column heads, and **nothing between body rows** — a border on every row
-  is what makes a table read as a spreadsheet. Column heads 11.5px uppercase mono `--ink-3`,
-  left-aligned to their columns (a `th` centres by default). Quantity in the body face at
-  `--ink-2`/400; figure right-aligned, 19px/600 `--ink`, tabular numerals; `td.word` for a
-  row whose right cell is a name rather than a count. Rows pad `10px 0`. `.tabnote` beneath
-  for the "counted from…" line. `.showcase .tabf` takes the reel's flex slot at `1 1 260px`,
-  `align-self: flex-start`.
-  **It replaced `.stats`, `.stats-grid2` and `.stats-col`, which are deleted.** Those were a
-  grid of equal boxes with hairline gutters, each holding a 30px/600 figure over an uppercase
-  tracked mono label: the canonical dashboard KPI tile, and the one component here that could
-  have been lifted onto any SaaS page unnoticed. `.stats-col` had no page using it at all.
-  The figure lost 11px in the move and still leads, on weight and alignment — dropping the
-  size is exactly what stops it reading as a tile. The tracked mono label now has one correct
-  home, the column head, instead of sitting under every number.
+- **Numbers: three treatments, one per shape of data** (round 20). There is no single stat
+  component any more, and that is the point. `.stats`/`.stats-grid2`/`.stats-col` were KPI
+  tiles (deleted round 19); `.tabf` was one booktabs table for everything (deleted round 20).
+  `.tabf` was right to kill the tiles and wrong about the rest: two columns at the full 876px
+  measure put every label and its figure at opposite ends of a very wide, very empty row, and
+  it said the same thing about three exact counts, three lower bounds, and six counts
+  spanning four decades, which are not the same thing. **Pick the treatment from what the
+  numbers are.** All three keep a real `<table>` or list with `<th scope="row">` underneath,
+  labelled by `aria-labelledby` where the caption sits outside the table; every bracket,
+  relation glyph, rule and tick is `aria-hidden` or a pseudo-element. `.tabcap` above,
+  `.tabnote` beneath, `.figcap` below for the one that is a figure.
+- `.vecf` — **a short fixed set of exact counts is a vector**, so it is set as one (lean,
+  `Table 1`). Figures inside one bracket, labels hung outside, `L =` naming it. Brackets are
+  drawn from borders, never typed as glyphs, because a real square bracket grows with its
+  matrix. **The geometry hangs off one number, `--vecw` (96px)**: the table is
+  `table-layout: fixed` with a `<col>` at that width, the closing bracket is positioned at
+  exactly that offset, and the label column clears it on 26px of padding. Hardcode the
+  bracket offset anywhere else and it drifts off the column the first time a figure gets
+  longer. Figures 21px/600 tabular, `9px 18px` pad. The row that is a name rather than a
+  count (`built on Lean 4 + Mathlib`) leaves the vector for a `.vecf-where` line beneath,
+  which is what a paper does with it.
+- `.eqf` — **counts that are really lower bounds** (projects, `Table 2`). Rows locked on the
+  relation the way `align` locks on the `=`, label right-aligned into it at 60%, figure left
+  of centre. The point is the relation column: these are bounds, and `≥ 2,000` is both truer
+  and better set than `2,000+`. Left-aligned rather than centred (fleqn), because everything
+  else on the site sets from the left margin.
+- `.railf` — **counts spanning decades** (projects, `fig. 18`). 20 and 200,000 in the same
+  column are two strings of digits; on a log rail they are a distance. Marks are `bottom`
+  percentages from log10, normalised over the four decades the data itself spans, computed
+  once and written into the HTML as inline styles, so the whole figure works with no JS.
+  440px tall, 46px left margin for the decade labels, plot inset 14px top and bottom so the
+  marks at 0% and 100% have room for their labels. **Two constraints set the height**: the
+  two closest counts (25,000 and 42,000) sit 5.63% apart, which is 23px here, so the labels
+  run `line-height: 1.2` rather than the inherited 1.65 or they overlap. A bound on the rail
+  keeps its `≥` (`.railf .rel`), same as `.eqf`. No canvas: a hairline and a few positioned
+  marks read the tokens directly, so the night board repaints them with no `palette()` call
+  and no `onRepaint` registration.
 - `.plate-frame` — 9:16 film reel, `object-fit: cover` over `--film`, no controls
 - `.reel` (showcase) — 4:5 portrait video, hairline border over `--film`
 - `.onair-n` (index) — one figure read as a line of prose: 26px/600 `<b>` inside 17px

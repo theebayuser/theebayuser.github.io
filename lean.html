@@ -78,19 +78,25 @@ hw : w = thueMorse</span>
         <p class="kicker">By the numbers</p>
         <h2>The library, measured</h2>
       </div>
-      <table class="tabf">
-        <caption>Table 1 &#183; the library, counted</caption>
-        <thead>
-          <tr><th scope="col">quantity</th><th scope="col">count</th></tr>
-        </thead>
-        <tbody>
-          <tr><th scope="row">lines of Lean</th><td data-count="7665">7,665</td></tr>
-          <tr><th scope="row">theorems and lemmas</th><td data-count="394">394</td></tr>
-          <tr><th scope="row">classical results, closed</th><td data-count="2">2</td></tr>
-          <tr><th scope="row">built on</th><td class="word">Lean 4 + Mathlib</td></tr>
-        </tbody>
-      </table>
-      <p class="tabnote">Counted from the working repository, July 2026.</p>
+      <div class="vecf">
+        <p class="tabcap" id="tab-library">Table 1 &#183; the library, counted</p>
+        <div class="vecf-row">
+          <span class="vecf-name" aria-hidden="true">L</span>
+          <span class="vecf-rel" aria-hidden="true">=</span>
+          <div class="vecf-body">
+            <table aria-labelledby="tab-library">
+              <colgroup><col class="cv"><col></colgroup>
+              <tbody>
+                <tr><td class="v" data-count="7665">7,665</td><th scope="row">lines of Lean</th></tr>
+                <tr><td class="v" data-count="394">394</td><th scope="row">theorems and lemmas</th></tr>
+                <tr><td class="v" data-count="2">2</td><th scope="row">classical results, closed</th></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="vecf-where">over <em>Lean&nbsp;4</em> and <em>Mathlib</em>.</p>
+        <p class="tabnote">Counted from the working repository, July 2026.</p>
+      </div>
     </section>
 
     <div class="tm" data-n="24"></div>

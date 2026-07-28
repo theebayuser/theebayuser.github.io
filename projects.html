@@ -67,17 +67,19 @@
         <p class="env-body">A peer-to-peer tutoring organization I started in my school district, run by
         high schoolers for the students right behind them. I learned how to sell myself, what people
         actually want, and a dozen more lessons.</p>
-        <table class="tabf" style="margin-top: var(--s3);">
-          <caption>Table 2 &#183; Tri-Valley Tutoring, to date</caption>
-          <thead>
-            <tr><th scope="col">quantity</th><th scope="col">count</th></tr>
-          </thead>
-          <tbody>
-            <tr><th scope="row">peer tutors</th><td data-count="25">25+</td></tr>
-            <tr><th scope="row">hours delivered</th><td data-count="2000">2,000+</td></tr>
-            <tr><th scope="row">students reached</th><td data-count="100">100+</td></tr>
-          </tbody>
-        </table>
+        <div class="eqf" style="margin-top: var(--s3);">
+          <p class="tabcap" id="tab-tvt">Table 2 &#183; Tri-Valley Tutoring, to date</p>
+          <table aria-labelledby="tab-tvt">
+            <tbody>
+              <tr><th scope="row">peer tutors</th>
+                <td class="rel">&#8805;</td><td class="v" data-count="25">25</td></tr>
+              <tr><th scope="row">hours delivered</th>
+                <td class="rel">&#8805;</td><td class="v" data-count="2000">2,000</td></tr>
+              <tr><th scope="row">students reached</th>
+                <td class="rel">&#8805;</td><td class="v" data-count="100">100</td></tr>
+            </tbody>
+          </table>
+        </div>
         <div class="texview" data-texview style="margin-top: var(--s3);">
           <div class="texview-bar">
             <span>exponential-equation.tex</span>
@@ -147,20 +149,30 @@ Since $3^x > 0$, reject $t = -6$.
               <source src="assets/video/UsamoGuideShowcase.mp4" type="video/mp4">
             </video>
           </div>
-          <table class="tabf">
-            <caption>Table 3 &#183; USAMO Guide, as it stands</caption>
-            <thead>
-              <tr><th scope="col">quantity</th><th scope="col">count</th></tr>
-            </thead>
-            <tbody>
-              <tr><th scope="row">on staff</th><td data-count="20">20</td></tr>
-              <tr><th scope="row">unique users</th><td data-count="25000">25,000</td></tr>
-              <tr><th scope="row">monthly visits</th><td data-count="200000">200,000</td></tr>
-              <tr><th scope="row">lines of code</th><td data-count="42000">42,000+</td></tr>
-              <tr><th scope="row">problems banked</th><td data-count="993">993</td></tr>
-              <tr><th scope="row">study sections</th><td data-count="158">158</td></tr>
-            </tbody>
-          </table>
+          <!-- The rail is drawn from log10 of each count, normalised over the four
+               decades the data itself spans: 20 sits at 0% and 200,000 at 100%
+               because 200,000 is exactly 10,000 times 20. Decade ticks at 10²–10⁵
+               fall where log10 puts them, which is why 993 lands a hair under the
+               10³ line rather than on it. -->
+          <div class="railf">
+            <div class="railf-plot">
+              <span class="railf-axis" aria-hidden="true"></span>
+              <span class="railf-dec" style="bottom: 17.474%" aria-hidden="true"><i>10&#178;</i></span>
+              <span class="railf-dec" style="bottom: 42.474%" aria-hidden="true"><i>10&#179;</i></span>
+              <span class="railf-dec" style="bottom: 67.474%" aria-hidden="true"><i>10&#8308;</i></span>
+              <span class="railf-dec" style="bottom: 92.474%" aria-hidden="true"><i>10&#8309;</i></span>
+              <ul>
+                <li style="bottom: 0%"><span><b data-count="20">20</b><i>on staff</i></span></li>
+                <li style="bottom: 22.441%"><span><b data-count="158">158</b><i>study sections</i></span></li>
+                <li style="bottom: 42.398%"><span><b data-count="993">993</b><i>problems banked</i></span></li>
+                <li style="bottom: 77.423%"><span><b data-count="25000">25,000</b><i>unique users</i></span></li>
+                <li style="bottom: 83.055%"><span><span class="rel">&#8805;</span><b data-count="42000">42,000</b><i>lines of code</i></span></li>
+                <li style="bottom: 100%"><span><b data-count="200000">200,000</b><i>monthly visits</i></span></li>
+              </ul>
+            </div>
+          </div>
+          <p class="figcap">fig. 18 &#183; USAMO Guide on a logarithmic rail. The 200,000 monthly
+          visits are exactly 10&#8308; times the twenty people on staff.</p>
         </div>
         <p class="env-foot" style="margin-top: var(--s3);">
           <span>open source</span><span>·</span>
@@ -209,7 +221,7 @@ Since $3^x > 0$, reject $t = -6$.
         <canvas id="figure-roots" role="img"
           aria-label="The complex roots of every cubic with small integer coefficients, stippled in ink into a dense self-similar cloud."></canvas>
       </div>
-      <p class="figcap">fig. 18 · roots of every integer cubic, coefficients in &#8722;5 to 5</p>
+      <p class="figcap">fig. 19 · roots of every integer cubic, coefficients in &#8722;5 to 5</p>
     </div>
 
     <nav class="pager" aria-label="Sections, in order">
