@@ -36,7 +36,7 @@ Read in this order before changing anything:
 | `index.html` | Title block, abstract, the Ulam-spiral contents, the manuscript deskstack, the animation block (a live Lorenz beside the reach line), contact |
 | `research.html` | § 01. Ternary word art, two definitions, the morphism widget, two manuscripts with the turtle figure beside them |
 | `lean.html` | § 02. The goal stepper, the library measured, the catalog with its figure in the rail, upstream contributions |
-| `manim.html` | § 03. Two live figures, the reach headline, three film plates, the Euler circle the reader drags, the follower ledger |
+| `manim.html` | § 03. Two live figures, the reach headline, three film plates, the follower ledger |
 | `education.html` | § 04. The prerequisite graph as navigation, the record grid |
 | `projects.html` | § 05. Tri-Valley Tutoring with the LaTeX viewer, USAMO Guide with the showcase reel |
 | `404.html` | Not-found, proved by contradiction |
@@ -71,7 +71,7 @@ These are the ones that keep the site coherent. Breaking any of them is visible 
 - **Figure captions go below, with one named exception.** fig. 1 on the homepage sits *above*
   its figure, because it is not a caption but a live readout that renames itself on hover.
   Every other figure keeps its caption underneath. Do not generalise the exception.
-- **Figures are numbered globally.** One `fig. N` run, currently 1–21, in nav order from the
+- **Figures are numbered globally.** One `fig. N` run, currently 1–20, in nav order from the
   homepage through the 404. Insert one and you renumber the rest, highest number first or the
   replacements collide: `grep -o 'fig\. [0-9]*' *.html`.
   Film plates keep their own Plate I–III series.
