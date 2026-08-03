@@ -954,6 +954,21 @@ a.env:hover .env-kind { color: var(--ballpoint); }
 .canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .figcap { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); margin-top: 10px; }
 
+/* The one figure the reader operates. It squares up because it is a circle in
+   the complex plane rather than a plot: at 4/3 the unit circle uses a third of
+   its own box and the rest is margin. */
+.euler-wrap { aspect-ratio: 1 / 1; max-width: 440px; margin-left: auto; margin-right: auto; }
+.euler-wrap canvas { cursor: grab; touch-action: none; }
+.euler-wrap canvas:active { cursor: grabbing; }
+/* Progressive enhancement: the readout underneath states something true on its
+   own, so the controls appear only once there is something to control. */
+.euler-controls { display: none; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s2); justify-content: center; }
+[data-euler="on"] .euler-controls { display: flex; }
+.euler-read {
+  font-family: var(--mono); font-size: var(--fs-meta); color: var(--ink-2);
+  font-variant-numeric: tabular-nums; text-align: center; margin-top: var(--s2);
+}
+
 .eq {
   font-style: italic; font-size: 19px; line-height: 2;
   letter-spacing: 0.02em; text-align: center; margin: var(--s3) 0;

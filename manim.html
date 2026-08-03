@@ -155,6 +155,33 @@
       </div>
     </section>
 
+    <section class="section" style="padding-top: 0;" id="euler">
+      <div class="section-head" data-reveal>
+        <p class="kicker">Check it yourself</p>
+        <h2>Plate II, in your hands</h2>
+        <p class="prose lede">A film can only assert that the helix lands on &#8722;1. Here the same
+        claim is yours to move: drag the point around the unit circle and read the two components
+        off the axes. At <em>&#952;</em> = &#960; the imaginary part is gone and what is left is
+        &#8722;1, exactly.</p>
+      </div>
+
+      <div class="wide-fig" data-reveal data-euler>
+        <div class="canvas-wrap euler-wrap">
+          <canvas id="figure-euler" role="img"
+            aria-label="The complex number e to the i theta, drawn on the unit circle, with its real and imaginary parts dropped onto the two axes. Drag or use the arrow keys to change theta."></canvas>
+        </div>
+        <div class="euler-controls">
+          <button class="btn" type="button" data-euler-set="0">&#952; = 0</button>
+          <button class="btn" type="button" data-euler-set="1.5707963267948966">&#952; = &#960;/2</button>
+          <button class="btn" type="button" data-euler-set="3.141592653589793">&#952; = &#960;</button>
+          <button class="btn" type="button" data-euler-set="4.71238898038469">&#952; = 3&#960;/2</button>
+        </div>
+        <p class="euler-read" data-euler-read aria-live="polite">&#952; = 3.1416 rad = 180.0&#176;
+        &#160;&#160;&#160; e^(i&#952;) = &#8722;1.0000 + 0.0000 i</p>
+        <p class="figcap">fig. 14 &#183; e^(i&#952;) on the unit circle, its parts read off the two axes</p>
+      </div>
+    </section>
+
     <section class="section" style="padding-top: 0;" id="distribution">
       <div class="section-head" data-reveal>
         <p class="kicker">Distribution</p>
@@ -204,7 +231,7 @@
         <canvas id="figure-attractor" role="img"
           aria-label="A Clifford strange attractor, forty thousand points stippled into a smoke-like density."></canvas>
       </div>
-      <p class="figcap">fig. 14 · a Clifford attractor, forty thousand points</p>
+      <p class="figcap">fig. 15 · a Clifford attractor, forty thousand points</p>
     </div>
 
     <nav class="pager" aria-label="Sections, in order">

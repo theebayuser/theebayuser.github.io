@@ -2704,6 +2704,145 @@
     });
   }
 
+  /* --- Euler, checkable by hand -------------------------------------------
+     Plate II claims the helix lands on -1 at x = pi. This is that claim with
+     the reader's hand on it: drag the circle and read the components off the
+     axes. There is no animation loop, so the figure is simply whatever theta
+     currently is, which is also why it needs none of the rAF guards the
+     plotters do. */
+
+  function initEuler(root) {
+    var canvas = root.querySelector("canvas");
+    var read = root.querySelector("[data-euler-read]");
+    if (!canvas || !read) return;
+
+    /* opens on pi, so the first thing on screen is the case the plate states */
+    var theta = Math.PI;
+
+    function fmt(x) {
+      /* -0.0000 is arithmetically correct and reads as a mistake */
+      var s = x.toFixed(4);
+      return s === "-0.0000" ? "0.0000" : s.replace("-", "−");
+    }
+
+    function say() {
+      var im = Math.sin(theta);
+      read.textContent =
+        "θ = " + theta.toFixed(4) + " rad = " + (theta * 180 / Math.PI).toFixed(1) + "°"
+        + "    e^(iθ) = " + fmt(Math.cos(theta))
+        + (im < 0 ? " − " : " + ") + fmt(Math.abs(im)) + " i";
+    }
+
+    function draw() {
+      var f = fitCanvas(canvas);
+      var ctx = f.ctx, w = f.w, h = f.h;
+      /* a page can boot invisible: in a background tab every measurement is
+         zero, and anything laid out against nothing stays there */
+      if (w < 40 || h < 40) return;
+
+      var P = palette();
+      var cx = w / 2, cy = h / 2;
+      var R = Math.min(w, h) * 0.33;
+      var px = cx + R * Math.cos(theta), py = cy - R * Math.sin(theta);
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = P.guide;
+      ctx.beginPath();
+      ctx.moveTo(cx - R * 1.42, cy); ctx.lineTo(cx + R * 1.42, cy);
+      ctx.moveTo(cx, cy - R * 1.42); ctx.lineTo(cx, cy + R * 1.42);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.font = '12px "IBM Plex Mono", ui-monospace, Menlo, monospace';
+      ctx.fillStyle = P.ink4;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("1", cx + R + 14, cy + 12);
+      ctx.fillText("−1", cx - R - 16, cy + 12);
+      ctx.fillText("i", cx - 12, cy - R - 11);
+      ctx.fillText("−i", cx - 15, cy + R + 13);
+
+      /* the two components, read off the axes: solid along the real axis,
+         dashed up to the point */
+      ctx.strokeStyle = P.ink3;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy); ctx.lineTo(px, cy);
+      ctx.stroke();
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(px, cy); ctx.lineTo(px, py);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      /* theta sweeps anticlockwise from the positive real axis; canvas y runs
+         down, so the mathematical direction is the anticlockwise flag */
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.2, 0, -theta, true);
+      ctx.stroke();
+
+      ctx.strokeStyle = P.ballpoint;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy); ctx.lineTo(px, py);
+      ctx.stroke();
+      ctx.fillStyle = P.ballpoint;
+      ctx.beginPath();
+      ctx.arc(px, py, 4.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      say();
+    }
+
+    function wrap(a) { return (a % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2); }
+
+    function setFromPointer(e) {
+      var r = canvas.getBoundingClientRect();
+      var dx = e.clientX - (r.left + r.width / 2);
+      var dy = (r.top + r.height / 2) - e.clientY;
+      if (Math.abs(dx) < 1e-6 && Math.abs(dy) < 1e-6) return;
+      theta = wrap(Math.atan2(dy, dx));
+      draw();
+    }
+
+    var dragging = false;
+    canvas.addEventListener("pointerdown", function (e) {
+      dragging = true;
+      if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
+      setFromPointer(e);
+      e.preventDefault();
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (dragging) { setFromPointer(e); e.preventDefault(); }
+    });
+    canvas.addEventListener("pointerup", function () { dragging = false; });
+    canvas.addEventListener("pointercancel", function () { dragging = false; });
+
+    Array.prototype.forEach.call(root.querySelectorAll("[data-euler-set]"), function (b) {
+      b.addEventListener("click", function () {
+        theta = wrap(parseFloat(b.getAttribute("data-euler-set")));
+        draw();
+      });
+    });
+
+    /* the canvas is the control, so it has to be reachable without a pointer */
+    canvas.setAttribute("tabindex", "0");
+    canvas.addEventListener("keydown", function (e) {
+      var step = e.shiftKey ? Math.PI / 12 : Math.PI / 60;
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") theta = wrap(theta + step);
+      else if (e.key === "ArrowLeft" || e.key === "ArrowDown") theta = wrap(theta - step);
+      else return;
+      e.preventDefault();
+      draw();
+    });
+
+    window.addEventListener("resize", draw);
+    onRepaint(draw);
+    root.setAttribute("data-euler", "on");
+  }
+
   /* --- boot --------------------------------------------------------------- */
 
   function boot() {
@@ -2766,6 +2905,9 @@
 
     var morph = document.querySelector("[data-morphism]");
     if (morph) initMorphism(morph);
+
+    var euler = document.querySelector("[data-euler]");
+    if (euler) initEuler(euler);
 
     initCounts();
     initLedger();
