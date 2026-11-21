@@ -88,15 +88,15 @@ hw : w = thueMorse</span>
               <table aria-labelledby="tab-library">
                 <colgroup><col class="cv"><col></colgroup>
                 <tbody>
-                  <tr><td class="v" data-count="10707">10,707</td><th scope="row">lines of Lean</th></tr>
-                  <tr><td class="v" data-count="509">509</td><th scope="row">theorems and lemmas</th></tr>
+                  <tr><td class="v" data-count="18672">18,672</td><th scope="row">lines of Lean</th></tr>
+                  <tr><td class="v" data-count="847">847</td><th scope="row">theorems and lemmas</th></tr>
                   <tr><td class="v" data-count="2">2</td><th scope="row">classical results, closed</th></tr>
                 </tbody>
               </table>
             </div>
           </div>
           <p class="vecf-where">over <em>Lean&nbsp;4</em> and <em>Mathlib</em>.</p>
-          <p class="tabnote">Counted from the working repository, July 2026.</p>
+          <p class="tabnote">Counted from the working repository, November 2026.</p>
         </div>
 
         <!-- The vector is what is finished; this is what is still moving, in
@@ -110,7 +110,7 @@ hw : w = thueMorse</span>
             <tbody>
               <tr>
                 <td class="gl-mark" aria-hidden="true">&#8866;</td>
-                <td class="v" data-count="7">7</td>
+                <td class="v" data-count="4">4</td>
                 <th scope="row">named obligations, open<span class="gl-where">P3 frontier</span></th>
               </tr>
               <tr>
@@ -167,13 +167,13 @@ hw : w = thueMorse</span>
             <span class="cat-body">The classification wired end to end: the structural argument, the
             upper bound, and the finite base cases compile together with no <code>sorry</code>
             anywhere in the development. The open frontier has moved to a second manuscript,
-            seven named obligations, stated as such in the source and counted above.</span>
+            four named obligations, stated as such in the source and counted above.</span>
           </div>
 
           <div class="cat-foot">
             <span class="cat-what">In total</span>
-            <span class="cat-body">10,707 lines of Lean, 509 theorems and lemmas, counted from the
-            working repository in July 2026.</span>
+            <span class="cat-body">18,672 lines of Lean, 847 theorems and lemmas, counted from the
+            working repository in November 2026.</span>
           </div>
         </div>
 
@@ -201,12 +201,14 @@ hw : w = thueMorse</span>
           <div class="env-head">
             <span class="env-kind">Talos</span>
             <span class="env-name">(Cajal).</span>
-            <span class="env-status wip">&#8943; ongoing</span>
+            <span class="env-status done">✓ 11 merged</span>
           </div>
           <p class="env-body"><a href="https://github.com/theebayuser/talos" target="_blank" rel="noopener">Talos</a>
           is a WebAssembly interpreter written in Lean 4, where the definitions that
           <em>run</em> a program are the same ones you <em>reason about</em>. There is no second
-          specification to drift out of sync with the implementation, which is the whole point.</p>
+          specification to drift out of sync with the implementation, which is the whole point.
+          I work on the proof side: total-correctness specs, program equivalence, and memory-region
+          algebra, plus verified models of Rust's <code>Vec</code> and <code>HashMap</code>.</p>
           <p class="env-foot"><span>Wasm</span><span>&#183;</span><span>Lean 4</span></p>
         </div>
 
@@ -214,26 +216,29 @@ hw : w = thueMorse</span>
           <div class="env-head">
             <span class="env-kind">Mathlib</span>
             <span class="env-name">(Lean Prover Community).</span>
-            <span class="env-status wip">&#8943; in review</span>
+            <span class="env-status done">✓ 4 merged</span>
           </div>
           <p class="env-body">
           <a href="https://github.com/leanprover-community/mathlib4/pulls/theebayuser" target="_blank" rel="noopener">Mathlib</a>
           is a massive crowdsourced library of formalized mathematics, all in Lean. It allows mathematicians to work and use Lean
-          without having to formalize prior results. </p>
-          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>combinatorics</span></p>
+          without having to formalize prior results. I added four classical theorems of Euclidean
+          geometry: the British flag theorem, the geometric mean theorem, Varignon's theorem, and
+          Euler's quadrilateral theorem. Two results on lists are in review.</p>
+          <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>geometry</span></p>
         </div>
 
         <div class="env" style="border-bottom: 1px solid var(--rule);">
           <div class="env-head">
             <span class="env-kind">Formal-Conjectures</span>
             <span class="env-name">(DeepMind).</span>
-            <span class="env-status done">✓ 2 merged</span>
+            <span class="env-status done">✓ 19 merged</span>
           </div>
           <p class="env-body">Formal Lean statements of open problems for
           <a href="https://github.com/google-deepmind/formal-conjectures" target="_blank" rel="noopener">formal-conjectures</a>,
           Google DeepMind's open library of unproved mathematics. I formalized the
           Elliott&#8211;Halberstam conjecture, a Green open problem on the largest product-free sets in
-          finite groups, and have two Erdős problems in review. </p>
+          finite groups, Rado's boundedness conjecture, and several Erdős problems, and I fixed
+          bounds in existing statements and wrote a linter for the library. </p>
           <p class="env-foot"><span>Lean 4</span><span>&#183;</span><span>number theory</span></p>
         </div>
       </div>
