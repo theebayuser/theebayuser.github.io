@@ -631,7 +631,7 @@
     }
   }
 
-  /* --- fig. 12: a cubic bezier, drawn as the envelope of its own
+  /* --- fig. 11: a cubic bezier, drawn as the envelope of its own
      construction ---------------------------------------------------------
      Four control points, one S with a real inflection (verified below: the
      signed curvature B'(t) × B''(t) changes sign exactly once over t in
@@ -1225,7 +1225,7 @@
     { x: 0.80, y: 0.34, t: "words + avoidance",
       kind: "Combinatorics on words", when: "2025 \u2013 present",
       body: "The study of infinite sequences of symbols and which patterns they can avoid forever. This is where both chains meet, and it is the research I actually do.",
-      more: "research.html", moreText: "the research" },
+      more: "lean.html", moreText: "the Lean library" },
     { x: 0.82, y: 0.68, t: "Lean 4 \u00b7 Mathlib",
       kind: "Lean 4 and Mathlib", when: "2025 \u2013 present",
       body: "Lean is a proof assistant and Mathlib is its crowdsourced library of formalized mathematics. I taught myself both from the manual and a lot of error messages.",

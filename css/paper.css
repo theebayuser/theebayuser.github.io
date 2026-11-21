@@ -1860,3 +1860,16 @@ a.btn .fill { color: var(--ink-3); }
   .topbar { view-transition-name: topbar; }
   ::view-transition-group(topbar) { animation-duration: 1ms; }
 }
+
+/* --- §01 Lemma: the demo plate and the marked page --------------------------
+   The demo is a landscape iPad recording on a light page, so it keeps its own
+   1024 x 710 ratio and sits on the paper instead of the portrait film ground.
+   The marked page reuses the goals ledger: the mark, then the line as written
+   (mono), then the reason. ✗ takes the ballpoint, ✓ the qed colour. */
+video.plate-frame.lemma-frame { aspect-ratio: 1024 / 710; object-fit: contain; background: var(--paper-inset); }
+.marked { max-width: 560px; }
+.marked td.ln {
+  padding: 11px var(--s3) 11px 0; font: 400 17px var(--mono); color: var(--ink);
+  white-space: nowrap; vertical-align: baseline;
+}
+.marked .boxed { border: 1.5px solid var(--qed); padding: 1px 6px; }

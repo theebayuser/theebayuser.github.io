@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daniel Liao · proofs on paper, in Lean, and in motion</title>
-<meta name="description" content="Daniel Liao: high-school mathematics research in combinatorics on words, formal verification in Lean 4, and mathematical animation.">
+<meta name="description" content="Daniel Liao: Lemma, a page for SAT math where a kernel checks every line; formal verification in Lean 4; and mathematical animation.">
 <meta property="og:title" content="Daniel Liao">
-<meta property="og:description" content="Mathematics research in combinatorics on words, formal verification in Lean 4, and mathematical animation.">
+<meta property="og:description" content="Lemma, a page for SAT math where a kernel checks every line; formal verification in Lean 4; and mathematical animation.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://theebayuser.github.io/assets/og.png">
 <meta property="og:url" content="https://theebayuser.github.io/index.html">
@@ -27,7 +27,7 @@
   <div class="topbar-inner">
     <a class="brand" href="index.html">Daniel&nbsp;Liao</a>
     <nav class="nav" aria-label="Sections">
-      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="research.html"><span class="num">01</span>Lemma</a>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>
@@ -44,7 +44,7 @@
 
   <div class="page">
     <div class="titleblock" data-titleblock>
-      <p class="kicker">Combinatorics · Lean 4 · Manim</p>
+      <p class="kicker">Lemma · Lean 4 · Manim</p>
       <h1 class="display"><em class="uline">Daniel Liao</em></h1>
       <p class="byline">proofs on paper, in Lean, and in motion</p>
       <p class="affil meta">Dougherty Valley High School · San Ramon, CA · class of 2027</p>
@@ -52,10 +52,10 @@
 
       <div class="abstract">
         <p><span class="runin">Abstract.</span> I work to connect frontier mathematics with AI, and to
-        make mathematics <em class="uline">worth learning</em>. In practice that means research in combinatorics on words,
+        make mathematics <em class="uline">worth learning</em>. In practice that means Lemma, a page where every line of a student's work gets checked,
         proofs rebuilt in Lean 4 until <em class="uline">it's impossible for them to be wrong</em>, and new ways to
         look at math through animation and visualization.</p>
-        <p class="keywords meta">Keywords: math · edtech · formal verification · combinatorics · AI</p>
+        <p class="keywords meta">Keywords: math · edtech · formal verification · AI</p>
       </div>
     </div>
   </div>
@@ -75,7 +75,7 @@
         <div class="canvas-wrap" data-spiral>
           <canvas id="figure-ulam" role="img"
             aria-label="The prime numbers plotted on Ulam's square walk, shown as a wide band across the middle of the spiral, with the six section numerals pinned to six of the primes."></canvas>
-          <a class="ulam-node" href="research.html" aria-label="01, Research" data-phrase="01 · Research, counting words">01</a>
+          <a class="ulam-node" href="research.html" aria-label="01, Lemma" data-phrase="01 · Lemma, every line checked">01</a>
           <a class="ulam-node" href="lean.html" aria-label="02, Formalization" data-phrase="02 · Formalization, proofs to a computer">02</a>
           <a class="ulam-node" href="manim.html" aria-label="03, Animations" data-phrase="03 · Animations, math you can watch">03</a>
           <a class="ulam-node" href="education.html" aria-label="04, Education" data-phrase="04 · Education, what I'm learning">04</a>
@@ -84,7 +84,7 @@
         </div>
 
         <ul class="toc-line">
-          <li><a href="research.html"><span class="n">01</span>Research</a></li>
+          <li><a href="research.html"><span class="n">01</span>Lemma</a></li>
           <li><a href="lean.html"><span class="n">02</span>Formalization</a></li>
           <li><a href="manim.html"><span class="n">03</span>Animations</a></li>
           <li><a href="education.html"><span class="n">04</span>Education</a></li>
@@ -102,33 +102,33 @@
       <div class="section-head" data-reveal>
         <p class="kicker">&#167; 01</p>
         <h2>On the desk</h2>
-        <p class="prose lede">Two drafted manuscripts and the library they use are awaiting
-        publication.</p>
+        <p class="prose lede">What I am building now: Lemma, a page for SAT math where a kernel
+        checks every line.</p>
       </div>
 
       <div class="deskstack" data-reveal data-desk>
         <a class="sheet" href="research.html">
-          <span class="sheet-kind">Manuscript I</span>
-          <span class="sheet-title">An exact repetition threshold</span>
-          <span class="sheet-note">Exact answer past a small alphabet size, with the extremal
-          configurations classified.</span>
-          <span class="sheet-status wip">&#8943; in preparation</span>
+          <span class="sheet-kind">The page</span>
+          <span class="sheet-title">Written by hand</span>
+          <span class="sheet-note">An iPad and a Pencil, the way you would work on paper. A box
+          around the answer hands the page in.</span>
+          <span class="sheet-status done">&#10003; live</span>
         </a>
         <a class="sheet" href="research.html">
-          <span class="sheet-kind">Manuscript II</span>
-          <span class="sheet-title">A classification of admissible alphabets</span>
-          <span class="sheet-note">Which finite alphabets admit a word that avoids and stays rich at
-          once.</span>
-          <span class="sheet-status wip">&#8943; in preparation</span>
+          <span class="sheet-kind">The kernel</span>
+          <span class="sheet-title">Every line, and its reason</span>
+          <span class="sheet-note">Python and SymPy mark each step and the reason the student
+          gives for it. No language model gives a verdict.</span>
+          <span class="sheet-status wip">&#8943; 27 of 46 warrants checked</span>
         </a>
-        <a class="sheet card" href="lean.html">
-          <span class="sheet-kind">Library</span>
-          <span class="sheet-title">Combinatorics on words, in Lean&nbsp;4</span>
-          <span class="sheet-note">The spine both manuscripts land on. Thue's 1912 theorems
-          machine-checked on top of it.</span>
+        <a class="sheet card" href="research.html">
+          <span class="sheet-kind">The bank</span>
+          <span class="sheet-title">SAT algebra, first</span>
+          <span class="sheet-note">Problems in sets, lessons for the algebra components, and probe
+          pages for the common mistakes.</span>
           <span class="sheet-rule"></span>
-          <span class="sheet-count"><b>18,672</b> lines &#183; <b>847</b> theorems</span>
-          <span class="sheet-status done">&#10003; machine-checked</span>
+          <span class="sheet-count"><b>777</b> problems &#183; <b>13</b> lessons</span>
+          <span class="sheet-status done">&#10003; 20 sets</span>
         </a>
       </div>
       <p class="desk-note" data-desk-note>
@@ -198,7 +198,7 @@
         </blockquote>
       </div>
       <nav class="foot-nav" aria-label="Sections">
-      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="research.html"><span class="num">01</span>Lemma</a>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>

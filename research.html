@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Research · Daniel Liao</title>
-<meta name="description" content="Mathematics research in combinatorics on words: pattern avoidance, repetition, and computer-assisted proof.">
-<meta property="og:title" content="Research · Daniel Liao">
-<meta property="og:description" content="Which patterns are forced to appear in an infinite word, and which can be avoided forever.">
+<title>Lemma · Daniel Liao</title>
+<meta name="description" content="Lemma: a page for SAT math, written by hand on an iPad, where a symbolic kernel checks every line and every reason.">
+<meta property="og:title" content="Lemma · Daniel Liao">
+<meta property="og:description" content="A page for SAT math where a symbolic kernel checks every line of the work, and the reason for it.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://theebayuser.github.io/assets/og.png">
 <meta property="og:url" content="https://theebayuser.github.io/research.html">
@@ -27,7 +27,7 @@
   <div class="topbar-inner">
     <a class="brand" href="index.html">Daniel&nbsp;Liao</a>
     <nav class="nav" aria-label="Sections">
-      <a href="research.html" aria-current="page"><span class="num">01</span>Research</a>
+      <a href="research.html" aria-current="page"><span class="num">01</span>Lemma</a>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>
@@ -44,35 +44,34 @@
   <div class="page">
 
     <div class="titleblock" style="text-align: left; padding-bottom: var(--s5);">
-      <p class="kicker">§ 01 · Research</p>
-      <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Counting Words?</h1>
-      <p class="byline">what has to repeat, and what never does</p>
+      <p class="kicker">&#167; 01 &#183; Lemma</p>
+      <h1 class="display" style="font-size: clamp(34px, 5vw, 48px);">Every line, checked</h1>
+      <p class="byline">a page for SAT math, written by hand</p>
     </div>
 
     <section class="section" style="padding-top: 0;" id="what">
       <div class="figure-row" style="align-items: center;">
         <div class="prose stack">
-          <p class="lede">Write an endless sequence of letters from a small alphabet. Can you keep going
-          without ever <em class="uline">repeating a block back-to-back</em>? On two letters, no. On three, yes, and Axel Thue
-          built such a word in 1912.</p>
+          <p class="lede">Most practice tools only look at the answer. Lemma looks at
+          <em class="uline">every line of the work</em>.</p>
 
-          <p>My own work is on the counting side: given a
-          repetition to avoid, how much room does a bigger alphabet actually buy you? The answers come
-          out as <em class="uline">exact formulas past some threshold</em>, with a small stubborn region below it that has to
-          be settled one case at a time.</p>
+          <p>The student writes on an iPad with a Pencil, the way they would on paper. A box
+          around the answer hands the page in. A symbolic kernel then marks each line: does it
+          follow from the line before, and is the boxed line the answer? After that, the student
+          names the reason for each legal line, and the kernel checks the reason too.</p>
+
+          <p>No language model gives a verdict. A model can read the handwriting, one line at a
+          time, but the kernel (Python and SymPy) decides what is true.</p>
+
+          <p><a href="https://locus-web-silk.vercel.app/welcome" target="_blank" rel="noopener">Open lemma &#8594;</a></p>
         </div>
-        <div data-reveal>
-          <pre class="wordart" aria-label="The first 216 letters of a square-free ternary word, the fixed point of the map that sends 2 to 210, 1 to 20, and 0 to 1, set as a block of three ink shades."><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i>
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i>
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1
-<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i>
-<b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b>1<i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i><b>2</b><i>0</i>1<b>2</b><i>0</i><b>2</b>1<i>0</i>1</pre>
-          <p class="figcap">fig. 4 · a square-free word on three letters, the fixed point of 2 &#8594; 210, 1 &#8594; 20, 0 &#8594; 1</p>
-        </div>
+        <figure class="plate" style="margin: 0;" data-reveal>
+          <video class="plate-frame lemma-frame" data-film muted loop playsinline preload="metadata"
+            aria-label="A student solves 5x minus 20 equals 15 by hand. Each line gets a check mark, and the reasons plus 20 and divide by 5 appear under the lines.">
+            <source src="assets/video/lemma-demo.mp4" type="video/mp4">
+          </video>
+          <p class="figcap">fig. 4 &#183; page 1 of set 1: solved by hand, marked, then given its reasons</p>
+        </figure>
       </div>
     </section>
 
@@ -82,99 +81,99 @@
       <div class="section-head" data-reveal>
         <p class="kicker">Vocabulary</p>
         <h2>Two words worth defining</h2>
-        <p class="prose lede">Everything on this page is built out of these. They are less
-        intimidating than they sound.</p>
+        <p class="prose lede">Everything on this page is built out of these.</p>
       </div>
 
       <div class="pair" data-reveal-group>
           <div class="env">
             <div class="env-head">
               <span class="env-kind">Definition&nbsp;1</span>
-              <span class="env-name">(square).</span>
+              <span class="env-name">(warrant).</span>
             </div>
-            <p class="env-body">A block repeated immediately after itself. Any word of the form</p>
-            <p class="eq">x x</p>
-            <p class="env-body">where <em>x</em> is any non-empty block. The word <em>banana</em>
-            contains two of them, <em>anan</em> and <em>nana</em>. A word with none anywhere inside it
-            is called square-free, and on three letters you can keep that up forever.</p>
+            <p class="env-body">The named rule that makes a step legal. For a step on both sides
+            of an equation, the student writes the operation itself, such as</p>
+            <p class="eq">+ 20 &#160;&#160; &#247; 5</p>
+            <p class="env-body">and the kernel checks that this operation really turns the line
+            before into this line.</p>
           </div>
 
           <div class="env" style="border-bottom: 1px solid var(--rule);">
             <div class="env-head">
               <span class="env-kind">Definition&nbsp;2</span>
-              <span class="env-name">(overlap).</span>
+              <span class="env-name">(kernel).</span>
             </div>
-            <p class="env-body">Slightly more than a square: a block repeated twice, plus its first
-            letter once more. Any word of the form</p>
-            <p class="eq">a x a x a</p>
-            <p class="env-body">where <em>a</em> is a single letter. On two letters squares are
-            unavoidable, but overlaps are not, which is exactly the gap Thue's theorem lives in.</p>
+            <p class="env-body">The program that decides what is true. It compares each line with
+            the line before it and with the problem. A line that restates the problem, or checks a
+            value such as</p>
+            <p class="eq">4 &#183; 13 &#8722; 11 = 41</p>
+            <p class="env-body">is not an error, even when it does not follow from the line above.
+            The rules are written as tests, so each mark is the same every time.</p>
           </div>
       </div>
 
-      <div class="wide-fig" data-reveal data-morphism>
-          <div class="code" data-morphism-out aria-live="polite"
-            aria-label="Generations of the rewriting rule 0 to 01 and 1 to 10.">0
-01
-0110
-01101001
-0110100110010110
-01101001100101101001011001101001</div>
-          <p class="figcap">fig. 5 · the morphism 0 → 01, 1 → 10</p>
+      <div class="wide-fig" data-reveal>
+        <div class="goals marked">
+          <p class="tabcap" id="tab-marked">If 5x &#8722; 20 = 15, what is the value of x?</p>
+          <table aria-labelledby="tab-marked">
+            <tbody>
+              <tr>
+                <td class="gl-mark" aria-label="wrong">&#10007;</td>
+                <td class="ln">5x = &#8722;5</td>
+                <th scope="row">does not follow<span class="gl-where">20 subtracted, not added</span></th>
+              </tr>
+              <tr>
+                <td class="gl-mark gl-qed" aria-label="legal">&#10003;</td>
+                <td class="ln">5x = 35</td>
+                <th scope="row">+ 20<span class="gl-where">same step on both sides</span></th>
+              </tr>
+              <tr>
+                <td class="gl-mark gl-qed" aria-label="legal">&#10003;</td>
+                <td class="ln"><span class="boxed">x = 7</span></td>
+                <th scope="row">&#247; 5<span class="gl-where">same step on both sides, and the answer</span></th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="figcap">fig. 5 &#183; one page as the kernel marks it, simplified: the line, its mark, and the reason the student wrote</p>
       </div>
     </section>
 
-    <section class="section" style="padding-top: 0;" id="projects">
+    <section class="section" style="padding-top: 0;" id="numbers">
       <div class="section-head" data-reveal>
-        <p class="kicker">Projects</p>
-        <h2>Two open lines of work</h2>
-        <p class="prose lede">Both are in preparation. I state them loosely here and in full in the
-        manuscripts.</p>
+        <p class="kicker">By the numbers</p>
+        <h2>What is built, and what is not</h2>
       </div>
 
-      <div class="figure-row">
-        <div data-reveal-group>
-          <div class="env">
-            <div class="env-head">
-              <span class="env-kind">Manuscript&nbsp;I</span>
-              <span class="env-name">(an exact threshold formula).</span>
-              <span class="env-status wip">⋯ manuscript in preparation</span>
-            </div>
-            <p class="env-body">For a family of avoidance problems, I determine the exact answer for every
-            alphabet size past a small explicit bound, together with a complete classification of the
-            extremal configurations that achieve it. The proof pairs a structural argument with an
-            exhaustive finite search; the search has been independently re-run from scratch by a second,
-            deliberately different implementation, and the structural half is being verified in Lean.</p>
-            <p class="env-foot">
-              <span>complete at computer-assisted rigor</span><span>·</span>
-              <span>Lean verification ~72%</span>
-            </p>
-          </div>
-
-          <div class="env" style="border-bottom: 1px solid var(--rule);">
-            <div class="env-head">
-              <span class="env-kind">Manuscript&nbsp;II</span>
-              <span class="env-name">(a classification of admissible alphabets).</span>
-              <span class="env-status wip">⋯ manuscript in preparation</span>
-            </div>
-            <p class="env-body">A sharp characterization of which finite alphabets admit an infinite word
-            with a demanding combination of avoidance and richness properties. The criterion turns out to be
-            strikingly simple, which took a long certificate to establish: a bounded search over a large but
-            finite space, with the boundary cases hunted down individually.</p>
-            <p class="env-foot">
-              <span>classification complete, under review</span><span>·</span>
-              <span>reproduction package written</span>
-            </p>
-          </div>
-        </div>
-
-        <div data-reveal>
-          <div class="canvas-wrap" style="aspect-ratio: 1;">
-            <canvas id="figure-turtle" role="img"
-              aria-label="A path drawn by reading the Thue-Morse word as turtle steps: forward on a one, turn sixty degrees on a zero."></canvas>
-          </div>
-          <p class="figcap">fig. 6 · the same word handed to a pen: 1 forward, 0 turn 60°. It never closes.</p>
-        </div>
+      <div class="goals" data-reveal>
+        <p class="tabcap" id="tab-bank">the bank, counted</p>
+        <table aria-labelledby="tab-bank">
+          <tbody>
+            <tr>
+              <td class="gl-mark gl-qed" aria-hidden="true">&#8718;</td>
+              <td class="v" data-count="777">777</td>
+              <th scope="row">problems<span class="gl-where">in 20 sets, algebra first</span></th>
+            </tr>
+            <tr>
+              <td class="gl-mark gl-qed" aria-hidden="true">&#8718;</td>
+              <td class="v" data-count="13">13</td>
+              <th scope="row">lessons<span class="gl-where">for the algebra components</span></th>
+            </tr>
+            <tr>
+              <td class="gl-mark gl-qed" aria-hidden="true">&#8718;</td>
+              <td class="v" data-count="100">100</td>
+              <th scope="row">probe pages<span class="gl-where">for 37 kinds of mistake</span></th>
+            </tr>
+            <tr>
+              <td class="gl-mark" aria-hidden="true">&#8866;</td>
+              <td class="v" data-count="19">19</td>
+              <th scope="row">warrants the kernel cannot check yet<span class="gl-where">27 of 46 have a predicate</span></th>
+            </tr>
+          </tbody>
+        </table>
+        <p class="tabnote">Counted from the working repository, November 2026. The claim to test is
+        that a student who must name the reason for each line does better alone than one who only
+        learns whether the answer was right. The study with two arms that tests it is a draft, and
+        it has not started.</p>
       </div>
     </section>
 
@@ -183,7 +182,7 @@
         <canvas id="figure-mandelbrot" role="img"
           aria-label="The Mandelbrot set, stippled small in ink as a closing ornament."></canvas>
       </div>
-      <p class="figcap">fig. 7 · the Mandelbrot set, stippled in ink</p>
+      <p class="figcap">fig. 6 · the Mandelbrot set, stippled in ink</p>
     </div>
 
     <nav class="pager" aria-label="Sections, in order">
@@ -211,7 +210,7 @@
         </blockquote>
       </div>
       <nav class="foot-nav" aria-label="Sections">
-      <a href="research.html"><span class="num">01</span>Research</a>
+      <a href="research.html"><span class="num">01</span>Lemma</a>
       <a href="lean.html"><span class="num">02</span>Formalization</a>
       <a href="manim.html"><span class="num">03</span>Animations</a>
       <a href="education.html"><span class="num">04</span>Education</a>
